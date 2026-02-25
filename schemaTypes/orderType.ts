@@ -20,12 +20,38 @@ export const orderType = defineType({
             name: 'customerPhone',
             title: 'Customer Phone',
             type: 'string',
-            description: 'Used for WhatsApp notifications',
+            description: 'Used to contact the customer',
+        }),
+        defineField({
+            name: 'customerEmail',
+            title: 'Customer Email',
+            type: 'string',
+        }),
+        defineField({
+            name: 'orderType',
+            title: 'Order Type',
+            type: 'string',
+            options: {
+                list: [
+                    { title: 'Delivery', value: 'delivery' },
+                    { title: 'Pickup', value: 'pickup' },
+                ],
+                layout: 'radio',
+            },
         }),
         defineField({
             name: 'customerAddress',
             title: 'Delivery Address',
-            type: 'string', // Could be an object if we need more detail later
+            type: 'object',
+            fields: [
+                defineField({ name: 'street', title: 'Street', type: 'string' }),
+                defineField({ name: 'houseNumber', title: 'House Number', type: 'string' }),
+                defineField({ name: 'apartmentNumber', title: 'Apartment Number', type: 'string' }),
+                defineField({ name: 'floorNumber', title: 'Floor', type: 'string' }),
+                defineField({ name: 'postcode', title: 'Postcode', type: 'string' }),
+                defineField({ name: 'city', title: 'City', type: 'string' }),
+                defineField({ name: 'distanceKm', title: 'Distance (km)', type: 'string' }),
+            ],
         }),
         defineField({
             name: 'status',
@@ -34,12 +60,14 @@ export const orderType = defineType({
             options: {
                 list: [
                     { title: 'Pending', value: 'pending' },
+                    { title: 'Confirmed', value: 'confirmed' },
                     { title: 'Preparing', value: 'preparing' },
                     { title: 'Out for Delivery', value: 'out_for_delivery' },
                     { title: 'Delivered', value: 'delivered' },
+                    { title: 'Picked Up', value: 'picked_up' },
                     { title: 'Cancelled', value: 'cancelled' },
                 ],
-                layout: 'radio', // Easier for admin to see
+                layout: 'radio',
             },
             initialValue: 'pending',
         }),
@@ -51,41 +79,40 @@ export const orderType = defineType({
                 {
                     type: 'object',
                     fields: [
-                        defineField({
-                            name: 'menuItem',
-                            title: 'Menu Item',
-                            type: 'reference',
-                            to: [{ type: 'post' }], // Assuming 'post' is used for menu items based on previous context, usually it should be a dedicated 'dish' type but stick to existing
-                        }),
-                        defineField({
-                            name: 'quantity',
-                            title: 'Quantity',
-                            type: 'number',
-                        }),
-                        defineField({
-                            name: 'price',
-                            title: 'Price at Order',
-                            type: 'number',
-                        }),
-                        defineField({
-                            name: 'additions',
-                            title: 'Additions/Notes',
-                            type: 'string',
-                        }),
+                        defineField({ name: 'itemId', title: 'Item ID', type: 'string' }),
+                        defineField({ name: 'name', title: 'Name', type: 'string' }),
+                        defineField({ name: 'quantity', title: 'Quantity', type: 'number' }),
+                        defineField({ name: 'price', title: 'Price at Order (PLN)', type: 'number' }),
                     ],
                     preview: {
-                        select: {
-                            title: 'menuItem.title',
-                            subtitle: 'quantity',
+                        select: { title: 'name', subtitle: 'quantity' },
+                        prepare({ title, subtitle }) {
+                            return { title: title || 'Unknown', subtitle: `Qty: ${subtitle}` }
                         },
                     },
                 },
             ],
         }),
         defineField({
-            name: 'totalAmount',
-            title: 'Total Amount',
+            name: 'subtotal',
+            title: 'Subtotal (PLN)',
             type: 'number',
+        }),
+        defineField({
+            name: 'deliveryFee',
+            title: 'Delivery Fee (PLN)',
+            type: 'number',
+        }),
+        defineField({
+            name: 'totalAmount',
+            title: 'Total Amount (PLN)',
+            type: 'number',
+        }),
+        defineField({
+            name: 'notes',
+            title: 'Customer Notes',
+            type: 'text',
+            rows: 2,
         }),
         defineField({
             name: 'orderDate',
@@ -98,15 +125,22 @@ export const orderType = defineType({
         select: {
             title: 'customerName',
             subtitle: 'status',
-            media: 'items.0.menuItem.mainImage',
+            orderNum: 'orderNumber',
+            type: 'orderType',
         },
-        prepare(selection) {
-            const { title, subtitle, media } = selection
+        prepare({ title, subtitle, orderNum, type }) {
+            const icon = type === 'delivery' ? '🚚' : '📦'
             return {
-                title: title || 'No Name',
-                subtitle: `Status: ${subtitle ? subtitle.toUpperCase() : 'UNKNOWN'}`,
-                media: media,
+                title: `${icon} #${orderNum || '?'} — ${title || 'No Name'}`,
+                subtitle: `Status: ${subtitle ? subtitle.toUpperCase() : 'PENDING'}`,
             }
         },
     },
+    orderings: [
+        {
+            title: 'Newest First',
+            name: 'orderDateDesc',
+            by: [{ field: 'orderDate', direction: 'desc' }],
+        },
+    ],
 })

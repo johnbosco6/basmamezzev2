@@ -2,7 +2,7 @@
 import Link from "next/link"
 import { useState, useEffect, useMemo } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Home, BookOpen, MessageCircle, Coffee, Utensils, Wine, X, Share2, ChevronUp, ChevronDown, Filter, Calendar, Megaphone } from "lucide-react"
+import { Home, BookOpen, MessageCircle, Coffee, Utensils, Wine, X, Share2, ChevronUp, ChevronDown, Filter, Calendar, Megaphone, ShoppingCart, ShoppingBag, Plus, Check } from "lucide-react"
 import { Archivo } from "next/font/google"
 import Image from "next/image"
 
@@ -11,6 +11,8 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { menuData, allergenMap } from "./menu-data"
+import { useCart, parsePrice } from "@/context/cart-context"
+import { CartDrawer } from "@/components/cart-drawer"
 
 const archivo = Archivo({
   subsets: ["latin"],
@@ -33,6 +35,18 @@ const IconMap = {
 }
 
 export default function MenuPage() {
+  const { addItem, totalItems } = useCart()
+  const [cartOpen, setCartOpen] = useState(false)
+  const [justAdded, setJustAdded] = useState<string | null>(null)
+
+  const handleAddToCart = (item: { id: string; name: string; price: string; image?: string }) => {
+    const numericPrice = parsePrice(item.price)
+    if (numericPrice === 0) return // skip items with no price (e.g. package notes)
+    addItem({ id: item.id, name: item.name, price: numericPrice, image: item.image })
+    setJustAdded(item.id)
+    setTimeout(() => setJustAdded(null), 1200)
+  }
+
   const [activeSection, setActiveSection] = useState("sniadania")
   const [activeCategory, setActiveCategory] = useState<string | null>(null)
   const [selectedImage, setSelectedImage] = useState<{ src: string; alt: string } | null>(null)
@@ -171,6 +185,9 @@ ${shareData.url}`)
 
   return (
     <div className="min-h-screen bg-white text-gray-900">
+      {/* Cart Drawer */}
+      <CartDrawer isOpen={cartOpen} onClose={() => setCartOpen(false)} />
+
       {/* Header */}
       <header className="sticky top-0 z-50 backdrop-blur-md bg-[#597FB1]/80 border-b border-white/10">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
@@ -212,7 +229,22 @@ ${shareData.url}`)
               <span className={`text-xs font-light ${archivo.className}`}>Oferty</span>
             </Link>
           </nav>
-          <div className="flex-1 flex justify-end"></div>
+          {/* Cart Button */}
+          <div className="flex-1 flex justify-end">
+            <button
+              onClick={() => setCartOpen(true)}
+              className="relative flex items-center gap-2 bg-[#BA9D76]/20 hover:bg-[#BA9D76]/40 border border-[#BA9D76]/40 text-white rounded-full px-4 py-2 transition-all duration-200 hover:scale-105"
+              aria-label="Otwórz koszyk"
+            >
+              <ShoppingCart className="h-4 w-4 text-[#BA9D76]" />
+              <span className={`text-sm font-light hidden sm:inline ${archivo.className}`}>Koszyk</span>
+              {totalItems > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 bg-[#BA9D76] text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-sm">
+                  {totalItems > 9 ? "9+" : totalItems}
+                </span>
+              )}
+            </button>
+          </div>
         </div>
       </header>
 
@@ -610,7 +642,7 @@ ${shareData.url}`)
                                   </div>
                                   <div className="flex items-center gap-2 flex-shrink-0">
                                     {item.price && (
-                                      <span className={`text-gray-600 text-sm font-light ${archivo.className} whitespace-nowrap`}>
+                                      <span className={`text-[#BA9D76] text-sm font-semibold ${archivo.className} whitespace-nowrap`}>
                                         {item.price}
                                       </span>
                                     )}
@@ -670,6 +702,26 @@ ${shareData.url}`)
                                   </ul>
                                 )}
                               </div>
+
+                              {/* Add to Cart Button */}
+                              {item.price && parsePrice(item.price) > 0 && section.id !== "specjalne-okazje" && (
+                                <button
+                                  onClick={() => handleAddToCart(item)}
+                                  disabled={!isSafe}
+                                  className={`mt-3 flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 border ${justAdded === item.id
+                                      ? "bg-green-500 border-green-500 text-white scale-95"
+                                      : isSafe
+                                        ? "bg-[#BA9D76]/10 hover:bg-[#BA9D76] border-[#BA9D76]/40 hover:border-[#BA9D76] text-[#BA9D76] hover:text-white hover:scale-105"
+                                        : "bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed"
+                                    } ${archivo.className}`}
+                                >
+                                  {justAdded === item.id ? (
+                                    <><Check className="h-4 w-4" /> Dodano!</>
+                                  ) : (
+                                    <><Plus className="h-4 w-4" /> Dodaj do koszyka</>
+                                  )}
+                                </button>
+                              )}
                             </div>
 
                             {/* Image Section */}

@@ -6,6 +6,9 @@ import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
+export const dynamic = "force-dynamic"
+export const revalidate = 0
+
 async function getOffer(slug: string) {
     const query = `*[_type == "post" && slug.current == $slug][0] {
     _id,
@@ -15,7 +18,7 @@ async function getOffer(slug: string) {
     image,
     body
   }`
-    return client.fetch(query, { slug })
+    return client.fetch(query, { slug }, { cache: "no-store" })
 }
 
 export default async function OfferPage({ params }: { params: { slug: string } }) {
