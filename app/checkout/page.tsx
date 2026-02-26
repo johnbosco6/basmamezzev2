@@ -206,16 +206,26 @@ export default function CheckoutPage() {
             totalPrice: grandTotal,
         }
 
-        // Save to Sanity (non-blocking — customer still gets to confirmation even if it fails)
+        // Save to Sanity (non-blocking — but we log for debugging)
         try {
-            await fetch("/api/orders", {
+            const response = await fetch("/api/orders", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(orderData),
             })
+
+            if (!response.ok) {
+                const data = await response.json()
+                console.error("Sanity save failed:", data.error)
+                // Optionally alert the user or just log
+                // alert(`Uwaga: Nie udało się zapisać zamówienia w panelu Sanity: ${data.error}. Jednak zamówienie zostało złożone poprawnie w Twojej sesji.`)
+            } else {
+                console.log("Order saved to Sanity successfully")
+            }
         } catch (err) {
-            console.error("Failed to save order to Sanity:", err)
+            console.error("Network error saving to Sanity:", err)
         }
+
 
         // Always save to sessionStorage and redirect
         sessionStorage.setItem("basma-order", JSON.stringify(orderData))

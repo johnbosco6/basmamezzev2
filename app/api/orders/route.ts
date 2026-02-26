@@ -2,6 +2,17 @@ import { NextRequest, NextResponse } from 'next/server'
 import { writeClient } from '@/lib/sanity'
 
 export async function POST(req: NextRequest) {
+    console.log('--- Incoming Order Save Request ---')
+
+    // Check for token existence (don't log the token itself for security)
+    if (!process.env.SANITY_API_TOKEN) {
+        console.error('CRITICAL: SANITY_API_TOKEN is missing in environment variables')
+        return NextResponse.json({
+            ok: false,
+            error: 'Server configuration error: Missing API Token'
+        }, { status: 500 })
+    }
+
     try {
         const body = await req.json()
         const {
@@ -17,6 +28,8 @@ export async function POST(req: NextRequest) {
             deliveryFee,
             totalPrice,
         } = body
+
+        console.log(`Processing Order #${orderNumber} for ${name}`)
 
         const doc = {
             _type: 'order',
@@ -36,7 +49,7 @@ export async function POST(req: NextRequest) {
             } : undefined,
             status: 'pending',
             items: (items || []).map((item: { id: string; name: string; price: number; quantity: number }) => ({
-                _key: item.id,
+                _key: `item-${item.id}-${Date.now()}`, // Ensure a truly unique key
                 itemId: item.id,
                 name: item.name,
                 quantity: item.quantity,
@@ -49,11 +62,18 @@ export async function POST(req: NextRequest) {
             orderDate: new Date().toISOString(),
         }
 
+        console.log('Creating document in Sanity...')
         const result = await writeClient.create(doc)
+        console.log('Sanity create result ID:', result._id)
 
         return NextResponse.json({ ok: true, id: result._id, orderNumber })
     } catch (err: any) {
-        console.error('Order save error:', err)
-        return NextResponse.json({ ok: false, error: err.message }, { status: 500 })
+        console.error('Order save error details:', err)
+        return NextResponse.json({
+            ok: false,
+            error: err.message,
+            details: err.stack
+        }, { status: 500 })
     }
 }
+
