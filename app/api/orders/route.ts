@@ -77,3 +77,13 @@ export async function POST(req: NextRequest) {
     }
 }
 
+export async function GET() {
+    return NextResponse.json({
+        status: "Diagnostic Mode Active",
+        projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'missing',
+        dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'missing',
+        hasToken: !!process.env.SANITY_API_TOKEN,
+        tokenLength: process.env.SANITY_API_TOKEN ? process.env.SANITY_API_TOKEN.length : 0,
+        time: new Date().toISOString()
+    })
+}
