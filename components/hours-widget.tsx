@@ -18,19 +18,19 @@ interface OpeningHours {
 
 const OPENING_HOURS: OpeningHours[] = [
   // Sunday (0)
-  { day: 0, breakfast: { start: "09:00", end: "12:00" }, restaurant: { start: "12:00", end: "23:00" } },
+  { day: 0, breakfast: { start: "10:00", end: "12:00" }, restaurant: { start: "12:00", end: "23:00" } },
   // Monday (1)
-  { day: 1, breakfast: { start: "09:00", end: "12:00" }, restaurant: { start: "12:00", end: "23:00" } },
+  { day: 1, breakfast: { start: "12:00", end: "12:00" }, restaurant: { start: "12:00", end: "23:00" } },
   // Tuesday (2)
-  { day: 2, breakfast: { start: "09:00", end: "12:00" }, restaurant: { start: "12:00", end: "23:00" } },
+  { day: 2, breakfast: { start: "12:00", end: "12:00" }, restaurant: { start: "12:00", end: "23:00" } },
   // Wednesday (3)
-  { day: 3, breakfast: { start: "09:00", end: "12:00" }, restaurant: { start: "12:00", end: "23:00" } },
+  { day: 3, breakfast: { start: "12:00", end: "12:00" }, restaurant: { start: "12:00", end: "23:00" } },
   // Thursday (4)
-  { day: 4, breakfast: { start: "09:00", end: "12:00" }, restaurant: { start: "12:00", end: "23:00" } },
+  { day: 4, breakfast: { start: "12:00", end: "12:00" }, restaurant: { start: "12:00", end: "23:00" } },
   // Friday (5)
-  { day: 5, breakfast: { start: "09:00", end: "12:00" }, restaurant: { start: "12:00", end: "24:00" } },
+  { day: 5, breakfast: { start: "12:00", end: "12:00" }, restaurant: { start: "12:00", end: "24:00" } },
   // Saturday (6)
-  { day: 6, breakfast: { start: "09:00", end: "12:00" }, restaurant: { start: "12:00", end: "24:00" } },
+  { day: 6, breakfast: { start: "10:00", end: "12:00" }, restaurant: { start: "12:00", end: "24:00" } },
 ]
 
 function timeToMinutes(time: string): number {
@@ -147,7 +147,7 @@ export function HoursWidget() {
           <div className={`space-y-1 text-sm text-white/80 font-light ${archivo.className}`}>
             <div className="flex justify-between">
               <span>Godziny otwarcia:</span>
-              <span>{[0, 1, 2, 3, 4].includes(currentTime.getDay()) ? "9:00 - 23:00" : "9:00 - 00:00"}</span>
+              <span>{[0, 6].includes(currentTime.getDay()) ? (currentTime.getDay() === 0 ? "10:00 - 23:00" : "10:00 - 00:00") : ([5].includes(currentTime.getDay()) ? "12:00 - 00:00" : "12:00 - 23:00")}</span>
             </div>
           </div>
         </div>

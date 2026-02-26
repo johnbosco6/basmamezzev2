@@ -4,7 +4,9 @@ import Image from "next/image"
 import Link from "next/link"
 import { PortableText } from "@portabletext/react"
 
-export const dynamic = 'force-dynamic'
+// Always fetch fresh from Sanity — never use cached/stale data
+export const dynamic = "force-dynamic"
+export const revalidate = 0
 
 async function getOffers() {
     const query = `*[_type == "post"] | order(publishedAt desc) {
@@ -15,7 +17,7 @@ async function getOffers() {
     image,
     body
   }`
-    return client.fetch(query)
+    return client.fetch(query, {}, { cache: "no-store" })
 }
 
 export default async function OffersPage() {

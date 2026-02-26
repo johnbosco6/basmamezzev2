@@ -320,9 +320,10 @@ export default function AlergenyPage() {
                 <div className="flex items-center">
                   <Clock className="h-4 w-4 mr-2 text-[#BA9D76]" />
                   <div>
-                    <p className="text-gray-300 text-sm">Pon-Czw: 12:00-22:00</p>
-                    <p className="text-gray-300 text-sm">Pt-Sob: 12:00-23:00</p>
-                    <p className="text-gray-300 text-sm">Nie: 12:00-21:00</p>
+                    <p className="text-gray-300 text-sm">Pon-Czw: 12:00-23:00</p>
+                    <p className="text-gray-300 text-sm">Pt: 12:00-00:00</p>
+                    <p className="text-gray-300 text-sm">Sob: 10:00-00:00</p>
+                    <p className="text-gray-300 text-sm">Nie: 10:00-23:00</p>
                   </div>
                 </div>
               </div>

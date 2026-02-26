@@ -105,9 +105,10 @@ export default function RegulaminPage() {
                 <div className="space-y-3 text-sm leading-relaxed font-light">
                   <p className={`font-light ${archivo.className}`}>1. Restauracja jest czynna:</p>
                   <ul className="ml-6 space-y-1">
-                    <li className={`font-light ${archivo.className}`}>• Poniedziałek - Czwartek: 12:00 - 22:00</li>
-                    <li className={`font-light ${archivo.className}`}>• Piątek - Sobota: 12:00 - 23:00</li>
-                    <li className={`font-light ${archivo.className}`}>• Niedziela: 13:00 - 21:00</li>
+                    <li className={`font-light ${archivo.className}`}>• Poniedziałek - Czwartek: 12:00 - 23:00</li>
+                    <li className={`font-light ${archivo.className}`}>• Piątek: 12:00 - 00:00</li>
+                    <li className={`font-light ${archivo.className}`}>• Sobota: 10:00 - 00:00</li>
+                    <li className={`font-light ${archivo.className}`}>• Niedziela: 10:00 - 23:00</li>
                   </ul>
                   <p className={`font-light ${archivo.className}`}>
                     2. Restauracja zastrzega sobie prawo do zmiany godzin otwarcia w dni świąteczne.

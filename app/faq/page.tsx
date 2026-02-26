@@ -85,7 +85,7 @@ const faqData = [
       {
         question: "Jakie są wasze godziny otwarcia?",
         answer:
-          "Śniadania serwujemy codziennie od 8:30 do 12:00. Restauracja jest otwarta: Niedziela-Środa do 23:00, Czwartek-Sobota do 00:00. Szczegółowe informacje o aktualnym statusie znajdziesz na naszej stronie.",
+          "Restauracja jest otwarta: Poniedziałek-Czwartek 12:00-23:00, Piątek 12:00-00:00, Sobota 10:00-00:00, Niedziela 10:00-23:00. Szczegółowe informacje o aktualnym statusie znajdziesz na naszej stronie.",
       },
       {
         question: "Gdzie się znajdujecie?",

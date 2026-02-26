@@ -2,49 +2,43 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { client } from "@/lib/sanity"
-import { Home, BookOpen, MessageCircle, Megaphone, ArrowLeft } from "lucide-react"
+import Image from "next/image"
+import { client, urlFor } from "@/lib/sanity"
+import { PortableText } from "@portabletext/react"
+import { Home, BookOpen, MessageCircle, Megaphone } from "lucide-react"
 import { Archivo } from "next/font/google"
-import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 
-const archivo = Archivo({ subsets: ["latin"] })
+const archivo = Archivo({ subsets: ["latin"], weight: ["200", "400", "600", "700"], display: "swap" })
 
-interface NewsletterItem {
+interface Post {
     _id: string
     title: string
-    content: string
-    link?: string
+    slug: { current: string }
     publishedAt: string
-    isActive: boolean
+    image?: any
+    body?: any[]
 }
 
 export default function NewsletterPage() {
-    const [newsletters, setNewsletters] = useState<NewsletterItem[]>([])
+    const [posts, setPosts] = useState<Post[]>([])
     const [isLoading, setIsLoading] = useState(true)
 
     useEffect(() => {
-        const fetchNewsletters = async () => {
+        const fetchPosts = async () => {
             try {
-                const query = `*[_type == "newsletter" && isActive == true] | order(publishedAt desc){
-          _id,
-          title,
-          content,
-          link,
-          publishedAt,
-          isActive
-        }`
-
+                const query = `*[_type == "post"] | order(publishedAt desc) {
+                    _id, title, slug, publishedAt, image, body
+                }`
                 const data = await client.fetch(query)
-                setNewsletters(data)
+                setPosts(data)
             } catch (error) {
-                console.error("Error fetching newsletters:", error)
+                console.error("Error fetching posts:", error)
             } finally {
                 setIsLoading(false)
             }
         }
-
-        fetchNewsletters()
+        fetchPosts()
     }, [])
 
     return (
@@ -54,38 +48,23 @@ export default function NewsletterPage() {
                 <div className="container mx-auto px-4 py-4 flex items-center justify-between">
                     <div className="flex-1 flex justify-start"></div>
                     <nav className="flex-1 flex items-center justify-center gap-6 backdrop-blur-md bg-white/15 border border-white/25 rounded-full px-6 py-3 shadow-lg">
-                        <Link
-                            href="/"
-                            className="flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/20 hover:shadow-lg text-white/80 hover:text-[#BA9D76] group"
-                        >
+                        <Link href="/" className="flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/20 hover:shadow-lg text-white/80 hover:text-[#BA9D76] group">
                             <Home className="h-4 w-4 transition-colors duration-300" />
                             <span className={`text-xs font-light ${archivo.className}`}>Strona Główna</span>
                         </Link>
-                        <Link
-                            href="/menu"
-                            className="flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/20 hover:shadow-lg text-white/80 hover:text-[#BA9D76] group"
-                        >
+                        <Link href="/menu" className="flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/20 hover:shadow-lg text-white/80 hover:text-[#BA9D76] group">
                             <BookOpen className="h-4 w-4 transition-colors duration-300" />
                             <span className={`text-xs font-light ${archivo.className}`}>Menu</span>
                         </Link>
-                        <Link
-                            href="/faq"
-                            className="flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/20 hover:shadow-lg text-white/80 hover:text-[#BA9D76] group"
-                        >
+                        <Link href="/faq" className="flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/20 hover:shadow-lg text-white/80 hover:text-[#BA9D76] group">
                             <MessageCircle className="h-4 w-4 transition-colors duration-300" />
                             <span className={`text-xs font-light ${archivo.className}`}>FAQ</span>
                         </Link>
-                        <Link
-                            href="/#contact"
-                            className="flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/20 hover:shadow-lg text-white/80 hover:text-[#BA9D76] group"
-                        >
+                        <Link href="/#contact" className="flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/20 hover:shadow-lg text-white/80 hover:text-[#BA9D76] group">
                             <MessageCircle className="h-4 w-4 transition-colors duration-300" />
                             <span className={`text-xs font-light ${archivo.className}`}>Kontakt</span>
                         </Link>
-                        <Link
-                            href="/newsletter"
-                            className="flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-300 -translate-y-1 bg-white/20 shadow-lg text-[#BA9D76] group"
-                        >
+                        <Link href="/newsletter" className="flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-300 -translate-y-1 bg-white/20 shadow-lg text-[#BA9D76] group">
                             <Megaphone className="h-4 w-4 transition-colors duration-300" />
                             <span className={`text-xs font-light ${archivo.className}`}>Oferty</span>
                         </Link>
@@ -94,7 +73,7 @@ export default function NewsletterPage() {
                 </div>
             </header>
 
-            {/* Hero Section */}
+            {/* Hero */}
             <section className="relative py-16 overflow-hidden bg-gradient-to-r from-[#BA9D76]/10 to-[#597FB1]/10">
                 <div className="container mx-auto px-4">
                     <div className="text-center max-w-3xl mx-auto">
@@ -109,45 +88,56 @@ export default function NewsletterPage() {
                 </div>
             </section>
 
-            {/* Newsletter Content */}
+            {/* Posts Grid */}
             <main className="py-12 bg-white">
                 <div className="container mx-auto px-4">
                     {isLoading ? (
-                        <div className="text-center py-12">
-                            <p className={`text-gray-600 ${archivo.className}`}>Ładowanie...</p>
+                        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto">
+                            {[1, 2, 3].map(i => (
+                                <div key={i} className="rounded-2xl bg-gray-100 animate-pulse h-72" />
+                            ))}
                         </div>
-                    ) : newsletters.length === 0 ? (
-                        <div className="text-center py-12">
-                            <p className={`text-gray-600 ${archivo.className}`}>
+                    ) : posts.length === 0 ? (
+                        <div className="text-center py-16">
+                            <Megaphone className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                            <p className={`text-gray-500 text-lg ${archivo.className}`}>
                                 Brak aktualnych ofert. Wróć wkrótce!
                             </p>
                         </div>
                     ) : (
-                        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto">
-                            {newsletters.map((item) => (
-                                <Card key={item._id} className="hover:shadow-lg transition-shadow duration-300">
-                                    <CardContent className="p-6">
-                                        <h3 className={`text-xl font-semibold mb-3 text-gray-900 ${archivo.className}`}>
-                                            {item.title}
-                                        </h3>
-                                        <p className={`text-gray-600 mb-4 font-light ${archivo.className}`}>
-                                            {item.content}
-                                        </p>
-                                        {item.link && (
-                                            <a
-                                                href={item.link}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className={`text-[#BA9D76] hover:text-[#597FB1] transition-colors font-medium ${archivo.className}`}
-                                            >
-                                                Dowiedz się więcej →
-                                            </a>
+                        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto">
+                            {posts.map((post) => (
+                                <Link href={`/offers/${post.slug.current}`} key={post._id} className="group block">
+                                    <Card className="h-full overflow-hidden hover:shadow-xl transition-all duration-300 border border-gray-100 rounded-2xl">
+                                        {post.image && (
+                                            <div className="relative h-52 w-full overflow-hidden">
+                                                <Image
+                                                    src={urlFor(post.image).width(600).url()}
+                                                    alt={post.title}
+                                                    fill
+                                                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                                                />
+                                                <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+                                            </div>
                                         )}
-                                        <p className={`text-xs text-gray-400 mt-4 ${archivo.className}`}>
-                                            {new Date(item.publishedAt).toLocaleDateString('pl-PL')}
-                                        </p>
-                                    </CardContent>
-                                </Card>
+                                        <CardContent className="p-6">
+                                            <p className={`text-xs text-[#BA9D76] font-medium mb-2 uppercase tracking-wider ${archivo.className}`}>
+                                                {new Date(post.publishedAt).toLocaleDateString('pl-PL', { day: 'numeric', month: 'long', year: 'numeric' })}
+                                            </p>
+                                            <h3 className={`text-xl font-semibold mb-3 text-gray-900 group-hover:text-[#597FB1] transition-colors duration-200 ${archivo.className}`}>
+                                                {post.title}
+                                            </h3>
+                                            {post.body && (
+                                                <div className={`text-gray-500 text-sm font-light line-clamp-2 ${archivo.className}`}>
+                                                    <PortableText value={post.body} />
+                                                </div>
+                                            )}
+                                            <span className={`inline-block mt-4 text-sm font-medium text-[#BA9D76] group-hover:text-[#597FB1] transition-colors ${archivo.className}`}>
+                                                Czytaj więcej →
+                                            </span>
+                                        </CardContent>
+                                    </Card>
+                                </Link>
                             ))}
                         </div>
                     )}

@@ -449,11 +449,11 @@ export default function HomePage() {
                     <div>
                       <h4 className={`font-semibold text-lg text-white ${archivo.className}`}>Godziny Otwarcia</h4>
                       <div className={`text-white/90 space-y-1 font-light ${archivo.className}`}>
-                        <p className="font-medium text-[#BA9D76]">Śniadania:</p>
-                        <p>Codziennie: 9:00 - 12:00</p>
-                        <p className="font-medium text-[#BA9D76] mt-2">Restauracja:</p>
-                        <p>Niedziela - Czwartek: do 23:00</p>
-                        <p>Piątek - Sobota: do 00:00</p>
+                        <p className="font-medium text-[#BA9D76]">Godziny Otwarcia:</p>
+                        <p>Poniedziałek - Czwartek: 12:00 - 23:00</p>
+                        <p>Piątek: 12:00 - 00:00</p>
+                        <p>Sobota: 10:00 - 00:00</p>
+                        <p>Niedziela: 10:00 - 23:00</p>
                       </div>
                     </div>
                   </div>

@@ -9,6 +9,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 import { CookieConsent } from "@/components/cookie-consent"
 import { CookieSettingsButton } from "@/components/cookie-settings-button"
 import StyledComponentsRegistry from "@/lib/registry"
+import { CartProvider } from "@/context/cart-context"
 
 const archivo = Archivo({
   subsets: ["latin"],
@@ -42,14 +43,16 @@ export default function RootLayout({
       </head>
       <body className={archivo.className}>
         <StyledComponentsRegistry>
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-            <Suspense fallback={null}>
-              {children}
-              <CookieConsent />
-              <CookieSettingsButton />
-              <Analytics />
-            </Suspense>
-          </ThemeProvider>
+          <CartProvider>
+            <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+              <Suspense fallback={null}>
+                {children}
+                <CookieConsent />
+                <CookieSettingsButton />
+                <Analytics />
+              </Suspense>
+            </ThemeProvider>
+          </CartProvider>
         </StyledComponentsRegistry>
       </body>
     </html>
