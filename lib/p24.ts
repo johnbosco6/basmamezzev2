@@ -39,23 +39,31 @@ export class Przelewy24 {
         }
     }
 
-    private static generateSignature(data: any): string {
-        const json = JSON.stringify(data)
-        // For V2.1 /api/v1/transaction/register, the signature is sha384(sessionId,merchantId,amount,currency,crc)
-        const hashStr = `${data.sessionId},${MERCHANT_ID},${data.amount},${data.currency},${CRC_KEY}`
+    private static generateSignature(data: { sessionId: string; amount: number; currency: string }): string {
+        // For V2.1 /api/v1/transaction/register, the signature is sha384({"sessionId":"...","merchantId":... ,"amount":... ,"currency":"...","crc":"..."})
+        // Essential: EXACT field order, NO SPACES, merchantId as NUMBER
+        const hashStr = JSON.stringify({
+            sessionId: data.sessionId,
+            merchantId: Number(MERCHANT_ID),
+            amount: data.amount,
+            currency: data.currency,
+            crc: CRC_KEY
+        })
         return crypto.createHash("sha384").update(hashStr).digest("hex")
     }
 
     static async registerTransaction(params: TransactionRequest) {
+        const sign = this.generateSignature({
+            sessionId: params.sessionId,
+            amount: params.amount,
+            currency: params.currency
+        })
+
         const requestData = {
             ...params,
             merchantId: Number(MERCHANT_ID),
             posId: Number(POS_ID),
-            sign: this.generateSignature({
-                sessionId: params.sessionId,
-                amount: params.amount,
-                currency: params.currency
-            }),
+            sign
         }
 
         console.log("P24 Register Request:", JSON.stringify(requestData, null, 2))
@@ -79,8 +87,14 @@ export class Przelewy24 {
     }
 
     static async verifyTransaction(params: { sessionId: string; amount: number; currency: string; orderId: number }) {
-        // For V2.1 /api/v1/transaction/verify, signature is sha384(sessionId,orderId,amount,currency,crc)
-        const hashStr = `${params.sessionId},${params.orderId},${params.amount},${params.currency},${CRC_KEY}`
+        // For V2.1 verify, signature is sha384({"sessionId":"...","orderId":... ,"amount":... ,"currency":"...","crc":"..."})
+        const hashStr = JSON.stringify({
+            sessionId: params.sessionId,
+            orderId: params.orderId,
+            amount: params.amount,
+            currency: params.currency,
+            crc: CRC_KEY
+        })
         const sign = crypto.createHash("sha384").update(hashStr).digest("hex")
 
         const requestData = {
@@ -94,7 +108,7 @@ export class Przelewy24 {
         }
 
         const response = await fetch(`${BASE_URL}/transaction/verify`, {
-            method: "PUT", // Docs specify PUT for verify
+            method: "PUT",
             headers: this.getHeaders(),
             body: JSON.stringify(requestData),
         })
@@ -120,8 +134,19 @@ export class Przelewy24 {
         statement: string
         sign: string
     }): boolean {
-        // For notification, signature is sha384(merchantId,posId,sessionId,amount,originAmount,currency,orderId,methodId,statement,crc)
-        const hashStr = `${data.merchantId},${data.posId},${data.sessionId},${data.amount},${data.originAmount},${data.currency},${data.orderId},${data.methodId},${data.statement},${CRC_KEY}`
+        // For notification, signature is sha384({"merchantId":... ,"posId":... ,"sessionId":"...","amount":... ,"originAmount":... ,"currency":"...","orderId":... ,"methodId":... ,"statement":"...","crc":"..."})
+        const hashStr = JSON.stringify({
+            merchantId: data.merchantId,
+            posId: data.posId,
+            sessionId: data.sessionId,
+            amount: data.amount,
+            originAmount: data.originAmount,
+            currency: data.currency,
+            orderId: data.orderId,
+            methodId: data.methodId,
+            statement: data.statement,
+            crc: CRC_KEY
+        })
         const calculatedSign = crypto.createHash("sha384").update(hashStr).digest("hex")
         return calculatedSign === data.sign
     }
