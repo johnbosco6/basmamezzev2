@@ -56,6 +56,36 @@ export async function updateOrderStatus(orderId: string, newStatus: string) {
     }
 }
 
+/**
+ * Send an email notification for a specific order stage without changing order status.
+ * Used by OrderCard buttons (Cooking, On the Way).
+ */
+export async function sendNotificationEmail(orderId: string, stage: 'preparing' | 'out_for_delivery') {
+    try {
+        const order = await client.fetch(
+            `*[_type == "order" && _id == $id][0]{ orderNumber, customerName, customerEmail, customerPhone }`,
+            { id: orderId }
+        )
+
+        if (!order?.customerEmail) {
+            return { success: false, message: 'No customer email on file' }
+        }
+
+        await sendOrderStatusUpdate(
+            order.orderNumber,
+            order.customerName,
+            order.customerEmail,
+            order.customerPhone,
+            stage
+        )
+
+        return { success: true, message: `Email sent for stage: ${stage}` }
+    } catch (error) {
+        console.error('[Admin] sendNotificationEmail error:', error)
+        return { success: false, message: 'Failed to send email' }
+    }
+}
+
 export async function getOrders() {
     try {
         const query = `*[_type == "order"] | order(orderDate desc) {
