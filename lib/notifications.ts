@@ -1,11 +1,14 @@
 import { Resend } from 'resend'
 import { Novu } from '@novu/node'
 
-// Initialize Resend client
+// Initialize Resend client (safe at module level — no side effects)
 const resend = new Resend(process.env.RESEND_API_KEY)
 
-// Initialize Novu client
-const novu = new Novu(process.env.NOVU_API_KEY || '')
+// Novu is initialized lazily inside each function to avoid crashing during Vercel build
+// when env vars aren't yet available
+function getNovu() {
+    return new Novu(process.env.NOVU_API_KEY || '')
+}
 
 // ─── Types ───────────────────────────────────────────────
 interface OrderItem {
@@ -267,6 +270,7 @@ export async function sendOrderConfirmation(order: OrderDetails) {
     // 2) Trigger Novu workflow (for multi-channel orchestration)
     if (process.env.NOVU_API_KEY) {
         try {
+            const novu = getNovu()
             await novu.trigger('order-confirmation', {
                 to: {
                     subscriberId: order.customerEmail || order.customerPhone,
@@ -329,6 +333,7 @@ export async function sendOrderStatusUpdate(
     // 2) Trigger Novu workflow
     if (process.env.NOVU_API_KEY) {
         try {
+            const novu = getNovu()
             await novu.trigger('order-status-update', {
                 to: {
                     subscriberId: customerEmail || customerPhone,

@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { writeClient } from '@/lib/sanity'
 import { sendOrderConfirmation } from '@/lib/notifications'
 
+export const dynamic = 'force-dynamic'
+
 export async function POST(req: NextRequest) {
     console.log('--- Incoming Order Save Request ---')
 
