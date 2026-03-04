@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { ArrowLeft, Home, BookOpen, MessageCircle } from "lucide-react"
+import { ArrowLeft, Home, BookOpen, MessageCircle, RefreshCw } from "lucide-react"
 import { Archivo } from "next/font/google"
 
 import { Button } from "@/components/ui/button"
@@ -82,7 +82,7 @@ export default function PolitykaPrywatnosciPage() {
                 <div className={`space-y-3 text-sm leading-relaxed font-light ${archivo.className}`}>
                   <p>
                     Administratorem Państwa danych osobowych jest restauracja Basma Mezze & Grill z siedzibą przy ul.
-                    Krakowskie Przedmieście 15, 20-002 Lublin.
+                    Krakowskie Przedmieście 3, 20-002 Lublin.
                   </p>
                   <p>Kontakt z administratorem: basmalublin@gmail.com, tel. +48 574 933 988</p>
                 </div>

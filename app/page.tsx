@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { Clock, MapPin, Phone, Mail, FileText, Shield, ChevronRight, Home, BookOpen, MessageCircle } from "lucide-react"
+import { Clock, MapPin, Phone, Mail, FileText, Shield, ChevronRight, Home, BookOpen, MessageCircle, RefreshCw } from "lucide-react"
 import { Archivo } from "next/font/google"
 
 import { Button } from "@/components/ui/button"
@@ -711,6 +711,13 @@ export default function HomePage() {
                 >
                   <Shield className="h-3 w-3" />
                   Polityka Prywatności
+                </Link>
+                <Link
+                  href="/polityka-zwrotow"
+                  className="hover:text-[#BA9D76] transition-colors duration-300 flex items-center gap-1"
+                >
+                  <RefreshCw className="h-3 w-3" />
+                  Polityka Zwrotów
                 </Link>
                 <Link href="/alergeny" className="hover:text-[#BA9D76] transition-colors duration-300">
                   Informacje o Alergenach

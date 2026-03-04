@@ -217,6 +217,30 @@ export default function RegulaminPage() {
                 </div>
               </section>
 
+              <section>
+                <h2 className={`text-xl font-semibold mb-4 text-[#BA9D76] ${archivo.className}`}>
+                  §9. Zwroty i odstąpienie od umowy
+                </h2>
+                <div className="space-y-3 text-sm leading-relaxed font-light">
+                  <p className={`font-light ${archivo.className}`}>
+                    1. Zgodnie z art. 38 pkt 4 i 6 ustawy o prawach konsumenta, prawo do odstąpienia od umowy zawartej na
+                    odległość nie przysługuje konsumentowi w odniesieniu do umów, w których przedmiotem świadczenia jest
+                    rzecz ulegająca szybkiemu zepsuciu lub mająca krótki termin przydatności do użycia oraz w których
+                    przedmiotem świadczenia jest rzecz dostarczana w zapieczętowanym opakowaniu, której po otwarciu
+                    opakowania nie można zwrócić ze względu na ochronę zdrowia lub ze względów higienicznych, jeżeli
+                    opakowanie zostało otwarte po dostarczeniu.
+                  </p>
+                  <p className={`font-light ${archivo.className}`}>
+                    2. W przypadku produktów niebędących żywnością (np. vouchery podarunkowe), konsumentowi przysługuje
+                    prawo do odstąpienia od umowy w terminie 14 dni bez podania przyczyny.
+                  </p>
+                  <p className={`font-light ${archivo.className}`}>
+                    3. Szczegółowe zasady dotyczące zwrotów i reklamacji określa dokument "Polityka Zwrotów" dostępny na
+                    stronie internetowej.
+                  </p>
+                </div>
+              </section>
+
               <div className="mt-8 p-4 bg-[#BA9D76]/20 rounded-lg border border-[#BA9D76]/30">
                 <p className="text-sm text-white/90 font-light">
                   <strong>Kontakt:</strong>

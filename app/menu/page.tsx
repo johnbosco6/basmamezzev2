@@ -195,7 +195,7 @@ ${shareData.url}`)
       <header className="sticky top-0 z-50 backdrop-blur-md bg-[#597FB1]/80 border-b border-white/10">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex-1 flex justify-start"></div>
-          <nav className="flex-1 flex items-center justify-center gap-6 backdrop-blur-md bg-white/15 border border-white/25 rounded-full px-6 py-3 shadow-lg">
+          <nav className="flex-1 flex items-center justify-center gap-2 md:gap-6 backdrop-blur-md bg-white/15 border border-white/25 rounded-full px-2 md:px-6 py-3 shadow-lg">
             <Link
               href="/"
               className="flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/20 hover:shadow-lg text-white/80 hover:text-[#BA9D76] group"
@@ -232,22 +232,7 @@ ${shareData.url}`)
               <span className={`text-xs font-light ${archivo.className}`}>Oferty</span>
             </Link>
           </nav>
-          {/* Cart Button */}
-          <div className="flex-1 flex justify-end">
-            <button
-              onClick={() => setCartOpen(true)}
-              className="relative flex items-center gap-2 bg-[#BA9D76]/20 hover:bg-[#BA9D76]/40 border border-[#BA9D76]/40 text-white rounded-full px-4 py-2 transition-all duration-200 hover:scale-105"
-              aria-label="Otwórz koszyk"
-            >
-              <ShoppingCart className="h-4 w-4 text-[#BA9D76]" />
-              <span className={`text-sm font-light hidden sm:inline ${archivo.className}`}>Koszyk</span>
-              {totalItems > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 bg-[#BA9D76] text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-sm">
-                  {totalItems > 9 ? "9+" : totalItems}
-                </span>
-              )}
-            </button>
-          </div>
+          <div className="flex-1 flex justify-end"></div>
         </div>
       </header>
 
@@ -929,10 +914,10 @@ ${shareData.url}`)
       {/* ─── Mobile Floating Cart Bar ─────────────────────────── */}
       {/* Only shows on mobile (md:hidden) when there are items in the cart */}
       {mounted && (totalItems ?? 0) > 0 && (
-        <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 p-3 bg-gradient-to-t from-black/80 to-transparent">
+        <div className="fixed bottom-0 left-0 right-0 z-50 p-3 bg-gradient-to-t from-black/80 to-transparent flex justify-center">
           <button
             onClick={() => setCartOpen(true)}
-            className="w-full flex items-center justify-between bg-[#BA9D76] hover:bg-[#a88a63] active:scale-95 text-white rounded-2xl px-5 py-4 shadow-2xl transition-all duration-200"
+            className="w-full max-w-2xl flex items-center justify-between bg-[#BA9D76] hover:bg-[#a88a63] active:scale-95 text-white rounded-2xl px-5 py-4 shadow-2xl transition-all duration-200"
           >
             {/* Left: count badge */}
             <div className="flex items-center gap-3">
