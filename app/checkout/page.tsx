@@ -211,7 +211,7 @@ export default function CheckoutPage() {
             const response = await fetch("/api/orders", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(orderData),
+                body: JSON.stringify({ ...orderData, paymentMethod: 'p24' }),
             })
 
             if (!response.ok) {
@@ -227,10 +227,41 @@ export default function CheckoutPage() {
         }
 
 
-        // Always save to sessionStorage and redirect
+        // Always save to sessionStorage
         sessionStorage.setItem("basma-order", JSON.stringify(orderData))
-        clearCart()
-        router.push("/order-confirmation")
+
+        // Trigger Przelewy24 Payment
+        try {
+            const p24Response = await fetch("/api/payments/p24/create", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    orderNumber,
+                    totalAmount: grandTotal,
+                    email: form.email || "klient@basma.pl", // Fallback if optional email missing
+                    name: form.name,
+                    phone: form.phone,
+                    orderType,
+                    deliveryAddress: orderData.deliveryAddress
+                }),
+            })
+
+            if (p24Response.ok) {
+                const { redirectUrl } = await p24Response.json()
+                clearCart()
+                // Redirect to P24
+                window.location.href = redirectUrl
+            } else {
+                const errorData = await p24Response.json()
+                throw new Error(errorData.error || "Błąd inicjalizacji płatności")
+            }
+        } catch (err: any) {
+            console.error("Payment redirect failed:", err)
+            // If payment fails to init, we still have the order in Sanity as pending
+            // But we should probably tell the user
+            alert(`Wystąpił błąd podczas inicjalizacji płatności: ${err.message}. Spróbuj ponownie lub skontaktuj się z nami.`)
+            setIsSubmitting(false)
+        }
     }
 
 

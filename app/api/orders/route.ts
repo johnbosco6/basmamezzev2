@@ -70,22 +70,26 @@ export async function POST(req: NextRequest) {
         console.log('Sanity create result ID:', result._id)
 
         // Fire off email notification (non-blocking)
-        sendOrderConfirmation({
-            orderNumber,
-            customerName: name,
-            customerEmail: email || '',
-            customerPhone: phone,
-            orderType,
-            items: (items || []).map((item: any) => ({
-                name: item.name,
-                quantity: item.quantity,
-                price: item.price,
-            })),
-            subtotal: subtotal || 0,
-            deliveryFee: deliveryFee || 0,
-            totalAmount: totalPrice || 0,
-            customerAddress: deliveryAddress,
-        }).catch(err => console.error('[Order API] Notification error:', err))
+        // We defer this for P24 orders to the webhook, or we can send a "Received" email here.
+        // The user said "implement the rest flows after payment is done", so we'll defer.
+        if (body.paymentMethod !== 'p24') {
+            sendOrderConfirmation({
+                orderNumber,
+                customerName: name,
+                customerEmail: email || '',
+                customerPhone: phone,
+                orderType,
+                items: (items || []).map((item: any) => ({
+                    name: item.name,
+                    quantity: item.quantity,
+                    price: item.price,
+                })),
+                subtotal: subtotal || 0,
+                deliveryFee: deliveryFee || 0,
+                totalAmount: totalPrice || 0,
+                customerAddress: deliveryAddress,
+            }).catch(err => console.error('[Order API] Notification error:', err))
+        }
 
         return NextResponse.json({ ok: true, id: result._id, orderNumber })
     } catch (err: any) {

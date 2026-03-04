@@ -54,6 +54,26 @@ export const orderType = defineType({
             ],
         }),
         defineField({
+            name: 'paymentStatus',
+            title: 'Payment Status',
+            type: 'string',
+            options: {
+                list: [
+                    { title: 'Pending', value: 'pending' },
+                    { title: 'Paid', value: 'paid' },
+                    { title: 'Failed', value: 'failed' },
+                ],
+                layout: 'radio',
+            },
+            initialValue: 'pending',
+        }),
+        defineField({
+            name: 'p24SessionId',
+            title: 'P24 Session ID',
+            type: 'string',
+            readOnly: true,
+        }),
+        defineField({
             name: 'status',
             title: 'Order Status',
             type: 'string',
