@@ -35,9 +35,12 @@ const IconMap = {
 }
 
 export default function MenuPage() {
-  const { addItem, totalItems } = useCart()
+  const { addItem, totalItems, totalPrice } = useCart()
   const [cartOpen, setCartOpen] = useState(false)
   const [justAdded, setJustAdded] = useState<string | null>(null)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => { setMounted(true) }, [])
 
   const handleAddToCart = (item: { id: string; name: string; price: string; image?: string }) => {
     const numericPrice = parsePrice(item.price)
@@ -709,10 +712,10 @@ ${shareData.url}`)
                                   onClick={() => handleAddToCart(item)}
                                   disabled={!isSafe}
                                   className={`mt-3 flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 border ${justAdded === item.id
-                                      ? "bg-green-500 border-green-500 text-white scale-95"
-                                      : isSafe
-                                        ? "bg-[#BA9D76]/10 hover:bg-[#BA9D76] border-[#BA9D76]/40 hover:border-[#BA9D76] text-[#BA9D76] hover:text-white hover:scale-105"
-                                        : "bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed"
+                                    ? "bg-green-500 border-green-500 text-white scale-95"
+                                    : isSafe
+                                      ? "bg-[#BA9D76]/10 hover:bg-[#BA9D76] border-[#BA9D76]/40 hover:border-[#BA9D76] text-[#BA9D76] hover:text-white hover:scale-105"
+                                      : "bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed"
                                     } ${archivo.className}`}
                                 >
                                   {justAdded === item.id ? (
@@ -908,11 +911,12 @@ ${shareData.url}`)
         </div>
       )}
 
-      {/* Floating Back to Menu Button */}
+      {/* Floating Back to Menu Button — desktop only OR left side on mobile */}
       {showBackToMenu && (
         <Button
           onClick={scrollToMenuNavigation}
-          className="fixed bottom-6 right-6 z-40 bg-[#BA9D76] hover:bg-[#BA9D76]/90 text-white shadow-lg hover:shadow-xl transition-all duration-300 rounded-full p-4 border-2 border-white/20"
+          className="fixed bottom-6 right-6 md:right-6 z-40 bg-[#BA9D76] hover:bg-[#BA9D76]/90 text-white shadow-lg hover:shadow-xl transition-all duration-300 rounded-full p-4 border-2 border-white/20"
+          style={{ bottom: totalItems > 0 ? '90px' : '24px' }}
           size="lg"
         >
           <div className="flex flex-col items-center gap-1">
@@ -920,6 +924,31 @@ ${shareData.url}`)
             <span className={`text-xs font-light ${archivo.className}`}>Menu</span>
           </div>
         </Button>
+      )}
+
+      {/* ─── Mobile Floating Cart Bar ─────────────────────────── */}
+      {/* Only shows on mobile (md:hidden) when there are items in the cart */}
+      {mounted && (totalItems ?? 0) > 0 && (
+        <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 p-3 bg-gradient-to-t from-black/80 to-transparent">
+          <button
+            onClick={() => setCartOpen(true)}
+            className="w-full flex items-center justify-between bg-[#BA9D76] hover:bg-[#a88a63] active:scale-95 text-white rounded-2xl px-5 py-4 shadow-2xl transition-all duration-200"
+          >
+            {/* Left: count badge */}
+            <div className="flex items-center gap-3">
+              <span className="bg-white/20 text-white text-sm font-bold w-8 h-8 rounded-xl flex items-center justify-center">
+                {totalItems ?? 0}
+              </span>
+              <span className={`text-sm font-semibold ${archivo.className}`}>
+                Wyświetl koszyk
+              </span>
+            </div>
+            {/* Right: total */}
+            <span className={`text-lg font-bold ${archivo.className}`}>
+              {Number(totalPrice ?? 0).toFixed(0)} zł
+            </span>
+          </button>
+        </div>
       )}
     </div>
   )

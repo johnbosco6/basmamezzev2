@@ -31,6 +31,29 @@ interface OrderCardProps {
     order: any
 }
 
+// Helper to safely render the customer address whether it's an old string or new object format
+const formatAddress = (address: any) => {
+    if (!address) return 'Brak adresu'
+    if (typeof address === 'string') return address
+
+    const parts = []
+    if (address.street) {
+        let streetPart = address.street
+        if (address.houseNumber) {
+            streetPart += ` ${address.houseNumber}`
+            if (address.apartmentNumber) {
+                streetPart += `/${address.apartmentNumber}`
+            }
+        }
+        parts.push(streetPart)
+    }
+    if (address.city) {
+        parts.push(`${address.postcode || ''} ${address.city}`.trim())
+    }
+
+    return parts.join(', ') || 'Brak pełnego adresu'
+}
+
 
 export function OrderCard({ order }: OrderCardProps) {
     const [loading, setLoading] = useState(false)
@@ -142,7 +165,7 @@ export function OrderCard({ order }: OrderCardProps) {
                         </div>
                         <div className="flex items-start gap-3 text-white/70">
                             <MapPin className="w-3.5 h-3.5 text-[#BA9D76] mt-1 shrink-0" />
-                            <span className="text-sm leading-tight">{order.customerAddress || 'Brak adresu'}</span>
+                            <span className="text-sm leading-tight">{formatAddress(order.customerAddress)}</span>
                         </div>
                     </div>
                 </div>
@@ -159,7 +182,7 @@ export function OrderCard({ order }: OrderCardProps) {
                                     </span>
                                     <div className="flex flex-col min-w-0">
                                         <span className="font-medium group-hover:text-[#BA9D76] transition-colors truncate">
-                                            {item.menuItem?.title || 'Nieznany produkt'}
+                                            {item.name || 'Nieznany produkt'}
                                         </span>
                                         {item.additions && (
                                             <span className="text-white/40 text-[11px] italic mt-0.5 line-clamp-2">

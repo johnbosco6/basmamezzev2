@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { writeClient } from '@/lib/sanity'
+import { sendOrderConfirmation } from '@/lib/notifications'
 
 export async function POST(req: NextRequest) {
     console.log('--- Incoming Order Save Request ---')
@@ -65,6 +66,24 @@ export async function POST(req: NextRequest) {
         console.log('Creating document in Sanity...')
         const result = await writeClient.create(doc)
         console.log('Sanity create result ID:', result._id)
+
+        // Fire off email notification (non-blocking)
+        sendOrderConfirmation({
+            orderNumber,
+            customerName: name,
+            customerEmail: email || '',
+            customerPhone: phone,
+            orderType,
+            items: (items || []).map((item: any) => ({
+                name: item.name,
+                quantity: item.quantity,
+                price: item.price,
+            })),
+            subtotal: subtotal || 0,
+            deliveryFee: deliveryFee || 0,
+            totalAmount: totalPrice || 0,
+            customerAddress: deliveryAddress,
+        }).catch(err => console.error('[Order API] Notification error:', err))
 
         return NextResponse.json({ ok: true, id: result._id, orderNumber })
     } catch (err: any) {

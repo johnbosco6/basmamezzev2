@@ -2,6 +2,7 @@
 
 import { createClient } from 'next-sanity'
 import { revalidatePath } from 'next/cache'
+import { sendOrderStatusUpdate } from '@/lib/notifications'
 
 const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID
 const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET
@@ -21,10 +22,31 @@ const client = createClient({
 
 export async function updateOrderStatus(orderId: string, newStatus: string) {
     try {
-        await client
-            .patch(orderId)
-            .set({ status: newStatus })
-            .commit()
+        // First, fetch the order's customer info for the notification
+        const order = await client.fetch(
+            `*[_type == "order" && _id == $id][0]{ orderNumber, customerName, customerEmail, customerPhone }`,
+            { id: orderId }
+        )
+
+        const patch = client.patch(orderId).set({ status: newStatus })
+
+        // Record timestamp when the order enters a terminal state
+        if (newStatus === 'delivered' || newStatus === 'picked_up') {
+            patch.set({ completedAt: new Date().toISOString() })
+        }
+
+        await patch.commit()
+
+        // Fire off status update email (non-blocking)
+        if (order?.customerEmail) {
+            sendOrderStatusUpdate(
+                order.orderNumber,
+                order.customerName,
+                order.customerEmail,
+                order.customerPhone,
+                newStatus
+            ).catch(err => console.error('[Admin] Notification error:', err))
+        }
 
         revalidatePath('/admin')
         return { success: true, message: `Status updated to ${newStatus}` }
@@ -35,61 +57,32 @@ export async function updateOrderStatus(orderId: string, newStatus: string) {
 }
 
 export async function getOrders() {
-    // MOCK DATA FOR UI PREVIEW
-    return [
-        {
-            _id: '1',
-            orderNumber: 'BM-2024-9482',
-            customerName: 'Jan Kowalski',
-            customerPhone: '123456789',
-            customerAddress: 'ul. Krakowskie Przedmieście 12/4, Lublin',
-            status: 'pending',
-            items: [
-                { menuItem: { title: 'Hummus z Jagnięciną' }, quantity: 1, price: 45.00 },
-                { menuItem: { title: 'Falafel Wrap' }, quantity: 2, price: 28.00, additions: 'Ostry sos' }
-            ],
-            totalAmount: 101.00,
-            orderDate: new Date().toISOString()
-        },
-        {
-            _id: '2',
-            orderNumber: 'BM-2024-9483',
-            customerName: 'Anna Nowak',
-            customerPhone: '987654321',
-            customerAddress: 'ul. Lipowa 15, Lublin',
-            status: 'preparing',
-            items: [
-                { menuItem: { title: 'Mix Grill' }, quantity: 1, price: 85.00 }
-            ],
-            totalAmount: 85.00,
-            orderDate: new Date(Date.now() - 1000 * 60 * 15).toISOString() // 15 mins ago
-        },
-        {
-            _id: '3',
-            orderNumber: 'BM-2024-9484',
-            customerName: 'Piotr Wiśniewski',
-            customerPhone: '555123456',
-            customerAddress: 'ul. Gabriela Narutowicza 32, Lublin',
-            status: 'out_for_delivery',
-            items: [
-                { menuItem: { title: 'Sałatka Tabouleh' }, quantity: 1, price: 32.00 },
-                { menuItem: { title: 'Sambousek z Serem' }, quantity: 1, price: 24.00 }
-            ],
-            totalAmount: 56.00,
-            orderDate: new Date(Date.now() - 1000 * 60 * 45).toISOString() // 45 mins ago
-        },
-        {
-            _id: '4',
-            orderNumber: 'BM-2024-9485',
-            customerName: 'Maria Zielińska',
-            customerPhone: '111222333',
-            customerAddress: 'ul. Zana 19, Lublin',
-            status: 'delivered',
-            items: [
-                { menuItem: { title: 'Talerz Shoarma' }, quantity: 2, price: 55.00 }
-            ],
-            totalAmount: 110.00,
-            orderDate: new Date(Date.now() - 1000 * 60 * 120).toISOString() // 2 hours ago
-        }
-    ]
+    try {
+        const query = `*[_type == "order"] | order(orderDate desc) {
+            _id,
+            orderNumber,
+            customerName,
+            customerPhone,
+            customerEmail,
+            customerAddress,
+            status,
+            orderType,
+            items[]{
+                itemId,
+                name,
+                quantity,
+                price
+            },
+            subtotal,
+            deliveryFee,
+            totalAmount,
+            notes,
+            orderDate,
+            completedAt
+        }`
+        return await client.fetch(query, {}, { cache: "no-store" })
+    } catch (error) {
+        console.error('Failed to fetch orders:', error)
+        return []
+    }
 }

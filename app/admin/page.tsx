@@ -1,6 +1,6 @@
 import { getOrders } from '@/app/actions/admin-actions'
 import { OrderCard } from '@/components/admin/order-card'
-import { RefreshCw, TrendingUp, Users, ShoppingBag, UtensilsCrossed } from 'lucide-react'
+import { RefreshCw, TrendingUp, Users, ShoppingBag, UtensilsCrossed, Download } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import Image from 'next/image'
 import { Archivo } from 'next/font/google'
@@ -19,11 +19,14 @@ export default async function AdminDashboardPage() {
     const orders = await getOrders() || []
 
     const activeOrders = orders.filter((o: any) => o.status !== 'cancelled' && o.status !== 'delivered')
-    const completedToday = orders.filter((o: any) => o.status === 'delivered')
+    // Sort history by completedAt (newest completions first)
+    const completedToday = orders
+        .filter((o: any) => o.status === 'delivered' || o.status === 'picked_up')
+        .sort((a: any, b: any) => new Date(b.completedAt || b.orderDate).getTime() - new Date(a.completedAt || a.orderDate).getTime())
 
     // Calculate daily stats
-    const totalTodayAmount = completedToday.reduce((sum, o) => sum + (o.totalAmount || 0), 0)
-    const totalItems = completedToday.reduce((sum, o) => sum + (o.items?.length || 0), 0)
+    const totalTodayAmount = completedToday.reduce((sum: number, o: any) => sum + (o.totalAmount || 0), 0)
+    const totalItems = completedToday.reduce((sum: number, o: any) => sum + (o.items?.reduce((iSum: number, i: any) => iSum + (i.quantity || 0), 0) || 0), 0)
 
     return (
         <div className={`flex min-h-screen bg-gradient-to-br from-[#1a2c44] via-[#2B2B2B] to-[#121212] text-white ${archivo.className}`}>
@@ -107,9 +110,15 @@ export default async function AdminDashboardPage() {
                     {/* Recently Completed Section */}
                     {completedToday.length > 0 && (
                         <section className="pt-8 md:pt-10 border-t border-white/5">
-                            <div className="flex items-center gap-4 md:gap-6 mb-6 md:mb-8">
-                                <h2 className="text-lg md:text-xl font-bold text-white/60 shrink-0">Historia z Dzisiaj</h2>
-                                <div className="h-px bg-white/5 flex-1"></div>
+                            <div className="flex items-center justify-between gap-4 md:gap-6 mb-6 md:mb-8 w-full">
+                                <h2 className="text-lg md:text-xl font-bold text-white/60 shrink-0">Historia Zamówień</h2>
+                                <div className="h-px bg-white/5 flex-1 hidden sm:block"></div>
+                                <a href="/api/export-orders" target="_blank" rel="noopener noreferrer">
+                                    <Button variant="outline" size="sm" className="bg-white/5 border-white/10 hover:bg-white/10 text-white rounded-xl shadow-xl backdrop-blur-sm whitespace-nowrap">
+                                        <Download className="mr-2 h-4 w-4" />
+                                        Pobierz Raport (CSV)
+                                    </Button>
+                                </a>
                             </div>
                             <div className="space-y-4">
                                 {completedToday.map((order: any) => (
@@ -121,13 +130,14 @@ export default async function AdminDashboardPage() {
                                             <div className="min-w-0">
                                                 <h4 className="font-bold text-base md:text-lg text-[#BA9D76]">#{order.orderNumber?.slice(-4)}</h4>
                                                 <p className="text-white/70 text-xs md:text-sm font-medium truncate">{order.customerName}</p>
+                                                <p className="text-white/40 text-[10px] mt-1">Zakończono: {new Date(order.completedAt || order.orderDate).toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' })}</p>
                                             </div>
                                         </div>
 
                                         <div className="w-full md:flex-1 text-left">
-                                            <p className="text-white/40 text-[9px] md:text-[10px] uppercase font-bold tracking-widest mb-1">Zamówienie</p>
+                                            <p className="text-white/40 text-[9px] md:text-[10px] uppercase font-bold tracking-widest mb-1">Zamówienie ({order.orderType === 'delivery' ? 'Dostawa' : 'Odbiór'})</p>
                                             <p className="text-[11px] md:text-xs text-white/80 line-clamp-1 italic">
-                                                {order.items?.map((i: any) => `${i.quantity}x ${i.menuItem?.title || 'Produkt'}`).join(', ')}
+                                                {order.items?.map((i: any) => `${i.quantity}x ${i.name || 'Produkt'}`).join(', ')}
                                             </p>
                                         </div>
 

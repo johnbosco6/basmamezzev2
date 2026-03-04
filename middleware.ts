@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 const PUBLIC_ROUTES = ['/admin/login']
-const BLOCKED_ROUTES = ['/', '/menu', '/offers', '/newsletter', '/studio']
 
 export function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl
@@ -14,11 +13,8 @@ export function middleware(request: NextRequest) {
         return NextResponse.next()
     }
 
-    // Block access to public website routes
-    const blockedPaths = ['/menu', '/offers', '/newsletter', '/studio']
-    if (pathname === '/' || blockedPaths.some(route => pathname.startsWith(route))) {
-        return NextResponse.redirect(new URL('/admin/login', request.url))
-    }
+    // Removed the aggressive block on public routes. 
+    // The public site should remain public!
 
     // Protect all /admin routes (except login which we already handled)
     if (pathname.startsWith('/admin')) {

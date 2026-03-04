@@ -120,6 +120,13 @@ export const orderType = defineType({
             type: 'datetime',
             initialValue: () => new Date().toISOString(),
         }),
+        defineField({
+            name: 'completedAt',
+            title: 'Completed At (Timestamp)',
+            type: 'datetime',
+            description: 'Automatically set when order is marked as delivered or picked up',
+            readOnly: true,
+        }),
     ],
     preview: {
         select: {
