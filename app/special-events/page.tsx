@@ -61,11 +61,11 @@ export default function SpecialEventsPage() {
                             <span className={`text-xs font-light ${archivo.className}`}>Zamów Online</span>
                         </Link>
                         <Link
-                            href="/newsletter"
-                            className="flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/20 hover:shadow-lg text-white/80 hover:text-[#BA9D76] group"
+                            href="/special-events"
+                            className="flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-300 -translate-y-1 bg-white/20 shadow-lg text-[#BA9D76] group"
                         >
-                            <Megaphone className="h-4 w-4 transition-colors duration-300" />
-                            <span className={`text-xs font-light ${archivo.className}`}>Oferty</span>
+                            <Calendar className="h-4 w-4 transition-colors duration-300" />
+                            <span className={`text-xs font-light ${archivo.className}`}>Eventy</span>
                         </Link>
                         <Link
                             href="/faq"

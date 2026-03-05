@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { ArrowLeft, Phone, Mail, MapPin, Home, BookOpen, MessageCircle, Megaphone } from "lucide-react"
+import { ArrowLeft, Phone, Mail, MapPin, Home, BookOpen, MessageCircle, Megaphone, ShoppingBag, Calendar } from "lucide-react"
 import { Archivo } from "next/font/google"
 
 import { Button } from "@/components/ui/button"
@@ -149,11 +149,18 @@ export default function FAQPage() {
               <span className={`text-xs font-light ${archivo.className}`}>Menu</span>
             </Link>
             <Link
-              href="/newsletter"
+              href="/order"
               className="flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/20 hover:shadow-lg text-white/80 hover:text-[#BA9D76] group"
             >
-              <Megaphone className="h-4 w-4 transition-colors duration-300" />
-              <span className={`text-xs font-light ${archivo.className}`}>Oferty</span>
+              <ShoppingBag className="h-4 w-4 transition-colors duration-300" />
+              <span className={`text-xs font-light ${archivo.className}`}>Zamów Online</span>
+            </Link>
+            <Link
+              href="/special-events"
+              className="flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/20 hover:shadow-lg text-white/80 hover:text-[#BA9D76] group"
+            >
+              <Calendar className="h-4 w-4 transition-colors duration-300" />
+              <span className={`text-xs font-light ${archivo.className}`}>Eventy</span>
             </Link>
             <Link
               href="/faq"
