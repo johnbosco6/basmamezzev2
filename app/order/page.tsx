@@ -39,6 +39,15 @@ export default function OrderPage() {
     const [justAdded, setJustAdded] = useState<string | null>(null)
     const [mounted, setMounted] = useState(false)
 
+    // Filter menu sections for online ordering
+    const filteredMenuData = useMemo(() => {
+        return menuData.filter(section =>
+            !["sniadania", "napoje", "alkohole", "specjalne-okazje"].includes(section.id)
+        )
+    }, [])
+
+    const [activeSection, setActiveSection] = useState(filteredMenuData[0]?.id || "")
+
     useEffect(() => { setMounted(true) }, [])
 
     const handleAddToCart = (item: { id: string; name: string; price: string; image?: string }) => {
@@ -48,8 +57,6 @@ export default function OrderPage() {
         setJustAdded(item.id)
         setTimeout(() => setJustAdded(null), 1200)
     }
-
-    const [activeSection, setActiveSection] = useState("sniadania")
     const [activeCategory, setActiveCategory] = useState<string | null>(null)
     const [selectedImage, setSelectedImage] = useState<{ src: string; alt: string } | null>(null)
     const [activeAllergens, setActiveAllergens] = useState<number[]>([])
@@ -289,7 +296,7 @@ export default function OrderPage() {
             <section className="py-8 bg-gray-50" data-menu-navigation>
                 <div className="container mx-auto px-4">
                     <div className="flex flex-wrap justify-center gap-4">
-                        {menuData.map((section) => {
+                        {filteredMenuData.map((section) => {
                             const IconComponent = IconMap[section.id as keyof typeof IconMap] || Utensils
                             return (
                                 <Button
@@ -314,28 +321,13 @@ export default function OrderPage() {
             {/* Menu Sections */}
             <main className="py-12 bg-white">
                 <div className="container mx-auto px-4">
-                    {menuData.map((section, sectionIndex) => (
+                    {filteredMenuData.map((section, sectionIndex) => (
                         <section key={section.id} id={section.id} className={`mb-20 ${sectionIndex > 0 ? "pt-16" : ""}`}>
                             <div className="text-center mb-12">
                                 <h2 className={`text-3xl md:text-4xl font-semibold mb-4 text-gray-900 ${archivo.className}`}>
                                     {section.sectionTitle}
                                 </h2>
                                 <div className="w-24 h-1 bg-gradient-to-r from-[#BA9D76] to-[#597FB1] mx-auto rounded-full"></div>
-                                {section.id === "sniadania" && (
-                                    <div className="mt-6 inline-flex items-center gap-3 bg-amber-50 border border-amber-200 text-amber-800 rounded-2xl px-6 py-4 text-sm shadow-sm">
-                                        <Coffee className="h-5 w-5 text-amber-600 flex-shrink-0" />
-                                        <div className="text-left">
-                                            <p className={`font-semibold text-amber-900 ${archivo.className}`}>Śniadania dostępne wyłącznie w restauracji</p>
-                                            <p className={`font-light text-amber-700 ${archivo.className}`}>Sobota – Niedziela: 10:00–13:00 &nbsp;·&nbsp; Poniedziałek–Piątek: niedostępne</p>
-                                        </div>
-                                    </div>
-                                )}
-                                {(section.id === "napoje" || section.id === "alkohole") && (
-                                    <div className="mt-6 inline-flex items-center gap-3 bg-blue-50 border border-blue-200 text-blue-800 rounded-2xl px-6 py-4 text-sm shadow-sm">
-                                        <Wine className="h-5 w-5 text-blue-600 flex-shrink-0" />
-                                        <p className={`font-light text-blue-700 ${archivo.className}`}>Napoje dostępne wyłącznie na miejscu – nie można ich dodać do zamówienia online</p>
-                                    </div>
-                                )}
                             </div>
 
                             {/* Render regular categories only for ordering */}
