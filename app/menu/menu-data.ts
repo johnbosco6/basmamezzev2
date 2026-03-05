@@ -16,6 +16,7 @@ export interface PackageGroup {
   packageName: string
   packagePrice: string
   packageDescription?: string
+  packageImage?: string
   categories: Array<{
     categoryName: string
     items: MenuItem[]
@@ -1153,6 +1154,33 @@ export const menuData: MenuCategory[] = [
     sectionTitle: "Menu na Specjalne Okazje",
     isPackageSection: true,
     packages: [
+      {
+        packageId: "party-box",
+        packageName: "PARTY BOX (dla 4 osób)",
+        packagePrice: "299 zł",
+        packageImage: "/images/menu/party-box.jpg",
+        categories: [
+          {
+            categoryName: "Zawartość Party Boxa",
+            items: [
+              { id: "pb-labneh-basma", name: "Labneh by BASMA", description: "", price: "", allergens: [7, 11] },
+              { id: "pb-tabbouleh", name: "Tabbouleh", description: "", price: "", allergens: [1, 10] },
+              { id: "pb-hummus", name: "Hummus", description: "", price: "", allergens: [11] },
+              { id: "pb-olives", name: "Oliwki marynowane", description: "", price: "", allergens: [11] },
+              { id: "pb-pickles", name: "Pikle", description: "", price: "", allergens: [10] },
+              { id: "pb-hummus-bean", name: "Hummus z fasoli", description: "", price: "", allergens: [1, 11] },
+              { id: "pb-tabbouleh-basma", name: "Tabbouleh by BASMA", description: "", price: "", allergens: [1, 8, 10] },
+              { id: "pb-baba-ghanoush", name: "Baba Ghanoush", description: "", price: "", allergens: [7, 11] },
+              { id: "pb-muhammara", name: "Muhammara", description: "", price: "", allergens: [8] },
+              { id: "pb-fattoush", name: "Sałatka fattoush", description: "", price: "", allergens: [1, 7, 11] },
+              { id: "pb-wrap-falafel", name: "Mini Wrapy z falafelem 4x", description: "", price: "", allergens: [1, 11] },
+              { id: "pb-wrap-eggplant", name: "Mini Wrapy z bakłażanem 4x", description: "", price: "", allergens: [1, 11] },
+              { id: "pb-simit-chicken", name: "Simit z kurczakiem taouk 4x", description: "", price: "", allergens: [1, 3, 7, 10, 11] },
+              { id: "pb-bread-sticks", name: "Paluchy chlebowe 4x", description: "", price: "", allergens: [1] },
+            ],
+          },
+        ],
+      },
       {
         packageId: "package-1",
         packageName: "MEZZE & GRILL - PAKIET 1",

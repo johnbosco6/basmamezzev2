@@ -343,23 +343,46 @@ ${shareData.url}`)
                         {/* Package Header - Clickable */}
                         <div
                           onClick={() => togglePackage(pkg.packageId)}
-                          className="cursor-pointer bg-gradient-to-r from-[#BA9D76]/10 to-[#597FB1]/10 border-2 border-[#BA9D76]/30 rounded-2xl p-6 mb-6 hover:shadow-lg transition-all duration-300 hover:scale-[1.01]"
+                          className="group cursor-pointer bg-gradient-to-r from-[#BA9D76]/10 to-[#597FB1]/10 border-2 border-[#BA9D76]/30 rounded-2xl p-0 overflow-hidden mb-6 hover:shadow-xl transition-all duration-300 hover:scale-[1.01]"
                         >
-                          <div className="flex items-center justify-between">
-                            <div className="flex-1">
-                              <h3 className={`text-2xl md:text-3xl font-semibold text-gray-900 mb-2 ${archivo.className}`}>
-                                {pkg.packageName}
-                              </h3>
-                              <p className={`text-xl text-[#BA9D76] font-semibold ${archivo.className}`}>
-                                {pkg.packagePrice}
-                              </p>
-                            </div>
-                            <div className="flex items-center gap-3">
-                              <span className={`text-sm text-gray-600 font-light ${archivo.className}`}>
-                                {isExpanded ? "Zwiń" : "Rozwiń"}
-                              </span>
-                              <div className={`p-2 rounded-full bg-[#BA9D76]/20 transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`}>
-                                <ChevronDown className="h-6 w-6 text-[#BA9D76]" />
+                          <div className="flex flex-col md:flex-row items-stretch">
+                            {pkg.packageImage && (
+                              <div className="relative w-full md:w-80 h-64 md:h-auto overflow-hidden">
+                                <Image
+                                  src={pkg.packageImage}
+                                  alt={pkg.packageName}
+                                  fill
+                                  className="object-cover transition-transform duration-700 group-hover:scale-110"
+                                  sizes="(max-width: 768px) 100vw, 320px"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-black/20 to-transparent"></div>
+                              </div>
+                            )}
+                            <div className="flex-1 p-6 md:p-8 flex flex-col justify-center">
+                              <div className="flex items-center justify-between">
+                                <div className="flex-1">
+                                  <h3 className={`text-2xl md:text-3xl font-semibold text-gray-900 mb-2 ${archivo.className}`}>
+                                    {pkg.packageName}
+                                  </h3>
+                                  <p className={`text-xl md:text-2xl text-[#BA9D76] font-semibold ${archivo.className}`}>
+                                    {pkg.packagePrice}
+                                  </p>
+                                  {pkg.packageDescription && (
+                                    <p className={`text-sm text-gray-600 mt-3 font-light leading-relaxed ${archivo.className}`}>
+                                      {pkg.packageDescription}
+                                    </p>
+                                  )}
+                                </div>
+                                <div className="flex items-center gap-4 ml-4">
+                                  <div className="hidden sm:flex flex-col items-end">
+                                    <span className={`text-xs text-gray-500 uppercase tracking-wider font-semibold ${archivo.className}`}>
+                                      {isExpanded ? "Ukryj menu" : "Zobacz menu"}
+                                    </span>
+                                  </div>
+                                  <div className={`p-3 rounded-full bg-[#BA9D76]/20 transition-all duration-300 group-hover:bg-[#BA9D76]/30 ${isExpanded ? "rotate-180" : ""}`}>
+                                    <ChevronDown className="h-6 w-6 text-[#BA9D76]" />
+                                  </div>
+                                </div>
                               </div>
                             </div>
                           </div>

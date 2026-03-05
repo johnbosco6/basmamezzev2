@@ -132,6 +132,22 @@ export default function AlergenyPage() {
       { name: "Orange Rosemary", allergens: [] },
       { name: "Amaretto Sour", allergens: [3] },
     ],
+    "PARTY BOX": [
+      { name: "Labneh by BASMA", allergens: [7, 11] },
+      { name: "Tabbouleh", allergens: [1, 10] },
+      { name: "Hummus", allergens: [11] },
+      { name: "Oliwki marynowane", allergens: [11] },
+      { name: "Pikle", allergens: [10] },
+      { name: "Hummus z fasoli", allergens: [1, 11] },
+      { name: "Tabbouleh by BASMA", allergens: [1, 8, 10] },
+      { name: "Baba Ghanoush", allergens: [7, 11] },
+      { name: "Muhammara", allergens: [8] },
+      { name: "Sałatka fattoush", allergens: [1, 7, 11] },
+      { name: "Mini Wrapy z falafelem", allergens: [1, 11] },
+      { name: "Mini Wrapy z bakłażanem", allergens: [1, 11] },
+      { name: "Simit z kurczakiem taouk", allergens: [1, 3, 7, 10, 11] },
+      { name: "Paluchy chlebowe", allergens: [1] },
+    ],
   }
 
   return (
