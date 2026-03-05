@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { Clock, MapPin, Phone, Mail, FileText, Shield, ChevronRight, Home, BookOpen, MessageCircle, RefreshCw, Megaphone } from "lucide-react"
+import { Clock, MapPin, Phone, Mail, FileText, Shield, ChevronRight, Home, BookOpen, MessageCircle, RefreshCw, Megaphone, CalendarDays, ShoppingBag } from "lucide-react"
 import { Archivo } from "next/font/google"
 
 import { Button } from "@/components/ui/button"
@@ -96,8 +96,35 @@ export default function HomePage() {
         </div>
 
         {/* Hours Widget Below Navigation */}
-        <div className="container mx-auto px-4 pb-4 flex justify-center">
+        <div className="container mx-auto px-4 pb-3 flex justify-center">
           <HeaderHoursWidget />
+        </div>
+
+        {/* Secondary Navigation */}
+        <div className="container mx-auto px-4 pb-4 flex justify-center">
+          <nav className="flex items-center justify-center gap-2 md:gap-6 backdrop-blur-md bg-white/15 border border-white/25 rounded-full px-2 md:px-6 py-3 shadow-lg">
+            <Link
+              href="/special-events"
+              className="flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/20 hover:shadow-lg text-white/80 hover:text-[#BA9D76] group"
+            >
+              <CalendarDays className="h-4 w-4 transition-colors duration-300" />
+              <span className={`text-xs font-light ${archivo.className}`}>Eventy Specjalne</span>
+            </Link>
+            <Link
+              href="/menu"
+              className="flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/20 hover:shadow-lg text-white/80 hover:text-[#BA9D76] group"
+            >
+              <ShoppingBag className="h-4 w-4 transition-colors duration-300" />
+              <span className={`text-xs font-light ${archivo.className}`}>Zamów Online</span>
+            </Link>
+            <Link
+              href="/newsletter"
+              className="flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/20 hover:shadow-lg text-white/80 hover:text-[#BA9D76] group"
+            >
+              <Mail className="h-4 w-4 transition-colors duration-300" />
+              <span className={`text-xs font-light ${archivo.className}`}>Newsletter</span>
+            </Link>
+          </nav>
         </div>
       </header>
 
