@@ -331,6 +331,21 @@ ${shareData.url}`)
                   {section.sectionTitle}
                 </h2>
                 <div className="w-24 h-1 bg-gradient-to-r from-[#BA9D76] to-[#597FB1] mx-auto rounded-full"></div>
+                {section.id === "sniadania" && (
+                  <div className="mt-6 inline-flex items-center gap-3 bg-amber-50 border border-amber-200 text-amber-800 rounded-2xl px-6 py-4 text-sm shadow-sm">
+                    <Coffee className="h-5 w-5 text-amber-600 flex-shrink-0" />
+                    <div className="text-left">
+                      <p className={`font-semibold text-amber-900 ${archivo.className}`}>Śniadania dostępne wyłącznie w restauracji</p>
+                      <p className={`font-light text-amber-700 ${archivo.className}`}>Sobota – Niedziela: 10:00–13:00 &nbsp;·&nbsp; Poniedziałek–Piątek: niedostępne</p>
+                    </div>
+                  </div>
+                )}
+                {(section.id === "napoje" || section.id === "alkohole") && (
+                  <div className="mt-6 inline-flex items-center gap-3 bg-blue-50 border border-blue-200 text-blue-800 rounded-2xl px-6 py-4 text-sm shadow-sm">
+                    <Wine className="h-5 w-5 text-blue-600 flex-shrink-0" />
+                    <p className={`font-light text-blue-700 ${archivo.className}`}>Napoje dostępne wyłącznie na miejscu – nie można ich dodać do zamówienia online</p>
+                  </div>
+                )}
               </div>
 
               {/* Render packages if this is a package section */}
@@ -715,7 +730,7 @@ ${shareData.url}`)
                               </div>
 
                               {/* Add to Cart Button */}
-                              {item.price && parsePrice(item.price) > 0 && section.id !== "specjalne-okazje" && (
+                              {item.price && parsePrice(item.price) > 0 && !(["specjalne-okazje", "sniadania", "napoje", "alkohole"].includes(section.id)) && (
                                 <button
                                   onClick={() => handleAddToCart(item)}
                                   disabled={!isSafe}
