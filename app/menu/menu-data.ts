@@ -1343,7 +1343,6 @@ export const specialOccasionsData: MenuCategory = {
       categoryName: "Uwagi",
       items: [
         { id: "notes-deposit", name: "Zaliczka", description: "Warunkiem potwierdzenia rezerwacji jest wpłacenie zaliczki w kwocie 50% wartości zamówienia", price: "" },
-        { id: "notes-duration", name: "Czas Rezerwacji", description: "Rezerwacja obejmuje 4 godziny, wydłużenie rezerwacji wiąże się z kosztami (500 zł - każda kolejna rozpoczęta godzina)", price: "" },
         { id: "notes-service", name: "Opłata Serwisowa", description: "Do grup od 10 osób doliczamy opłatę za serwis w wysokości 10 zł/os netto (plus VAT 23%)", price: "" },
       ],
     },
