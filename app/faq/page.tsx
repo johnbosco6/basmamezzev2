@@ -1,5 +1,4 @@
-import Link from "next/link"
-import { ArrowLeft, Phone, Mail, MapPin } from "lucide-react"
+import { ArrowLeft, Phone, Mail, MapPin, Home, BookOpen, MessageCircle, Megaphone } from "lucide-react"
 import { Archivo } from "next/font/google"
 
 import { Button } from "@/components/ui/button"
@@ -123,16 +122,54 @@ export default function FAQPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#597FB1] via-[#326096] to-[#2B2B2B]">
       {/* Header */}
-      <header className="bg-[#2B2B2B]/80 backdrop-blur-md border-b border-[#BA9D76]/20">
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex items-center gap-4">
+      <header className="sticky top-0 z-50 backdrop-blur-md bg-[#597FB1]/80 border-b border-white/10">
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+          <div className="flex-1 flex justify-start">
             <Link href="/">
-              <Button variant="ghost" size="sm" className="text-white hover:text-[#BA9D76] hover:bg-white/10">
+              <Button variant="ghost" size="sm" className="text-white hover:text-[#BA9D76] hover:bg-white/10 hidden md:flex">
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                Powrót do strony głównej
+                Powrót
               </Button>
             </Link>
           </div>
+          <nav className="flex-1 flex items-center justify-center gap-2 md:gap-6 backdrop-blur-md bg-white/15 border border-white/25 rounded-full px-2 md:px-6 py-3 shadow-lg">
+            <Link
+              href="/"
+              className="flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/20 hover:shadow-lg text-white/80 hover:text-[#BA9D76] group"
+            >
+              <Home className="h-4 w-4 transition-colors duration-300" />
+              <span className={`text-xs font-light ${archivo.className}`}>Strona Główna</span>
+            </Link>
+            <Link
+              href="/menu"
+              className="flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/20 hover:shadow-lg text-white/80 hover:text-[#BA9D76] group"
+            >
+              <BookOpen className="h-4 w-4 transition-colors duration-300" />
+              <span className={`text-xs font-light ${archivo.className}`}>Menu</span>
+            </Link>
+            <Link
+              href="/newsletter"
+              className="flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/20 hover:shadow-lg text-white/80 hover:text-[#BA9D76] group"
+            >
+              <Megaphone className="h-4 w-4 transition-colors duration-300" />
+              <span className={`text-xs font-light ${archivo.className}`}>Oferty</span>
+            </Link>
+            <Link
+              href="/faq"
+              className="flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-300 -translate-y-1 bg-white/20 shadow-lg text-[#BA9D76] group"
+            >
+              <MessageCircle className="h-4 w-4 transition-colors duration-300" />
+              <span className={`text-xs font-light ${archivo.className}`}>FAQ</span>
+            </Link>
+            <Link
+              href="/#contact"
+              className="flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/20 hover:shadow-lg text-white/80 hover:text-[#BA9D76] group"
+            >
+              <Phone className="h-4 w-4 transition-colors duration-300" />
+              <span className={`text-xs font-light ${archivo.className}`}>Kontakt</span>
+            </Link>
+          </nav>
+          <div className="flex-1 flex justify-end"></div>
         </div>
       </header>
 

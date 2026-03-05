@@ -3,7 +3,14 @@ import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import Link from "next/link"
 import Image from "next/image"
-import { Phone, MapPin, Clock, Facebook, Instagram } from "lucide-react"
+import { Phone, MapPin, Clock, Facebook, Instagram, Home, BookOpen, MessageCircle, Megaphone } from "lucide-react"
+import { Archivo } from "next/font/google"
+
+const archivo = Archivo({
+  subsets: ["latin"],
+  weight: ["200", "400", "600", "700"],
+  display: "swap",
+})
 
 export default function AlergenyPage() {
   const allergenList = [
@@ -151,46 +158,49 @@ export default function AlergenyPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white text-gray-900">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-20">
-            <Link href="/" className="flex items-center">
-              <Image
-                src="/images/basma-new-logo.png"
-                alt="BASMA Restaurant"
-                width={120}
-                height={60}
-                className="h-12 w-auto"
-              />
+      <header className="sticky top-0 z-50 backdrop-blur-md bg-[#597FB1]/80 border-b border-white/10">
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+          <div className="flex-1 flex justify-start"></div>
+          <nav className="flex-1 flex items-center justify-center gap-2 md:gap-6 backdrop-blur-md bg-white/15 border border-white/25 rounded-full px-2 md:px-6 py-3 shadow-lg">
+            <Link
+              href="/"
+              className="flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/20 hover:shadow-lg text-white/80 hover:text-[#BA9D76] group"
+            >
+              <Home className="h-4 w-4 transition-colors duration-300" />
+              <span className={`text-xs font-light ${archivo.className}`}>Strona Główna</span>
             </Link>
-
-            <nav className="hidden md:flex items-center space-x-8">
-              <Link href="/" className="text-gray-700 hover:text-[#BA9D76] transition-colors">
-                Strona główna
-              </Link>
-              <Link href="/menu" className="text-gray-700 hover:text-[#BA9D76] transition-colors">
-                Menu
-              </Link>
-              <Link href="/alergeny" className="text-[#BA9D76] font-medium">
-                Alergeny
-              </Link>
-              <Link href="/faq" className="text-gray-700 hover:text-[#BA9D76] transition-colors">
-                FAQ
-              </Link>
-              <Link href="/kariera" className="text-gray-700 hover:text-[#BA9D76] transition-colors">
-                Kariera
-              </Link>
-            </nav>
-
-            <div className="flex items-center space-x-4">
-              <div className="hidden lg:flex items-center text-sm text-gray-600">
-                <Phone className="h-4 w-4 mr-1" />
-                <span>+48 12 345 67 89</span>
-              </div>
-            </div>
-          </div>
+            <Link
+              href="/menu"
+              className="flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/20 hover:shadow-lg text-white/80 hover:text-[#BA9D76] group"
+            >
+              <BookOpen className="h-4 w-4 transition-colors duration-300" />
+              <span className={`text-xs font-light ${archivo.className}`}>Menu</span>
+            </Link>
+            <Link
+              href="/newsletter"
+              className="flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/20 hover:shadow-lg text-white/80 hover:text-[#BA9D76] group"
+            >
+              <Megaphone className="h-4 w-4 transition-colors duration-300" />
+              <span className={`text-xs font-light ${archivo.className}`}>Oferty</span>
+            </Link>
+            <Link
+              href="/faq"
+              className="flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/20 hover:shadow-lg text-white/80 hover:text-[#BA9D76] group"
+            >
+              <MessageCircle className="h-4 w-4 transition-colors duration-300" />
+              <span className={`text-xs font-light ${archivo.className}`}>FAQ</span>
+            </Link>
+            <Link
+              href="/#contact"
+              className="flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/20 hover:shadow-lg text-white/80 hover:text-[#BA9D76] group"
+            >
+              <Phone className="h-4 w-4 transition-colors duration-300" />
+              <span className={`text-xs font-light ${archivo.className}`}>Kontakt</span>
+            </Link>
+          </nav>
+          <div className="flex-1 flex justify-end"></div>
         </div>
       </header>
 

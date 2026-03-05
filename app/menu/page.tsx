@@ -211,6 +211,13 @@ ${shareData.url}`)
               <span className={`text-xs font-light ${archivo.className}`}>Menu</span>
             </Link>
             <Link
+              href="/newsletter"
+              className="flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/20 hover:shadow-lg text-white/80 hover:text-[#BA9D76] group"
+            >
+              <Megaphone className="h-4 w-4 transition-colors duration-300" />
+              <span className={`text-xs font-light ${archivo.className}`}>Oferty</span>
+            </Link>
+            <Link
               href="/faq"
               className="flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/20 hover:shadow-lg text-white/80 hover:text-[#BA9D76] group"
             >
@@ -221,15 +228,8 @@ ${shareData.url}`)
               href="/#contact"
               className="flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/20 hover:shadow-lg text-white/80 hover:text-[#BA9D76] group"
             >
-              <MessageCircle className="h-4 w-4 transition-colors duration-300" />
+              <Phone className="h-4 w-4 transition-colors duration-300" />
               <span className={`text-xs font-light ${archivo.className}`}>Kontakt</span>
-            </Link>
-            <Link
-              href="/newsletter"
-              className="flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/20 hover:shadow-lg text-white/80 hover:text-[#BA9D76] group"
-            >
-              <Megaphone className="h-4 w-4 transition-colors duration-300" />
-              <span className={`text-xs font-light ${archivo.className}`}>Oferty</span>
             </Link>
           </nav>
           <div className="flex-1 flex justify-end"></div>

@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { Clock, MapPin, Phone, Mail, FileText, Shield, ChevronRight, Home, BookOpen, MessageCircle, RefreshCw } from "lucide-react"
+import { Clock, MapPin, Phone, Mail, FileText, Shield, ChevronRight, Home, BookOpen, MessageCircle, RefreshCw, Megaphone } from "lucide-react"
 import { Archivo } from "next/font/google"
 
 import { Button } from "@/components/ui/button"
@@ -45,26 +45,48 @@ export default function HomePage() {
       <header className="sticky top-0 z-50 backdrop-blur-md bg-[#597FB1]/80 border-b border-white/10">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex-1 flex justify-start"></div>
-          <nav className="flex-1 flex items-center justify-center gap-8 backdrop-blur-md bg-white/15 border border-white/25 rounded-full px-6 py-3 shadow-lg">
+          <nav className="flex-1 flex items-center justify-center gap-2 md:gap-6 backdrop-blur-md bg-white/15 border border-white/25 rounded-full px-2 md:px-6 py-3 shadow-lg">
             <Link
               href="#home"
-              className="flex flex-col items-center gap-1 p-3 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/20 hover:shadow-lg text-white/80 hover:text-[#BA9D76] group"
+              className="flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/20 hover:shadow-lg text-white/80 hover:text-[#BA9D76] group"
+              onClick={(e) => {
+                e.preventDefault()
+                scrollToSection("home")
+              }}
             >
-              <Home className="h-5 w-5 transition-colors duration-300" />
+              <Home className="h-4 w-4 transition-colors duration-300" />
               <span className={`text-xs font-light ${archivo.className}`}>Strona Główna</span>
             </Link>
             <Link
               href="/menu"
-              className="flex flex-col items-center gap-1 p-3 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/20 hover:shadow-lg text-white/80 hover:text-[#BA9D76] group"
+              className="flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/20 hover:shadow-lg text-white/80 hover:text-[#BA9D76] group"
             >
-              <BookOpen className="h-5 w-5 transition-colors duration-300" />
+              <BookOpen className="h-4 w-4 transition-colors duration-300" />
               <span className={`text-xs font-light ${archivo.className}`}>Menu</span>
             </Link>
             <Link
-              href="#visit-us"
-              className="flex flex-col items-center gap-1 p-3 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/20 hover:shadow-lg text-white/80 hover:text-[#BA9D76] group"
+              href="/newsletter"
+              className="flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/20 hover:shadow-lg text-white/80 hover:text-[#BA9D76] group"
             >
-              <MessageCircle className="h-5 w-5 transition-colors duration-300" />
+              <Megaphone className="h-4 w-4 transition-colors duration-300" />
+              <span className={`text-xs font-light ${archivo.className}`}>Oferty</span>
+            </Link>
+            <Link
+              href="/faq"
+              className="flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/20 hover:shadow-lg text-white/80 hover:text-[#BA9D76] group"
+            >
+              <MessageCircle className="h-4 w-4 transition-colors duration-300" />
+              <span className={`text-xs font-light ${archivo.className}`}>FAQ</span>
+            </Link>
+            <Link
+              href="#visit-us"
+              className="flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/20 hover:shadow-lg text-white/80 hover:text-[#BA9D76] group"
+              onClick={(e) => {
+                e.preventDefault()
+                scrollToSection("visit-us")
+              }}
+            >
+              <Phone className="h-4 w-4 transition-colors duration-300" />
               <span className={`text-xs font-light ${archivo.className}`}>Kontakt</span>
             </Link>
           </nav>
@@ -80,7 +102,7 @@ export default function HomePage() {
       </header>
 
       {/* Hero Section */}
-      <section id="home" className="relative py-20 md:py-32 overflow-hidden min-h-[80vh] flex items-center">
+      <section id="home" className="relative py-20 md:py-32 overflow-hidden min-h-[80vh] flex items-center scroll-mt-20">
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-[url('/images/basma-evening-exterior.jpeg')] bg-cover bg-center" />
           <div className="absolute inset-0 bg-gradient-to-r from-[#2B2B2B]/60 via-[#326096]/50 to-[#2B2B2B]/60"></div>
@@ -262,7 +284,7 @@ export default function HomePage() {
       </section>
 
       {/* About Section */}
-      <section id="about" className="py-20 bg-gradient-to-l from-white via-white to-[#597FB1]/20">
+      <section id="about" className="py-20 bg-gradient-to-l from-white via-white to-[#597FB1]/20 scroll-mt-20">
         <div className="container mx-auto px-4">
           <div className="relative rounded-2xl overflow-hidden h-[500px] md:h-[600px] shadow-2xl group">
             <Image
@@ -290,7 +312,7 @@ export default function HomePage() {
       </section>
 
       {/* Featured Dishes - Updated with same styling as Skosztuj Basmy section */}
-      <section id="menu" className="py-20 bg-gradient-to-br from-[#2B2B2B] via-[#326096] to-[#597FB1]">
+      <section id="menu" className="py-20 bg-gradient-to-br from-[#2B2B2B] via-[#326096] to-[#597FB1] scroll-mt-20">
         <div className="container mx-auto px-4">
           <h2 className={`text-3xl font-semibold mb-2 text-center text-white ${archivo.className}`}>
             Nasze Wyjątkowe Dania
@@ -379,7 +401,7 @@ export default function HomePage() {
       </section>
 
       {/* Contact & Reservation */}
-      <section id="contact" className="py-20 bg-gradient-to-bl from-[#597FB1] to-[#2B2B2B]">
+      <section id="contact" className="py-20 bg-gradient-to-bl from-[#597FB1] to-[#2B2B2B] scroll-mt-20">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             {/* Image Side */}
@@ -421,7 +443,7 @@ export default function HomePage() {
               {/* Contact Information */}
               <div
                 id="visit-us"
-                className="backdrop-blur-lg bg-white/10 border border-[#BA9D76]/25 p-8 rounded-2xl shadow-2xl"
+                className="backdrop-blur-lg bg-white/10 border border-[#BA9D76]/25 p-8 rounded-2xl shadow-2xl scroll-mt-28"
               >
                 <h3 className={`text-2xl font-semibold mb-6 text-white ${archivo.className}`}>Odwiedź Nas</h3>
                 <div className="space-y-4">
