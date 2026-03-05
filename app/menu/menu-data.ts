@@ -1157,562 +1157,198 @@ export const menuData: MenuCategory[] = [
       },
     ],
   },
-  {
-    id: "specjalne-okazje",
-    sectionTitle: "Menu na Specjalne Okazje",
-    isPackageSection: true,
-    packages: [
-      {
-        packageId: "party-box",
-        packageName: "PARTY BOX (dla 4 osób)",
-        packagePrice: "299 zł",
-        packageImage: "/images/menu/party-box.jpg",
-        categories: [
-          {
-            categoryName: "Zawartość Party Boxa",
-            items: [
-              { id: "pb-labneh-basma", name: "Labneh by BASMA", description: "", price: "", allergens: [7, 11] },
-              { id: "pb-tabbouleh", name: "Tabbouleh", description: "", price: "", allergens: [1, 10] },
-              { id: "pb-hummus", name: "Hummus", description: "", price: "", allergens: [11] },
-              { id: "pb-olives", name: "Oliwki marynowane", description: "", price: "", allergens: [11] },
-              { id: "pb-pickles", name: "Pikle", description: "", price: "", allergens: [10] },
-              { id: "pb-hummus-bean", name: "Hummus z fasoli", description: "", price: "", allergens: [1, 11] },
-              { id: "pb-tabbouleh-basma", name: "Tabbouleh by BASMA", description: "", price: "", allergens: [1, 8, 10] },
-              { id: "pb-baba-ghanoush", name: "Baba Ghanoush", description: "", price: "", allergens: [7, 11] },
-              { id: "pb-muhammara", name: "Muhammara", description: "", price: "", allergens: [8] },
-              { id: "pb-fattoush", name: "Sałatka fattoush", description: "", price: "", allergens: [1, 7, 11] },
-              { id: "pb-wrap-falafel", name: "Mini Wrapy z falafelem 4x", description: "", price: "", allergens: [1, 11] },
-              { id: "pb-wrap-eggplant", name: "Mini Wrapy z bakłażanem 4x", description: "", price: "", allergens: [1, 11] },
-              { id: "pb-simit-chicken", name: "Simit z kurczakiem taouk 4x", description: "", price: "", allergens: [1, 3, 7, 10, 11] },
-              { id: "pb-bread-sticks", name: "Paluchy chlebowe 4x", description: "", price: "", allergens: [1] },
-            ],
-          },
-        ],
-      },
-      {
-        packageId: "package-1",
-        packageName: "MEZZE & GRILL - PAKIET 1",
-        packagePrice: "159 zł / osoba",
-        packageDescription: "Cena: 159 ZŁ / OSOBA",
-        categories: [
-          {
-            categoryName: "Przystawki (Serwowane z pitą, do wyboru 5)",
-            items: [
-              {
-                id: "p1-hummus",
-                name: "HUMMUS",
-                description: "",
-                price: "",
-              },
-              {
-                id: "p1-tzatziki",
-                name: "TZATZIKI",
-                description: "",
-                price: "",
-              },
-              {
-                id: "p1-labneh",
-                name: "LABNEH",
-                description: "",
-                price: "",
-              },
-              {
-                id: "p1-labneh-sweet",
-                name: "LABNEH NA SŁODKO",
-                description: "",
-                price: "",
-              },
-              {
-                id: "p1-hummus-white-bean",
-                name: "HUMMUS Z BIAŁEJ FASOLI",
-                description: "",
-                price: "",
-              },
-              {
-                id: "p1-olives",
-                name: "MARYNOWANE OLIWKI",
-                description: "",
-                price: "",
-              },
-              {
-                id: "p1-tabbouleh",
-                name: "TABBOULEH",
-                description: "",
-                price: "",
-              },
-              {
-                id: "p1-grilled-pepper",
-                name: "GRILLOWANA PAPRYKA NA LABNEH",
-                description: "",
-                price: "",
-              },
-              {
-                id: "p1-labneh-basma",
-                name: "LABNEH BY BASMA",
-                description: "",
-                price: "",
-              },
-              {
-                id: "p1-muhammara",
-                name: "MUHAMMARA",
-                description: "",
-                price: "",
-              },
-              {
-                id: "p1-baba-ghanoush",
-                name: "BABA GHANOUSH",
-                description: "",
-                price: "",
-              },
-              {
-                id: "p1-whipped-feta",
-                name: "UBIJANA FETA",
-                description: "",
-                price: "",
-              },
-            ],
-          },
-          {
-            categoryName: "Zupa (Do wyboru 1)",
-            items: [
-              {
-                id: "p1-soup-header-meat",
-                name: "Mięsne:",
-                description: "",
-                price: "",
-              },
-              {
-                id: "p1-shorbat-kibbeh",
-                name: "SHORBAT KIBBEH",
-                description: "Rosół wołowy z pulpecikami",
-                price: "",
-              },
-              {
-                id: "p1-harira",
-                name: "HARIRA",
-                description: "Zupa z wołowiną, cieciorką i pomidorami",
-                price: "",
-              },
-              {
-                id: "p1-hafira",
-                name: "HAFIRA",
-                description: "Arabska zupa z kurczakiem i ciecierzycą",
-                price: "",
-              },
-              {
-                id: "p1-soup-header-veg",
-                name: "Wegetariańskie:",
-                description: "",
-                price: "",
-              },
-              {
-                id: "p1-pumpkin-cream",
-                name: "KREM DYNIOWY Z TAHINI I HARISSĄ",
-                description: "",
-                price: "",
-              },
-              {
-                id: "p1-sweet-potato-cream",
-                name: "KREM Z BATATA",
-                description: "",
-                price: "",
-              },
-            ],
-          },
-          {
-            categoryName: "Dania (Do wyboru 1 mięsne lub 1 wegetariańskie na osobę)",
-            items: [
-              {
-                id: "p1-main-header-meat",
-                name: "Mięsne:",
-                description: "",
-                price: "",
-              },
-              {
-                id: "p1-adana-kebab",
-                name: "ADANA KEBAB",
-                description: "Serwowany na picie, z ryżem, sałatką arabską i labneh",
-                price: "",
-              },
-              {
-                id: "p1-chicken-touk",
-                name: "KURCZAK TOUK Z HARISSĄ",
-                description: "Podawany z ryżem basmati z pomidorami lub frytkami z sumakiem, cytryną kiszoną oraz sałatką arabską lub mixem pikli",
-                price: "",
-              },
-              {
-                id: "p1-chicken-joojeh",
-                name: "KURCZAK SHISH JOOJEH",
-                description: "Podawany z ryżem basmati z pomidorami lub frytkami z sumakiem oraz z sałatką arabską lub mixem pikli",
-                price: "",
-              },
-              {
-                id: "p1-main-header-veg",
-                name: "Wegetariańskie:",
-                description: "",
-                price: "",
-              },
-              {
-                id: "p1-cauliflower",
-                name: "KALAFIOR PANIEROWANY",
-                description: "Polany sosem tahini i pilpelchuma, podawany z bulgurem z warzywami oraz piklowanym kalafiorem",
-                price: "",
-              },
-              {
-                id: "p1-grilled-aubergine",
-                name: "GRILLOWANY BAKŁAŻAN",
-                description: "Serwowany na hummusie z fasoli",
-                price: "",
-              },
-            ],
-          },
-          {
-            categoryName: "Deser",
-            items: [
-              {
-                id: "p1-dubai-dream",
-                name: "DUBAJSKI SEN",
-                description: "Ciasto czekoladowe podane na chrupiącym kataifi, z gałką lodów pistacjowych i sosem czekoladowym",
-                price: "",
-              },
-              {
-                id: "p1-cheesecake",
-                name: "SERNIK Z LABNEH",
-                description: "Serwowany z melasą daktylową",
-                price: "",
-              },
-              {
-                id: "p1-date-cake",
-                name: "CIASTO DAKTYLOWE",
-                description: "Podawane ze śmietanką tahini, lodami waniliowymi i chipsem z ciasta filo",
-                price: "",
-              },
-              {
-                id: "p1-ice-cream-duo",
-                name: "LODY DUO (PISTACJA, WANILIA)",
-                description: "W polewie z belgijskiej czekolady, z konfiturą z pomarańczy i ciastem kataifi",
-                price: "",
-              },
-            ],
-          },
-        ],
-      },
-      {
-        packageId: "package-2",
-        packageName: "MEZZE & GRILL - PAKIET 2",
-        packagePrice: "299 zł / osoba",
-        packageDescription: "Cena: 299 ZŁ / OSOBA",
-        categories: [
-          {
-            categoryName: "Przystawki (Serwowane z pitą, do wyboru 7)",
-            items: [
-              {
-                id: "p2-hummus",
-                name: "HUMMUS",
-                description: "",
-                price: "",
-              },
-              {
-                id: "p2-tzatziki",
-                name: "TZATZIKI",
-                description: "",
-                price: "",
-              },
-              {
-                id: "p2-labneh",
-                name: "LABNEH",
-                description: "",
-                price: "",
-              },
-              {
-                id: "p2-labneh-sweet",
-                name: "LABNEH NA SŁODKO",
-                description: "",
-                price: "",
-              },
-              {
-                id: "p2-hummus-white-bean",
-                name: "HUMMUS Z BIAŁEJ FASOLI",
-                description: "",
-                price: "",
-              },
-              {
-                id: "p2-olives",
-                name: "MARYNOWANE OLIWKI",
-                description: "",
-                price: "",
-              },
-              {
-                id: "p2-tabbouleh",
-                name: "TABBOULEH",
-                description: "",
-                price: "",
-              },
-              {
-                id: "p2-grilled-pepper",
-                name: "GRILLOWANA PAPRYKA NA LABNEH",
-                description: "",
-                price: "",
-              },
-              {
-                id: "p2-labneh-basma",
-                name: "LABNEH BY BASMA",
-                description: "",
-                price: "",
-              },
-              {
-                id: "p2-muhammara",
-                name: "MUHAMMARA",
-                description: "",
-                price: "",
-              },
-              {
-                id: "p2-baba-ghanoush",
-                name: "BABA GHANOUSH",
-                description: "",
-                price: "",
-              },
-              {
-                id: "p2-whipped-feta",
-                name: "UBIJANA FETA",
-                description: "",
-                price: "",
-              },
-              {
-                id: "p2-pita",
-                name: "PITA",
-                description: "",
-                price: "",
-              },
-            ],
-          },
-          {
-            categoryName: "Zupa (Do wyboru 1)",
-            items: [
-              {
-                id: "p2-soup-header-meat",
-                name: "Mięsne:",
-                description: "",
-                price: "",
-              },
-              {
-                id: "p2-shorbat-kibbeh",
-                name: "SHORBAT KIBBEH",
-                description: "Rosół wołowy z pulpecikami",
-                price: "",
-              },
-              {
-                id: "p2-harira",
-                name: "HARIRA",
-                description: "Zupa z wołowiną, cieciorką i pomidorami",
-                price: "",
-              },
-              {
-                id: "p2-hafira",
-                name: "HAFIRA",
-                description: "Arabska zupa z kurczakiem i ciecierzycą",
-                price: "",
-              },
-              {
-                id: "p2-soup-header-veg",
-                name: "Wegetariańskie:",
-                description: "",
-                price: "",
-              },
-              {
-                id: "p2-pumpkin-cream",
-                name: "KREM DYNIOWY Z TAHINI I HARISSĄ",
-                description: "",
-                price: "",
-              },
-              {
-                id: "p2-sweet-potato-cream",
-                name: "KREM Z BATATA",
-                description: "",
-                price: "",
-              },
-            ],
-          },
-          {
-            categoryName: "Przystawka Serwowana (Do wyboru 1 mięsna lub 1 wegetariańska na osobę)",
-            items: [
-              {
-                id: "p2-served-header-meat",
-                name: "Mięsna:",
-                description: "",
-                price: "",
-              },
-              {
-                id: "p2-carpaccio-beef",
-                name: "CARPACCIO WOŁOWE",
-                description: "Podawane z labneh, orzeszkami pini, okrą, oliwą ziołową i smażoną pitą",
-                price: "",
-              },
-              {
-                id: "p2-beef-tartare",
-                name: "TATAR Z POLĘDWICY WOŁOWEJ",
-                description: "Serwowany z żółtkiem, cebulą, piklowanym ogórkiem, skórką z cytryny i pomarańczy, labneh oraz smażoną pitą",
-                price: "",
-              },
-              {
-                id: "p2-served-header-veg",
-                name: "Wegetariańska:",
-                description: "",
-                price: "",
-              },
-              {
-                id: "p2-carpaccio-beet",
-                name: "CARPACCIO Z PIECZONEGO W SOLI BURAKA",
-                description: "Podawane z labneh, orzechową dukkah, melasą z granatu, miodem i ziołową sałatką",
-                price: "",
-              },
-              {
-                id: "p2-aubergine-rolls",
-                name: "ROLADKI Z GRILLOWANEGO BAKŁAŻANA I RUKOLA",
-                description: "Serwowane z labneh orzechowym z czosnkiem confit",
-                price: "",
-              },
-            ],
-          },
-          {
-            categoryName: "Dania (Do wyboru 1 mięsne lub 1 wegetariańskie na osobę)",
-            items: [
-              {
-                id: "p2-main-header-meat",
-                name: "Mięsne:",
-                description: "",
-                price: "",
-              },
-              {
-                id: "p2-lamb-comber",
-                name: "COMBER JAGNIĘCY",
-                description: "Serwowany z ryżem oraz sałatką ziołową z fenkułem i granatem",
-                price: "",
-              },
-              {
-                id: "p2-beef-steak",
-                name: "STEK Z POLĘDWICY WOŁOWEJ",
-                description: "Podawany z ziemniakami latkes, szaszłykiem warzywnym, labneh i sosem zoug",
-                price: "",
-              },
-              {
-                id: "p2-meat-trio",
-                name: "TRIO MIĘS (ADANA KEBAB, KOFTA JAGNIĘCA, KURCZAK)",
-                description: "Podawane z pieczonym ziemniakiem z zatarem i sumakiem, oraz piklowaną kapustą i ogórkiem",
-                price: "",
-              },
-              {
-                id: "p2-main-header-veg",
-                name: "Wegetariańskie:",
-                description: "",
-                price: "",
-              },
-              {
-                id: "p2-cauliflower",
-                name: "KALAFIOR PANIEROWANY",
-                description: "Polany sosem tahini i pilpelchuma, podawany z bulgurem z warzywami oraz piklowanym kalafiorem",
-                price: "",
-              },
-              {
-                id: "p2-grilled-aubergine",
-                name: "GRILLOWANY BAKŁAŻAN",
-                description: "Serwowany na hummusie z fasoli",
-                price: "",
-              },
-            ],
-          },
-          {
-            categoryName: "Deser",
-            items: [
-              {
-                id: "p2-dubai-dream",
-                name: "DUBAJSKI SEN",
-                description: "Ciasto czekoladowe podane na chrupiącym kataifi, z gałką lodów pistacjowych i sosem czekoladowym",
-                price: "",
-              },
-              {
-                id: "p2-cheesecake",
-                name: "SERNIK Z LABNEH",
-                description: "Serwowany z melasą daktylową",
-                price: "",
-              },
-              {
-                id: "p2-date-cake",
-                name: "CIASTO DAKTYLOWE",
-                description: "Podawane ze śmietanką tahini, lodami waniliowymi i chipsem z ciasta filo",
-                price: "",
-              },
-              {
-                id: "p2-ice-cream-duo",
-                name: "LODY DUO (PISTACJA, WANILIA)",
-                description: "W polewie z belgijskiej czekolady, z konfiturą z pomarańczy i ciastem kataifi",
-                price: "",
-              },
-            ],
-          },
-        ],
-      },
-    ],
-    categories: [
-      {
-        categoryName: "Napoje - Opcjonalny Pakiet Wybranych Napojów Bezalkoholowych",
-        items: [
-          {
-            id: "drinks-soft",
-            name: "Pakiet Napojów Bezalkoholowych",
-            description: "Woda gazowana/niegazowana z miętą i cytryną - bez limitu • Lemoniada homemade - bez limitu • Cola 1L / Sprite 1L - bez limitu • Kawa / Herbata - bez limitu",
-            price: "49 zł / osoba",
-          },
-        ],
-      },
-      {
-        categoryName: "Napoje - Opcjonalny Pakiet Soft Open Bar",
-        items: [
-          {
-            id: "drinks-soft-bar",
-            name: "Pakiet Soft Open Bar",
-            description: "Woda gazowana/niegazowana z miętą i cytryną - bez limitu • Lemoniada homemade - bez limitu • Cola 1L / Sprite 1L - bez limitu • Kawa / Herbata - bez limitu • Piwo rzemieślnicze - bez limitu • Wino domu białe / czerwone w karafkach - bez limitu",
-            price: "139 zł / osoba",
-          },
-        ],
-      },
-      {
-        categoryName: "Napoje - Opcjonalny Pakiet Open Bar",
-        items: [
-          {
-            id: "drinks-open-bar",
-            name: "Pakiet Open Bar",
-            description: "Woda gazowana/niegazowana z miętą i cytryną - bez limitu • Lemoniada homemade - bez limitu • Cola 1L / Sprite 1L - bez limitu • Kawa / Herbata - bez limitu • Wszystkie alkohole - bez limitu",
-            price: "249 zł / osoba",
-          },
-        ],
-      },
-      {
-        categoryName: "Uwagi",
-        items: [
-          {
-            id: "notes-deposit",
-            name: "Zaliczka",
-            description: "Warunkiem potwierdzenia rezerwacji jest wpłacenie zaliczki w kwocie 50% wartości zamówienia",
-            price: "",
-          },
-          {
-            id: "notes-duration",
-            name: "Czas Rezerwacji",
-            description: "Rezerwacja obejmuje 4 godziny, wydłużenie rezerwacji wiąże się z kosztami (500 zł - każda kolejna rozpoczęta godzina)",
-            price: "",
-          },
-          {
-            id: "notes-service",
-            name: "Opłata Serwisowa",
-            description: "Do grup od 10 osób doliczamy opłatę za serwis w wysokości 10 zł/os netto (plus VAT 23%)",
-            price: "",
-          },
-        ],
-      },
-    ],
-  },
 ]
+
+export const specialOccasionsData: MenuCategory = {
+  id: "specjalne-okazje",
+  sectionTitle: "Menu na Specjalne Okazje",
+  isPackageSection: true,
+  packages: [
+    {
+      packageId: "party-box",
+      packageName: "PARTY BOX (dla 4 osób)",
+      packagePrice: "299 zł",
+      packageImage: "/images/menu/party-box.jpg",
+      categories: [
+        {
+          categoryName: "Zawartość Party Boxa",
+          items: [
+            { id: "pb-labneh-basma", name: "Labneh by BASMA", description: "", price: "", allergens: [7, 11] },
+            { id: "pb-tabbouleh", name: "Tabbouleh", description: "", price: "", allergens: [1, 10] },
+            { id: "pb-hummus", name: "Hummus", description: "", price: "", allergens: [11] },
+            { id: "pb-olives", name: "Oliwki marynowane", description: "", price: "", allergens: [11] },
+            { id: "pb-pickles", name: "Pikle", description: "", price: "", allergens: [10] },
+            { id: "pb-hummus-bean", name: "Hummus z fasoli", description: "", price: "", allergens: [1, 11] },
+            { id: "pb-tabbouleh-basma", name: "Tabbouleh by BASMA", description: "", price: "", allergens: [1, 8, 10] },
+            { id: "pb-baba-ghanoush", name: "Baba Ghanoush", description: "", price: "", allergens: [7, 11] },
+            { id: "pb-muhammara", name: "Muhammara", description: "", price: "", allergens: [8] },
+            { id: "pb-fattoush", name: "Sałatka fattoush", description: "", price: "", allergens: [1, 7, 11] },
+            { id: "pb-wrap-falafel", name: "Mini Wrapy z falafelem 4x", description: "", price: "", allergens: [1, 11] },
+            { id: "pb-wrap-eggplant", name: "Mini Wrapy z bakłażanem 4x", description: "", price: "", allergens: [1, 11] },
+            { id: "pb-simit-chicken", name: "Simit z kurczakiem taouk 4x", description: "", price: "", allergens: [1, 3, 7, 10, 11] },
+            { id: "pb-bread-sticks", name: "Paluchy chlebowe 4x", description: "", price: "", allergens: [1] },
+          ],
+        },
+      ],
+    },
+    {
+      packageId: "package-1",
+      packageName: "MEZZE & GRILL - PAKIET 1",
+      packagePrice: "159 zł / osoba",
+      packageDescription: "Cena: 159 ZŁ / OSOBA",
+      categories: [
+        {
+          categoryName: "Przystawki (Serwowane z pitą, do wyboru 5)",
+          items: [
+            { id: "p1-hummus", name: "HUMMUS", description: "", price: "" },
+            { id: "p1-tzatziki", name: "TZATZIKI", description: "", price: "" },
+            { id: "p1-labneh", name: "LABNEH", description: "", price: "" },
+            { id: "p1-labneh-sweet", name: "LABNEH NA SŁODKO", description: "", price: "" },
+            { id: "p1-hummus-white-bean", name: "HUMMUS Z BIAŁEJ FASOLI", description: "", price: "" },
+            { id: "p1-olives", name: "MARYNOWANE OLIWKI", description: "", price: "" },
+            { id: "p1-tabbouleh", name: "TABBOULEH", description: "", price: "" },
+            { id: "p1-grilled-pepper", name: "GRILLOWANA PAPRYKA NA LABNEH", description: "", price: "" },
+            { id: "p1-labneh-basma", name: "LABNEH BY BASMA", description: "", price: "" },
+            { id: "p1-muhammara", name: "MUHAMMARA", description: "", price: "" },
+            { id: "p1-baba-ghanoush", name: "BABA GHANOUSH", description: "", price: "" },
+            { id: "p1-whipped-feta", name: "UBIJANA FETA", description: "", price: "" },
+          ],
+        },
+        {
+          categoryName: "Zupa (Do wyboru 1)",
+          items: [
+            { id: "p1-soup-header-meat", name: "Mięsne:", description: "", price: "" },
+            { id: "p1-shorbat-kibbeh", name: "SHORBAT KIBBEH", description: "Rosół wołowy z pulpecikami", price: "" },
+            { id: "p1-harira", name: "HARIRA", description: "Zupa z wołowiną, cieciorką i pomidorami", price: "" },
+            { id: "p1-hafira", name: "HAFIRA", description: "Arabska zupa z kurczakiem i ciecierzycą", price: "" },
+            { id: "p1-soup-header-veg", name: "Wegetariańskie:", description: "", price: "" },
+            { id: "p1-pumpkin-cream", name: "KREM DYNIOWY Z TAHINI I HARISSĄ", description: "", price: "" },
+            { id: "p1-sweet-potato-cream", name: "KREM Z BATATA", description: "", price: "" },
+          ],
+        },
+        {
+          categoryName: "Dania (Do wyboru 1 mięsne lub 1 wegetariańskie na osobę)",
+          items: [
+            { id: "p1-main-header-meat", name: "Mięsne:", description: "", price: "" },
+            { id: "p1-adana-kebab", name: "ADANA KEBAB", description: "Serwowany na picie, z ryżem, sałatką arabską i labneh", price: "" },
+            { id: "p1-chicken-touk", name: "KURCZAK TOUK Z HARISSĄ", description: "Podawany z ryżem basmati z pomidorami lub frytkami z sumakiem, cytryną kiszoną oraz sałatką arabską lub mixem pikli", price: "" },
+            { id: "p1-chicken-joojeh", name: "KURCZAK SHISH JOOJEH", description: "Podawany z ryżem basmati z pomidorami lub frytkami z sumakiem oraz z sałatką arabską lub mixem pikli", price: "" },
+            { id: "p1-main-header-veg", name: "Wegetariańskie:", description: "", price: "" },
+            { id: "p1-cauliflower", name: "KALAFIOR PANIEROWANY", description: "Polany sosem tahini i pilpelchuma, podawany z bulgurem z warzywami oraz piklowanym kalafiorem", price: "" },
+            { id: "p1-grilled-aubergine", name: "GRILLOWANY BAKŁAŻAN", description: "Serwowany na hummusie z fasoli", price: "" },
+          ],
+        },
+        {
+          categoryName: "Deser",
+          items: [
+            { id: "p1-dubai-dream", name: "DUBAJSKI SEN", description: "Ciasto czekoladowe podane na chrupiącym kataifi, z gałką lodów pistacjowych i sosem czekoladowym", price: "" },
+            { id: "p1-cheesecake", name: "SERNIK Z LABNEH", description: "Serwowany z melasą daktylową", price: "" },
+            { id: "p1-date-cake", name: "CIASTO DAKTYLOWE", description: "Podawane ze śmietanką tahini, lodami waniliowymi i chipsem z ciasta filo", price: "" },
+            { id: "p1-ice-cream-duo", name: "LODY DUO (PISTACJA, WANILIA)", description: "W polewie z belgijskiej czekolady, z konfiturą z pomarańczy i ciastem kataifi", price: "" },
+          ],
+        },
+      ],
+    },
+    {
+      packageId: "package-2",
+      packageName: "MEZZE & GRILL - PAKIET 2",
+      packagePrice: "299 zł / osoba",
+      packageDescription: "Cena: 299 ZŁ / OSOBA",
+      categories: [
+        {
+          categoryName: "Przystawki (Serwowane z pitą, do wyboru 7)",
+          items: [
+            { id: "p2-hummus", name: "HUMMUS", description: "", price: "" },
+            { id: "p2-tzatziki", name: "TZATZIKI", description: "", price: "" },
+            { id: "p2-labneh", name: "LABNEH", description: "", price: "" },
+            { id: "p2-labneh-sweet", name: "LABNEH NA SŁODKO", description: "", price: "" },
+            { id: "p2-hummus-white-bean", name: "HUMMUS Z BIAŁEJ FASOLI", description: "", price: "" },
+            { id: "p2-olives", name: "MARYNOWANE OLIWKI", description: "", price: "" },
+            { id: "p2-tabbouleh", name: "TABBOULEH", description: "", price: "" },
+            { id: "p2-grilled-pepper", name: "GRILLOWANA PAPRYKA NA LABNEH", description: "", price: "" },
+            { id: "p2-labneh-basma", name: "LABNEH BY BASMA", description: "", price: "" },
+            { id: "p2-muhammara", name: "MUHAMMARA", description: "", price: "" },
+            { id: "p2-baba-ghanoush", name: "BABA GHANOUSH", description: "", price: "" },
+            { id: "p2-whipped-feta", name: "UBIJANA FETA", description: "", price: "" },
+            { id: "p2-pita", name: "PITA", description: "", price: "" },
+          ],
+        },
+        {
+          categoryName: "Zupa (Do wyboru 1)",
+          items: [
+            { id: "p2-soup-header-meat", name: "Mięsne:", description: "", price: "" },
+            { id: "p2-shorbat-kibbeh", name: "SHORBAT KIBBEH", description: "Rosół wołowy z pulpecikami", price: "" },
+            { id: "p2-harira", name: "HARIRA", description: "Zupa z wołowiną, cieciorką i pomidorami", price: "" },
+            { id: "p2-hafira", name: "HAFIRA", description: "Arabska zupa z kurczakiem i ciecierzycą", price: "" },
+            { id: "p2-soup-header-veg", name: "Wegetariańskie:", description: "", price: "" },
+            { id: "p2-pumpkin-cream", name: "KREM DYNIOWY Z TAHINI I HARISSĄ", description: "", price: "" },
+            { id: "p2-sweet-potato-cream", name: "KREM Z BATATA", description: "", price: "" },
+          ],
+        },
+        {
+          categoryName: "Przystawka Serwowana (Do wyboru 1 mięsna lub 1 wegetariańska na osobę)",
+          items: [
+            { id: "p2-served-header-meat", name: "Mięsna:", description: "", price: "" },
+            { id: "p2-carpaccio-beef", name: "CARPACCIO WOŁOWE", description: "Podawane z labneh, orzeszkami pini, okrą, oliwą ziołową i smażoną pitą", price: "" },
+            { id: "p2-beef-tartare", name: "TATAR Z POLĘDWICY WOŁOWEJ", description: "Serwowany z żółtkiem, cebulą, piklowanym ogórkiem, skórką z cytryny i pomarańczy, labneh oraz smażoną pitą", price: "" },
+            { id: "p2-served-header-veg", name: "Wegetariańska:", description: "", price: "" },
+            { id: "p2-carpaccio-beet", name: "CARPACCIO Z PIECZONEGO W SOLI BURAKA", description: "Podawane z labneh, orzechową dukkah, melasą z granatu, miodem i ziołową sałatką", price: "" },
+            { id: "p2-aubergine-rolls", name: "ROLADKI Z GRILLOWANEGO BAKŁAŻANA I RUKOLA", description: "Serwowane z labneh orzechowym z czosnkiem confit", price: "" },
+          ],
+        },
+        {
+          categoryName: "Dania (Do wyboru 1 mięsne lub 1 wegetariańskie na osobę)",
+          items: [
+            { id: "p2-main-header-meat", name: "Mięsne:", description: "", price: "" },
+            { id: "p2-lamb-comber", name: "COMBER JAGNIĘCY", description: "Serwowany z ryżem oraz sałatką ziołową z fenkułem i granatem", price: "" },
+            { id: "p2-beef-steak", name: "STEK Z POLĘDWICY WOŁOWEJ", description: "Podawany z ziemniakami latkes, szaszłykiem warzywnym, labneh i sosem zoug", price: "" },
+            { id: "p2-meat-trio", name: "TRIO MIĘS (ADANA KEBAB, KOFTA JAGNIĘCA, KURCZAK)", description: "Podawane z pieczonym ziemniakiem z zatarem i sumakiem, oraz piklowaną kapustą i ogórkiem", price: "" },
+            { id: "p2-main-header-veg", name: "Wegetariańskie:", description: "", price: "" },
+            { id: "p2-cauliflower", name: "KALAFIOR PANIEROWANY", description: "Polany sosem tahini i pilpelchuma, podawany z bulgurem z warzywami oraz piklowanym kalafiorem", price: "" },
+            { id: "p2-grilled-aubergine", name: "GRILLOWANY BAKŁAŻAN", description: "Serwowany na hummusie z fasoli", price: "" },
+          ],
+        },
+        {
+          categoryName: "Deser",
+          items: [
+            { id: "p2-dubai-dream", name: "DUBAJSKI SEN", description: "Ciasto czekoladowe podane na chrupiącym kataifi, z gałką lodów pistacjowych i sosem czekoladowym", price: "" },
+            { id: "p2-cheesecake", name: "SERNIK Z LABNEH", description: "Serwowany z melasą daktylową", price: "" },
+            { id: "p2-date-cake", name: "CIASTO DAKTYLOWE", description: "Podawane ze śmietanką tahini, lodami waniliowymi i chipsem z ciasta filo", price: "" },
+            { id: "p2-ice-cream-duo", name: "LODY DUO (PISTACJA, WANILIA)", description: "W polewie z belgijskiej czekolady, z konfiturą z pomarańczy i ciastem kataifi", price: "" },
+          ],
+        },
+      ],
+    },
+  ],
+  categories: [
+    {
+      categoryName: "Napoje - Opcjonalny Pakiet Wybranych Napojów Bezalkoholowych",
+      items: [
+        { id: "drinks-soft", name: "Pakiet Napojów Bezalkoholowych", description: "Woda gazowana/niegazowana z miętą i cytryną - bez limitu • Lemoniada homemade - bez limitu • Cola 1L / Sprite 1L - bez limitu • Kawa / Herbata - bez limitu", price: "49 zł / osoba" },
+      ],
+    },
+    {
+      categoryName: "Napoje - Opcjonalny Pakiet Soft Open Bar",
+      items: [
+        { id: "drinks-soft-bar", name: "Pakiet Soft Open Bar", description: "Woda gazowana/niegazowana z miętą i cytryną - bez limitu • Lemoniada homemade - bez limitu • Cola 1L / Sprite 1L - bez limitu • Kawa / Herbata - bez limitu • Piwo rzemieślnicze - bez limitu • Wino domu białe / czerwone w karafkach - bez limitu", price: "139 zł / osoba" },
+      ],
+    },
+    {
+      categoryName: "Napoje - Opcjonalny Pakiet Open Bar",
+      items: [
+        { id: "drinks-open-bar", name: "Pakiet Open Bar", description: "Woda gazowana/niegazowana z miętą i cytryną - bez limitu • Lemoniada homemade - bez limitu • Cola 1L / Sprite 1L - bez limitu • Kawa / Herbata - bez limitu • Wszystkie alkohole - bez limitu", price: "249 zł / osoba" },
+      ],
+    },
+    {
+      categoryName: "Uwagi",
+      items: [
+        { id: "notes-deposit", name: "Zaliczka", description: "Warunkiem potwierdzenia rezerwacji jest wpłacenie zaliczki w kwocie 50% wartości zamówienia", price: "" },
+        { id: "notes-duration", name: "Czas Rezerwacji", description: "Rezerwacja obejmuje 4 godziny, wydłużenie rezerwacji wiąże się z kosztami (500 zł - każda kolejna rozpoczęta godzina)", price: "" },
+        { id: "notes-service", name: "Opłata Serwisowa", description: "Do grup od 10 osób doliczamy opłatę za serwis w wysokości 10 zł/os netto (plus VAT 23%)", price: "" },
+      ],
+    },
+  ],
+}
 
 export const allergenMap: { [key: number]: string } = {
   1: "Gluten",

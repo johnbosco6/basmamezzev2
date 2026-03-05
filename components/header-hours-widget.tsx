@@ -94,21 +94,27 @@ export function HeaderHoursWidget() {
   }
 
   return (
-    <div className="backdrop-blur-md bg-white/15 border border-white/25 rounded-full px-4 py-2 shadow-lg">
-      <div className="flex items-center gap-3">
-        <Clock className="h-4 w-4 text-[#BA9D76]" />
-        <div className="flex flex-col">
-          <div className="flex items-center gap-2">
-            <span className={`text-xs font-mono text-white ${archivo.className}`}>{formatTime(currentTime)}</span>
+    <div className="relative group">
+      <div
+        className="backdrop-blur-md bg-white/15 border border-white/20 shadow-lg px-3 py-1.5 flex items-center gap-2 transition-all duration-300 hover:bg-white/25"
+        style={{
+          clipPath: "polygon(0% 0%, 100% 0%, 100% 85%, 55% 85%, 50% 100%, 45% 85%, 0% 85%)",
+          paddingBottom: "10px"
+        }}
+      >
+        <Clock className="h-3 w-3 text-[#BA9D76]" />
+        <div className="flex flex-col leading-tight">
+          <div className="flex items-center gap-1.5">
+            <span className={`text-[10px] font-mono text-white ${archivo.className}`}>{formatTime(currentTime)}</span>
             <div className={`flex items-center gap-1 ${archivo.className}`}>
-              <div className={`w-2 h-2 rounded-full ${status.isOpen ? "bg-green-400" : "bg-red-400"}`} />
-              <span className={`text-xs font-light ${status.isOpen ? "text-green-400" : "text-red-400"}`}>
+              <div className={`w-1.5 h-1.5 rounded-full ${status.isOpen ? "bg-green-400" : "bg-red-400"}`} />
+              <span className={`text-[9px] font-bold ${status.isOpen ? "text-green-400" : "text-red-400"}`}>
                 {status.isOpen ? "OTWARTE" : "ZAMKNIĘTE"}
               </span>
             </div>
           </div>
           {!status.isOpen && status.nextOpening && (
-            <span className={`text-xs text-white/70 font-light ${archivo.className}`}>
+            <span className={`text-[9px] text-white/70 font-light ${archivo.className}`}>
               Otwieramy: {status.nextOpening}
             </span>
           )}

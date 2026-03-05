@@ -95,13 +95,8 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Hours Widget Below Navigation */}
-        <div className="container mx-auto px-4 pb-3 flex justify-center">
-          <HeaderHoursWidget />
-        </div>
-
         {/* Secondary Navigation */}
-        <div className="container mx-auto px-4 pb-4 flex justify-center">
+        <div className="container mx-auto px-4 pb-2 flex justify-center">
           <nav className="flex items-center justify-center gap-2 md:gap-6 backdrop-blur-md bg-white/15 border border-white/25 rounded-full px-2 md:px-6 py-3 shadow-lg">
             <Link
               href="/special-events"
@@ -125,6 +120,11 @@ export default function HomePage() {
               <span className={`text-xs font-light ${archivo.className}`}>Newsletter</span>
             </Link>
           </nav>
+        </div>
+
+        {/* Hours Widget Below Secondary Navigation */}
+        <div className="container mx-auto px-4 pb-2 flex justify-center">
+          <HeaderHoursWidget />
         </div>
       </header>
 

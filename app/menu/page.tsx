@@ -31,7 +31,6 @@ const IconMap = {
   dodatki: Utensils,
   napoje: Wine,
   alkohole: Wine,
-  "specjalne-okazje": Calendar,
 }
 
 export default function MenuPage() {
