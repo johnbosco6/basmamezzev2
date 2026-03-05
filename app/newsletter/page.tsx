@@ -5,7 +5,8 @@ import Link from "next/link"
 import Image from "next/image"
 import { client, urlFor } from "@/lib/sanity"
 import { PortableText } from "@portabletext/react"
-import { Home, BookOpen, MessageCircle, Megaphone, Phone, ShoppingBag, Calendar } from "lucide-react"
+import { Megaphone } from "lucide-react"
+import { MainNavbar } from "@/components/main-navbar"
 import { Archivo } from "next/font/google"
 import { Card, CardContent } from "@/components/ui/card"
 
@@ -43,39 +44,7 @@ export default function NewsletterPage() {
 
     return (
         <div className="min-h-screen bg-white text-gray-900">
-            {/* Header */}
-            <header className="sticky top-0 z-50 backdrop-blur-md bg-[#597FB1]/80 border-b border-white/10">
-                <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-                    <div className="flex-1 flex justify-start"></div>
-                    <nav className="flex-1 flex items-center justify-center gap-6 backdrop-blur-md bg-white/15 border border-white/25 rounded-full px-6 py-3 shadow-lg">
-                        <Link href="/" className="flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/20 hover:shadow-lg text-white/80 hover:text-[#BA9D76] group">
-                            <Home className="h-4 w-4 transition-colors duration-300" />
-                            <span className={`text-xs font-light ${archivo.className}`}>Strona Główna</span>
-                        </Link>
-                        <Link href="/menu" className="flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/20 hover:shadow-lg text-white/80 hover:text-[#BA9D76] group">
-                            <BookOpen className="h-4 w-4 transition-colors duration-300" />
-                            <span className={`text-xs font-light ${archivo.className}`}>Menu</span>
-                        </Link>
-                        <Link href="/order" className="flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/20 hover:shadow-lg text-white/80 hover:text-[#BA9D76] group">
-                            <ShoppingBag className="h-4 w-4 transition-colors duration-300" />
-                            <span className={`text-xs font-light ${archivo.className}`}>Zamów Online</span>
-                        </Link>
-                        <Link href="/special-events" className="flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/20 hover:shadow-lg text-white/80 hover:text-[#BA9D76] group">
-                            <Calendar className="h-4 w-4 transition-colors duration-300" />
-                            <span className={`text-xs font-light ${archivo.className}`}>Eventy</span>
-                        </Link>
-                        <Link href="/faq" className="flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/20 hover:shadow-lg text-white/80 hover:text-[#BA9D76] group">
-                            <MessageCircle className="h-4 w-4 transition-colors duration-300" />
-                            <span className={`text-xs font-light ${archivo.className}`}>FAQ</span>
-                        </Link>
-                        <Link href="/#contact" className="flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/20 hover:shadow-lg text-white/80 hover:text-[#BA9D76] group">
-                            <Phone className="h-4 w-4 transition-colors duration-300" />
-                            <span className={`text-xs font-light ${archivo.className}`}>Kontakt</span>
-                        </Link>
-                    </nav>
-                    <div className="flex-1 flex justify-end"></div>
-                </div>
-            </header>
+            <MainNavbar />
 
             {/* Hero */}
             <section className="relative py-16 overflow-hidden bg-gradient-to-r from-[#BA9D76]/10 to-[#597FB1]/10">
