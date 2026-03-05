@@ -1,3 +1,4 @@
+import Link from "next/link"
 import { ArrowLeft, Phone, Mail, MapPin, Home, BookOpen, MessageCircle, Megaphone } from "lucide-react"
 import { Archivo } from "next/font/google"
 
