@@ -2,7 +2,7 @@
 import Link from "next/link"
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Home, BookOpen, MessageCircle, Utensils, Calendar, Megaphone, Phone, ChevronDown, Check } from "lucide-react"
+import { Home, BookOpen, MessageCircle, Utensils, Calendar, Megaphone, Phone, ChevronDown, Check, ShoppingBag } from "lucide-react"
 import { Archivo } from "next/font/google"
 import Image from "next/image"
 
