@@ -128,8 +128,16 @@ export const menuData: MenuCategory[] = [
         categoryName: "Zupy Sezonowe",
         items: [
           {
-            id: "seasonal-soup",
-            name: "Zupy Sezonowe",
+            id: "seasonal-soup-vege",
+            name: "Zupa Sezonowa Wegetariańska",
+            description:
+              "W ofercie restauracji znajdują się sezonowa zupa mięsna i sezonowa zupa wegetariańska. O aktualną dostępność zapytaj obsługę",
+            price: "25 zł",
+            image: "/images/menu/seasonal-soup.jpg",
+          },
+          {
+            id: "seasonal-soup-meat",
+            name: "Zupa Sezonowa Mięsna",
             description:
               "W ofercie restauracji znajdują się sezonowa zupa mięsna i sezonowa zupa wegetariańska. O aktualną dostępność zapytaj obsługę",
             price: "25 zł",
