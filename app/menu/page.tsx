@@ -2,7 +2,7 @@
 import Link from "next/link"
 import { useState, useEffect, useMemo } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Home, BookOpen, MessageCircle, Coffee, Utensils, Wine, X, Share2, ChevronUp, ChevronDown, Filter, Calendar, Megaphone, ShoppingCart, ShoppingBag, Plus, Check } from "lucide-react"
+import { Home, BookOpen, MessageCircle, Coffee, Utensils, Wine, X, Share2, ChevronUp, ChevronDown, Filter, Calendar, Megaphone, ShoppingCart, ShoppingBag, Plus, Check, Phone } from "lucide-react"
 import { Archivo } from "next/font/google"
 import Image from "next/image"
 
