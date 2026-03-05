@@ -42,7 +42,7 @@ export const menuData: MenuCategory[] = [
     sectionTitle: "Śniadania",
     categories: [
       {
-        categoryName: "Śniadania Bliskowschodnie (9:00-12:00)",
+        categoryName: "Śniadania Bliskowschodnie",
         items: [
           {
             id: "szakszuka-kofta",
