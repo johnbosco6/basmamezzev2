@@ -24,6 +24,7 @@ const archivo = Archivo({
 // Icon mapping for menu sections
 const IconMap = {
     sniadania: Coffee,
+    wrapy: Utensils,
     "mezze-talerzyki": Utensils,
     "mezze-talerze": Utensils,
     grill: Utensils,

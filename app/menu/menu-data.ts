@@ -121,6 +121,66 @@ export const menuData: MenuCategory[] = [
     ],
   },
   {
+    id: "wrapy",
+    sectionTitle: "Wrapy",
+    categories: [
+      {
+        categoryName: "Wrapy",
+        notes: "Dostępne codziennie 12:00 – 18:00",
+        items: [
+          {
+            id: "wrap-syryjski",
+            name: "Wrap Syryjski",
+            description: "Falafel, sałata, ogórek, pomidor, natka pietruszki, sos Basma",
+            price: "35 zł",
+            image: "/images/menu/wrap-syrian.jpeg",
+            allergens: [1, 11],
+          },
+          {
+            id: "wrap-jerozolimski",
+            name: "Wrap Jerozolimski",
+            description: "Bakłażan, hummus, ogórek, pomidor, cebula, sos pilpelchuma, amba",
+            price: "35 zł",
+            image: "/images/menu/wrap-jerusalem.jpeg",
+            allergens: [1, 11],
+          },
+          {
+            id: "wrap-turecki",
+            name: "Wrap Turecki",
+            description: "Adana kebab, sałata, cebula, pikle, sumak, natka pietruszki, sos toum, sos pilpelchuma",
+            price: "39 zł",
+            image: "/images/menu/wrap-turkish.jpeg",
+            allergens: [1, 3, 10],
+          },
+          {
+            id: "wrap-libanski",
+            name: "Wrap Libański",
+            description: "Kurczak taouk, sałata, papryka, pepperoni, płatki chili, natka pietruszki, sos Basma",
+            price: "39 zł",
+            image: "/images/menu/wrap-lebanese.jpeg",
+            allergens: [1, 7],
+          },
+          {
+            id: "wrap-arabski",
+            name: "Wrap Arabski",
+            description: "Szarpana jagnięcina, sałata, pikle, natka pietruszki, sos Basma",
+            price: "45 zł",
+            image: "/images/menu/wrap-arabic.jpeg",
+            allergens: [1, 10],
+          },
+          {
+            id: "wrap-perski",
+            name: "Wrap Perski",
+            description: "Kofta jagnięca, ubijana feta, sałata, pikle, natka pietruszki",
+            price: "45 zł",
+            image: "/images/menu/wrap-persian.jpeg",
+            allergens: [1, 7],
+          },
+        ],
+      },
+    ],
+  },
+  {
     id: "zupy",
     sectionTitle: "Zupy",
     categories: [
