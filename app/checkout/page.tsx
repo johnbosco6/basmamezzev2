@@ -1,17 +1,18 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useRef, useMemo } from "react"
 import { useCart } from "@/context/cart-context"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
 import {
     ArrowLeft, ShoppingBag, User, Phone, Mail, MessageSquare,
-    CheckCircle, Minus, Plus, Trash2, MapPin, Navigation, Truck,
-    Package, AlertCircle, Loader2, Home, Building2
+    CheckCircle, Minus, Plus, Trash2, MapPin, Truck,
+    Package, AlertCircle, Loader2, Home, Building2, ChevronDown, Search
 } from "lucide-react"
 import { Archivo } from "next/font/google"
 import { Button } from "@/components/ui/button"
+import { LUBLIN_STREETS } from "@/lib/lublin-streets"
 
 const archivo = Archivo({ subsets: ["latin"], weight: ["200", "400", "600", "700"], display: "swap" })
 
@@ -63,25 +64,6 @@ async function geocodeAddress(address: string): Promise<{ lat: number; lon: numb
     return null
 }
 
-// ─── Reverse geocode lat/lon → address string ─────────────────────────────────
-async function reverseGeocode(lat: number, lon: number): Promise<{ street: string; number: string; city: string; postcode: string }> {
-    try {
-        const res = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&addressdetails=1`,
-            { headers: { "Accept-Language": "pl" } }
-        )
-        const data = await res.json()
-        const addr = data.address || {}
-        return {
-            street: addr.road || addr.pedestrian || addr.street || "",
-            number: addr.house_number || "",
-            city: addr.city || addr.town || addr.village || "Lublin",
-            postcode: addr.postcode || "",
-        }
-    } catch { }
-    return { street: "", number: "", city: "", postcode: "" }
-}
-
 type OrderType = "delivery" | "pickup"
 
 interface DeliveryInfo {
@@ -115,10 +97,32 @@ export default function CheckoutPage() {
 
     // Delivery distance/fee state
     const [deliveryInfo, setDeliveryInfo] = useState<DeliveryInfo | null>(null)
-    const [detectingLocation, setDetectingLocation] = useState(false)
     const [geocodingAddress, setGeocodingAddress] = useState(false)
     const [locationError, setLocationError] = useState("")
     const [addressConfirmed, setAddressConfirmed] = useState(false)
+
+    // Street dropdown state
+    const [streetDropdownOpen, setStreetDropdownOpen] = useState(false)
+    const [streetSearch, setStreetSearch] = useState("")
+    const streetDropdownRef = useRef<HTMLDivElement>(null)
+
+    // Filter streets based on search
+    const filteredStreets = useMemo(() => {
+        if (!streetSearch.trim()) return LUBLIN_STREETS
+        const lower = streetSearch.toLowerCase()
+        return LUBLIN_STREETS.filter(s => s.toLowerCase().includes(lower))
+    }, [streetSearch])
+
+    // Close dropdown on outside click
+    useEffect(() => {
+        function handleClickOutside(e: MouseEvent) {
+            if (streetDropdownRef.current && !streetDropdownRef.current.contains(e.target as Node)) {
+                setStreetDropdownOpen(false)
+            }
+        }
+        document.addEventListener("mousedown", handleClickOutside)
+        return () => document.removeEventListener("mousedown", handleClickOutside)
+    }, [])
 
     useEffect(() => {
         if (items.length === 0 && !isSubmitting) {
@@ -127,38 +131,55 @@ export default function CheckoutPage() {
         }
     }, [items.length, isSubmitting, router])
 
-    // ── GPS-only price calculation — does NOT touch form fields ─────────────────
-    const calculateShipping = useCallback(async () => {
-        setLocationError("")
-        setDeliveryInfo(null)
-        setAddressConfirmed(false)
-
-        if (!navigator.geolocation) {
-            setLocationError("Twoja przeglądarka nie obsługuje geolokalizacji. Skontaktuj się z nami telefonicznie.")
+    // ── Auto-geocode when street + houseNumber are filled ─────────────────────
+    useEffect(() => {
+        // Only auto-calculate for delivery orders
+        if (orderType !== "delivery") return
+        // Need at least street and house number
+        if (!form.street.trim() || !form.houseNumber.trim()) {
+            setDeliveryInfo(null)
+            setAddressConfirmed(false)
+            setLocationError("")
             return
         }
-        setDetectingLocation(true)
 
-        try {
-            const position = await new Promise<GeolocationPosition>((resolve, reject) => {
-                navigator.geolocation.getCurrentPosition(resolve, reject, {
-                    timeout: 10000,
-                    enableHighAccuracy: true,
-                })
-            })
+        const debounceTimer = setTimeout(async () => {
+            setGeocodingAddress(true)
+            setLocationError("")
+            setDeliveryInfo(null)
+            setAddressConfirmed(false)
 
-            const { latitude, longitude } = position.coords
-            const km = haversineKm(RESTAURANT_LAT, RESTAURANT_LON, latitude, longitude)
+            // Build the address string
+            const addressParts = [
+                `${form.street} ${form.houseNumber}`,
+            ]
+            if (form.postcode.trim()) addressParts.push(form.postcode)
+            addressParts.push(form.city || "Lublin")
+            const fullAddress = addressParts.join(", ")
 
-            // Only update price — form fields stay exactly as customer typed
-            setDeliveryInfo({ lat: latitude, lon: longitude, distanceKm: km, fee: getDeliveryFee(km) })
-            setAddressConfirmed(true)
-        } catch {
-            setLocationError("Nie udało się obliczyć kosztu dostawy. Skontaktuj się z nami: +48 574 933 988")
-        } finally {
-            setDetectingLocation(false)
-        }
-    }, [])
+            try {
+                const result = await geocodeAddress(fullAddress)
+                if (result) {
+                    const km = haversineKm(RESTAURANT_LAT, RESTAURANT_LON, result.lat, result.lon)
+                    setDeliveryInfo({
+                        lat: result.lat,
+                        lon: result.lon,
+                        distanceKm: km,
+                        fee: getDeliveryFee(km),
+                    })
+                    setAddressConfirmed(true)
+                } else {
+                    setLocationError("Nie udało się znaleźć podanego adresu. Sprawdź dane lub skontaktuj się z nami: +48 574 933 988")
+                }
+            } catch {
+                setLocationError("Błąd podczas obliczania kosztu dostawy. Spróbuj ponownie lub zadzwoń: +48 574 933 988")
+            } finally {
+                setGeocodingAddress(false)
+            }
+        }, 800)
+
+        return () => clearTimeout(debounceTimer)
+    }, [form.street, form.houseNumber, form.postcode, form.city, orderType])
 
     const validate = () => {
         const e: Record<string, string> = {}
@@ -217,8 +238,6 @@ export default function CheckoutPage() {
             if (!response.ok) {
                 const data = await response.json()
                 console.error("Sanity save failed:", data.error)
-                // Optionally alert the user or just log
-                // alert(`Uwaga: Nie udało się zapisać zamówienia w panelu Sanity: ${data.error}. Jednak zamówienie zostało złożone poprawnie w Twojej sesji.`)
             } else {
                 console.log("Order saved to Sanity successfully")
             }
@@ -257,8 +276,6 @@ export default function CheckoutPage() {
             }
         } catch (err: any) {
             console.error("Payment redirect failed:", err)
-            // If payment fails to init, we still have the order in Sanity as pending
-            // But we should probably tell the user
             alert(`Wystąpił błąd podczas inicjalizacji płatności: ${err.message}. Spróbuj ponownie lub skontaktuj się z nami.`)
             setIsSubmitting(false)
         }
@@ -364,19 +381,71 @@ export default function CheckoutPage() {
                                     </h2>
 
 
-                                    {/* Street + House Number */}
+                                    {/* Street Dropdown + House Number */}
                                     <div className="grid grid-cols-3 gap-3">
-                                        <div className="col-span-2">
+                                        <div className="col-span-2 relative" ref={streetDropdownRef}>
                                             <label className={`block text-xs font-medium text-gray-700 mb-1.5 ${archivo.className}`}>
                                                 Ulica <span className="text-red-500">*</span>
                                             </label>
-                                            <input
-                                                type="text"
-                                                value={form.street}
-                                                onChange={(e) => { setForm({ ...form, street: e.target.value }); setAddressConfirmed(false); setDeliveryInfo(null) }}
-                                                placeholder="np. Lipowa"
-                                                className={`w-full px-3 py-2.5 border rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#BA9D76]/40 focus:border-[#BA9D76] transition-colors text-sm ${errors.street ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50"} ${archivo.className}`}
-                                            />
+                                            {/* Dropdown trigger */}
+                                            <button
+                                                type="button"
+                                                onClick={() => { setStreetDropdownOpen(!streetDropdownOpen); setStreetSearch("") }}
+                                                className={`w-full px-3 py-2.5 border rounded-xl text-left flex items-center justify-between transition-colors text-sm ${errors.street ? "border-red-400 bg-red-50" : streetDropdownOpen ? "border-[#BA9D76] ring-2 ring-[#BA9D76]/40 bg-white" : "border-gray-200 bg-gray-50 hover:border-gray-300"} ${archivo.className}`}
+                                            >
+                                                <span className={form.street ? "text-gray-900" : "text-gray-400"}>
+                                                    {form.street || "Wybierz ulicę..."}
+                                                </span>
+                                                <ChevronDown className={`h-4 w-4 text-gray-400 transition-transform ${streetDropdownOpen ? "rotate-180" : ""}`} />
+                                            </button>
+
+                                            {/* Dropdown panel */}
+                                            {streetDropdownOpen && (
+                                                <div className="absolute z-50 mt-1 w-full bg-white border border-gray-200 rounded-xl shadow-xl overflow-hidden animate-in fade-in slide-in-from-top-1 duration-150">
+                                                    {/* Search input */}
+                                                    <div className="p-2 border-b border-gray-100">
+                                                        <div className="relative">
+                                                            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
+                                                            <input
+                                                                type="text"
+                                                                value={streetSearch}
+                                                                onChange={(e) => setStreetSearch(e.target.value)}
+                                                                placeholder="Szukaj ulicy..."
+                                                                autoFocus
+                                                                className={`w-full pl-8 pr-3 py-2 text-sm border border-gray-200 rounded-lg bg-gray-50 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-[#BA9D76]/40 focus:border-[#BA9D76] ${archivo.className}`}
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                    {/* Options list */}
+                                                    <div className="max-h-48 overflow-y-auto">
+                                                        {filteredStreets.length === 0 ? (
+                                                            <div className={`px-3 py-4 text-sm text-gray-400 text-center ${archivo.className}`}>
+                                                                Nie znaleziono ulicy
+                                                            </div>
+                                                        ) : (
+                                                            filteredStreets.map((street) => (
+                                                                <button
+                                                                    key={street}
+                                                                    type="button"
+                                                                    onClick={() => {
+                                                                        setForm({ ...form, street })
+                                                                        setStreetDropdownOpen(false)
+                                                                        setStreetSearch("")
+                                                                        setAddressConfirmed(false)
+                                                                        setDeliveryInfo(null)
+                                                                    }}
+                                                                    className={`w-full text-left px-3 py-2 text-sm transition-colors ${form.street === street
+                                                                        ? "bg-[#BA9D76]/10 text-[#BA9D76] font-semibold"
+                                                                        : "text-gray-700 hover:bg-gray-50"
+                                                                        } ${archivo.className}`}
+                                                                >
+                                                                    {street}
+                                                                </button>
+                                                            ))
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            )}
                                             {errors.street && <p className="text-red-500 text-xs mt-1">{errors.street}</p>}
                                         </div>
                                         <div>
@@ -431,7 +500,7 @@ export default function CheckoutPage() {
                                             <input
                                                 type="text"
                                                 value={form.postcode}
-                                                onChange={(e) => setForm({ ...form, postcode: e.target.value })}
+                                                onChange={(e) => { setForm({ ...form, postcode: e.target.value }); setAddressConfirmed(false); setDeliveryInfo(null) }}
                                                 placeholder="np. 20-002"
                                                 className={`w-full px-3 py-2.5 border border-gray-200 rounded-xl bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#BA9D76]/40 focus:border-[#BA9D76] transition-colors text-sm ${archivo.className}`}
                                             />
@@ -450,19 +519,13 @@ export default function CheckoutPage() {
                                         </div>
                                     </div>
 
-                                    {/* ── Calculate shipping price button ───── */}
-                                    <button
-                                        type="button"
-                                        onClick={calculateShipping}
-                                        disabled={detectingLocation}
-                                        className={`w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl border border-[#597FB1]/30 bg-[#597FB1]/5 hover:bg-[#597FB1]/10 text-[#597FB1] text-sm font-medium transition-all duration-200 disabled:opacity-60 ${archivo.className}`}
-                                    >
-                                        {detectingLocation ? (
-                                            <><Loader2 className="h-4 w-4 animate-spin" /> Obliczanie kosztu dostawy...</>
-                                        ) : (
-                                            <><Navigation className="h-4 w-4" /> Oblicz koszt dostawy</>
-                                        )}
-                                    </button>
+                                    {/* ── Auto-calculating delivery cost indicator ───── */}
+                                    {geocodingAddress && (
+                                        <div className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl border border-[#597FB1]/30 bg-[#597FB1]/5 text-[#597FB1] text-sm font-medium">
+                                            <Loader2 className="h-4 w-4 animate-spin" />
+                                            <span className={archivo.className}>Obliczanie kosztu dostawy...</span>
+                                        </div>
+                                    )}
 
                                     {/* Error */}
                                     {locationError && (
