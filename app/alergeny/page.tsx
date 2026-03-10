@@ -270,10 +270,10 @@ export default function AlergenyPage() {
                 z nowoczesnością.
               </p>
               <div className="flex space-x-4">
-                <Link href="#" className="text-gray-300 hover:text-[#BA9D76] transition-colors">
+                <Link href="https://www.facebook.com/Basmamezze" target="_blank" className="text-gray-300 hover:text-[#BA9D76] transition-colors">
                   <Facebook className="h-6 w-6" />
                 </Link>
-                <Link href="#" className="text-gray-300 hover:text-[#BA9D76] transition-colors">
+                <Link href="https://www.instagram.com/basma.mezze/" target="_blank" className="text-gray-300 hover:text-[#BA9D76] transition-colors">
                   <Instagram className="h-6 w-6" />
                 </Link>
               </div>
@@ -286,13 +286,17 @@ export default function AlergenyPage() {
                 <div className="flex items-start">
                   <MapPin className="h-5 w-5 mr-2 mt-0.5 text-[#BA9D76]" />
                   <div>
-                    <p className="text-gray-300">ul. Przykładowa 123</p>
-                    <p className="text-gray-300">31-000 Kraków</p>
+                    <p className="text-gray-300 text-sm">ul. Krakowskie Przedmieście 3</p>
+                    <p className="text-gray-300 text-sm">20-002 Lublin</p>
                   </div>
                 </div>
                 <div className="flex items-center">
                   <Phone className="h-5 w-5 mr-2 text-[#BA9D76]" />
-                  <p className="text-gray-300">+48 12 345 67 89</p>
+                  <p className="text-gray-300 text-sm">+48 574 933 988</p>
+                </div>
+                <div className="flex items-center">
+                  <Mail className="h-5 w-5 mr-2 text-[#BA9D76]" />
+                  <p className="text-gray-300 text-sm">basmalublin@gmail.com</p>
                 </div>
               </div>
             </div>
@@ -304,10 +308,10 @@ export default function AlergenyPage() {
                 <div className="flex items-center">
                   <Clock className="h-4 w-4 mr-2 text-[#BA9D76]" />
                   <div>
-                    <p className="text-gray-300 text-sm">Pon-Czw: 12:00-23:00</p>
-                    <p className="text-gray-300 text-sm">Pt: 12:00-00:00</p>
-                    <p className="text-gray-300 text-sm">Sob: 10:00-00:00</p>
-                    <p className="text-gray-300 text-sm">Nie: 10:00-23:00</p>
+                    <p className="text-gray-300 text-sm font-light">Pon-Czw: 12:00-23:00</p>
+                    <p className="text-gray-300 text-sm font-light">Piątek: 12:00-00:00</p>
+                    <p className="text-gray-300 text-sm font-light">Sobota: 10:00-00:00</p>
+                    <p className="text-gray-300 text-sm font-light">Niedziela: 10:00-23:00</p>
                   </div>
                 </div>
               </div>
@@ -316,14 +320,14 @@ export default function AlergenyPage() {
 
           <div className="border-t border-gray-700 mt-12 pt-8">
             <div className="flex flex-col md:flex-row justify-between items-center">
-              <p className="text-gray-400 text-sm">© 2024 BASMA Restaurant. Wszystkie prawa zastrzeżone.</p>
+              <p className="text-gray-400 text-xs font-light">© {new Date().getFullYear()} Basma Mezze i Grill. Wszystkie prawa zastrzeżone.</p>
               <div className="flex space-x-6 mt-4 md:mt-0">
-                <Link href="/regulamin" className="text-gray-400 hover:text-[#BA9D76] text-sm transition-colors">
+                <Link href="/regulamin" className="text-gray-400 hover:text-[#BA9D76] text-xs transition-colors">
                   Regulamin
                 </Link>
                 <Link
                   href="/polityka-prywatnosci"
-                  className="text-gray-400 hover:text-[#BA9D76] text-sm transition-colors"
+                  className="text-gray-400 hover:text-[#BA9D76] text-xs transition-colors"
                 >
                   Polityka prywatności
                 </Link>
