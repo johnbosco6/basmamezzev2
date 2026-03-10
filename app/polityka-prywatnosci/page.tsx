@@ -1,8 +1,6 @@
-import Link from "next/link"
-import { ArrowLeft, Home, BookOpen, MessageCircle, RefreshCw } from "lucide-react"
+import { MainNavbar } from "@/components/main-navbar"
 import { Archivo } from "next/font/google"
 
-import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
 const archivo = Archivo({
@@ -14,43 +12,7 @@ const archivo = Archivo({
 export default function PolitykaPrywatnosciPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#597FB1] via-[#326096] to-[#2B2B2B] text-white">
-      {/* Header */}
-      <header className="sticky top-0 z-50 backdrop-blur-md bg-[#597FB1]/80 border-b border-white/10">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex-1 flex justify-start">
-            <Link href="/">
-              <Button variant="ghost" className="text-white hover:text-[#BA9D76] hover:bg-white/10">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Powrót
-              </Button>
-            </Link>
-          </div>
-          <nav className="flex-1 flex items-center justify-center gap-8 backdrop-blur-md bg-white/15 border border-white/25 rounded-full px-6 py-3 shadow-lg">
-            <Link
-              href="/"
-              className="flex flex-col items-center gap-1 p-3 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/20 hover:shadow-lg text-white/80 hover:text-[#BA9D76] group"
-            >
-              <Home className="h-5 w-5 transition-colors duration-300" />
-              <span className={`text-xs font-light ${archivo.className}`}>Dom</span>
-            </Link>
-            <Link
-              href="/menu"
-              className="flex flex-col items-center gap-1 p-3 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/20 hover:shadow-lg text-white/80 hover:text-[#BA9D76] group"
-            >
-              <BookOpen className="h-5 w-5 transition-colors duration-300" />
-              <span className={`text-xs font-light ${archivo.className}`}>Menu</span>
-            </Link>
-            <Link
-              href="/#contact"
-              className="flex flex-col items-center gap-1 p-3 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:bg-white/20 hover:shadow-lg text-white/80 hover:text-[#BA9D76] group"
-            >
-              <MessageCircle className="h-5 w-5 transition-colors duration-300" />
-              <span className={`text-xs font-light ${archivo.className}`}>Kontakt</span>
-            </Link>
-          </nav>
-          <div className="flex-1 flex justify-end"></div>
-        </div>
-      </header>
+      <MainNavbar />
 
       {/* Hero Section */}
       <section className="relative py-16 overflow-hidden">
