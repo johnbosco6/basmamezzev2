@@ -1,7 +1,7 @@
 "use client"
 
-import { useState, useEffect, useMemo } from "react"
-import { Clock, Phone, Mail, ChefHat, X, Sparkles, Utensils, Flame, Leaf, Heart, Facebook, Instagram, Star, Calendar } from "lucide-react"
+import { useState, useEffect } from "react"
+import { Clock, Phone, Mail, ChefHat, X, Sparkles, Utensils, Flame, Leaf, Heart, Facebook, Instagram, Star, Calendar, MapPin } from "lucide-react"
 import { Archivo } from "next/font/google"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -61,7 +61,6 @@ function getCurrentStatus() {
     }
 
     return { isOpen: false, nextOpening }
-    return { isOpen: false, nextOpening }
 }
 
 const FACTS = [
@@ -70,6 +69,11 @@ const FACTS = [
     "Kawa po turecku jest wpisana na listę niematerialnego dziedzictwa UNESCO.",
     "Słowo 'Mezze' pochodzi od perskiego 'mazze', co oznacza 'smak'.",
     "W kulturze Bliskiego Wschodu gościnność jest najważniejszą cnotą.",
+    "Nasz Lava Grill nadaje mięsom niepowtarzalny, dymny aromat.",
+    "Wnętrze Basmy inspirowane jest tradycyjną architekturą Bliskiego Wschodu.",
+    "Nasza pita jest wypiekana na miejscu według tradycyjnej receptury.",
+    "Mezze to styl życia i celebrowanie chwil z bliskimi.",
+    "Karmelowy Kurczak to nasza autorska duma – duma Szefa Kuchni.",
 ]
 
 type Mood = "spicy" | "light" | "sweet" | "hearty"
@@ -221,17 +225,26 @@ export function FloatingChefBot() {
                             <div className="p-6 space-y-6 max-h-[60vh] overflow-y-auto custom-scrollbar">
 
                                 {/* Order Online Button */}
-                                <a
-                                    href="https://www.pyszne.pl/menu/basma-mezze-grill"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
+                                <Link
+                                    href="/order"
+                                    onClick={() => setIsOpen(false)}
                                     className="block w-full"
                                 >
                                     <Button className="w-full bg-[#FF8000] hover:bg-[#E67300] text-white border-none shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 animate-pulse">
                                         <Utensils className="mr-2 h-4 w-4" />
-                                        <span className={archivo.className}>Zamów Online (Pyszne.pl)</span>
+                                        <span className={archivo.className}>Zamów Online (Odbiór/Dostawa)</span>
                                     </Button>
-                                </a>
+                                </Link>
+
+                                {/* Nasza Filozofia */}
+                                <div className="bg-white/5 rounded-lg p-3 border border-white/10">
+                                    <h4 className={`text-xs font-semibold text-[#BA9D76] uppercase tracking-wider mb-2 ${archivo.className}`}>
+                                        Nasza Filozofia
+                                    </h4>
+                                    <p className={`text-white/80 text-[11px] leading-relaxed ${archivo.className}`}>
+                                        Autentyczna kuchnia bliskowschodnia, tradycyjne receptury i pasja do grillowania na Lava Grill. Poczuj serce orientu w Lublinie.
+                                    </p>
+                                </div>
 
                                 {/* Special Events Menu Button */}
                                 <Link href="/menu#specjalne-okazje" onClick={() => setIsOpen(false)} className="block w-full">
@@ -291,6 +304,18 @@ export function FloatingChefBot() {
 
                                 {/* Social & Rating */}
                                 <div className="grid grid-cols-2 gap-3">
+                                    <a
+                                        href="https://www.google.com/maps/dir//Krakowskie+Przedmie%C5%9Bcie+3,+20-002+Lublin/@51.2476527,22.4823717,12z"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="col-span-2"
+                                    >
+                                        <Button variant="outline" className="w-full border-[#BA9D76] text-[#BA9D76] hover:bg-[#BA9D76] hover:text-white transition-colors">
+                                            <MapPin className="mr-2 h-4 w-4" />
+                                            <span className={archivo.className}>Gdzie nas znajdziesz?</span>
+                                        </Button>
+                                    </a>
+
                                     <a
                                         href="https://www.tripadvisor.com/Restaurant_Review-g274818-d33304979-Reviews-Basma_Mezze_Grill-Lublin_Lublin_Province_Eastern_Poland.html"
                                         target="_blank"
