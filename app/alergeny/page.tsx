@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import Link from "next/link"
 import Image from "next/image"
-import { Phone, MapPin, Clock, Facebook, Instagram } from "lucide-react"
+import { Phone, MapPin, Clock, Facebook, Instagram, Mail } from "lucide-react"
 import { Archivo } from "next/font/google"
 
 const archivo = Archivo({
