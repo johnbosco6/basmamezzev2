@@ -89,7 +89,7 @@ export default function PolitykaZwrotowPage() {
                                         <br />
                                         20-002 Lublin, Polska
                                         <br />
-                                        NIP: [WPROWADŹ_NIP]
+                                        NIP: 714 185 55 52
                                         <br />
                                         E-mail: basmalublin@gmail.com
                                         <br />

@@ -251,6 +251,8 @@ export default function RegulaminPage() {
                   <br />
                   20-002 Lublin
                   <br />
+                  NIP: 714 185 55 52
+                  <br />
                   Tel: +48 574 933 988
                   <br />
                   Email: basmalublin@gmail.com
