@@ -44,7 +44,10 @@ export default async function AdminLoginPage() {
                     </div>
 
                     {/* Login Form */}
-                    <form action={loginAdmin} className="space-y-6">
+                    <form action={async (formData: FormData) => {
+                        "use server"
+                        await loginAdmin(formData)
+                    }} className="space-y-6">
                         <div>
                             <label htmlFor="password" className="block text-sm font-medium text-white/60 mb-2">
                                 Hasło
