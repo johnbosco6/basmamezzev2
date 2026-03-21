@@ -83,7 +83,7 @@ export default async function OrderHistoryPage() {
                                                 </td>
                                                 <td className="px-6 py-5 max-w-md">
                                                     <p className="text-sm text-white/70 line-clamp-1 italic">
-                                                        {order.items?.map((i: any) => `${i.quantity}x ${i.menuItem.title}`).join(', ')}
+                                                        {order.items?.map((i: any) => `${i.quantity}x ${i.name || 'Produkt'}`).join(', ')}
                                                     </p>
                                                 </td>
                                                 <td className="px-6 py-5 text-right whitespace-nowrap">

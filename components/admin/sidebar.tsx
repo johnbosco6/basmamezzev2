@@ -130,26 +130,26 @@ export function AdminSidebar() {
 
                 {/* Footer / Logout */}
                 <div className="p-4 border-t border-white/5">
-                    <form action={logoutAdmin}>
-                        <button
-                            type="submit"
-                            className="w-full flex items-center justify-start gap-4 p-3 rounded-xl text-red-400 hover:text-red-300 hover:bg-red-900/10 transition-all group"
-                        >
-                            <LogOut className="w-5 h-5" />
-                            {(!isCollapsed || isMobileOpen) && <span className="font-medium">Wyloguj</span>}
-                        </button>
-                    </form>
-
-                    {/* Collapse Toggle (Desktop Only) */}
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className="hidden lg:flex absolute -right-3 top-1/2 -translate-y-1/2 bg-[#BA9D76] text-white rounded-full w-6 h-6 border-2 border-[#1a2c44] hover:bg-[#BA9D76]/80"
-                        onClick={() => setIsCollapsed(!isCollapsed)}
+                    <button
+                        onClick={async () => {
+                            await logoutAdmin()
+                        }}
+                        className="w-full flex items-center justify-start gap-4 p-3 rounded-xl text-red-400 hover:text-red-300 hover:bg-red-900/10 transition-all group"
                     >
-                        {isCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
-                    </Button>
+                        <LogOut className="w-5 h-5" />
+                        {(!isCollapsed || isMobileOpen) && <span className="font-medium">Wyloguj</span>}
+                    </button>
                 </div>
+
+                {/* Collapse Toggle (Desktop Only) */}
+                <Button
+                    variant="ghost"
+                    size="icon"
+                    className="hidden lg:flex absolute -right-3 top-1/2 -translate-y-1/2 bg-[#BA9D76] text-white rounded-full w-6 h-6 border-2 border-[#1a2c44] hover:bg-[#BA9D76]/80"
+                    onClick={() => setIsCollapsed(!isCollapsed)}
+                >
+                    {isCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
+                </Button>
 
                 <style jsx global>{`
                     .custom-scrollbar::-webkit-scrollbar {
