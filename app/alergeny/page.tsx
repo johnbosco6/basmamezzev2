@@ -1,10 +1,10 @@
 import { MainNavbar } from "@/components/main-navbar"
+import { MainFooter } from "@/components/main-footer"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import Link from "next/link"
-import Image from "next/image"
-import { Phone, MapPin, Clock, Facebook, Instagram, Mail } from "lucide-react"
+import { ArrowLeft } from "lucide-react"
 import { Archivo } from "next/font/google"
 
 const archivo = Archivo({
@@ -159,8 +159,19 @@ export default function AlergenyPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white text-gray-900">
+    <div className="min-h-screen bg-gradient-to-br from-[#597FB1] via-[#326096] to-[#2B2B2B] text-white">
       <MainNavbar />
+
+      {/* Back Navigation */}
+      <div className="container mx-auto px-4 pt-6 relative z-10">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 text-white/70 hover:text-[#BA9D76] transition-colors duration-300 group"
+        >
+          <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform duration-300" />
+          <span className={`text-sm font-light ${archivo.className}`}>Wróć na stronę główną</span>
+        </Link>
+      </div>
 
       {/* Main Content */}
       <main className="py-16">
@@ -245,97 +256,7 @@ export default function AlergenyPage() {
           </div>
         </div>
       </main>
-
-      {/* Footer */}
-      <footer className="relative bg-gray-900 text-white">
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20"
-          style={{
-            backgroundImage: "url('/images/footer-bg-full.jpeg')",
-          }}
-        />
-        <div className="relative z-10 container mx-auto px-4 py-16">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {/* Logo and Description */}
-            <div className="lg:col-span-2">
-              <Image
-                src="/images/basma-full-logo.png"
-                alt="BASMA Restaurant"
-                width={200}
-                height={100}
-                className="h-16 w-auto mb-4"
-              />
-              <p className="text-gray-300 mb-6 max-w-md">
-                Odkryj autentyczne smaki Bliskiego Wschodu w sercu miasta. BASMA to miejsce, gdzie tradycja spotyka się
-                z nowoczesnością.
-              </p>
-              <div className="flex space-x-4">
-                <Link href="https://www.facebook.com/Basmamezze" target="_blank" className="text-gray-300 hover:text-[#BA9D76] transition-colors">
-                  <Facebook className="h-6 w-6" />
-                </Link>
-                <Link href="https://www.instagram.com/basma.mezze/" target="_blank" className="text-gray-300 hover:text-[#BA9D76] transition-colors">
-                  <Instagram className="h-6 w-6" />
-                </Link>
-              </div>
-            </div>
-
-            {/* Contact Info */}
-            <div>
-              <h3 className="text-lg font-semibold mb-4 text-[#BA9D76]">Kontakt</h3>
-              <div className="space-y-3">
-                <div className="flex items-start">
-                  <MapPin className="h-5 w-5 mr-2 mt-0.5 text-[#BA9D76]" />
-                  <div>
-                    <p className="text-gray-300 text-sm">ul. Krakowskie Przedmieście 3</p>
-                    <p className="text-gray-300 text-sm">20-002 Lublin</p>
-                  </div>
-                </div>
-                <div className="flex items-center">
-                  <Phone className="h-5 w-5 mr-2 text-[#BA9D76]" />
-                  <p className="text-gray-300 text-sm">+48 574 933 988</p>
-                </div>
-                <div className="flex items-center">
-                  <Mail className="h-5 w-5 mr-2 text-[#BA9D76]" />
-                  <p className="text-gray-300 text-sm">basmalublin@gmail.com</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Opening Hours */}
-            <div>
-              <h3 className="text-lg font-semibold mb-4 text-[#BA9D76]">Godziny otwarcia</h3>
-              <div className="space-y-2">
-                <div className="flex items-center">
-                  <Clock className="h-4 w-4 mr-2 text-[#BA9D76]" />
-                  <div>
-                    <p className="text-gray-300 text-sm font-light">Pon-Czw: 12:00-23:00</p>
-                    <p className="text-gray-300 text-sm font-light">Piątek: 12:00-00:00</p>
-                    <p className="text-gray-300 text-sm font-light">Sobota: 10:00-00:00</p>
-                    <p className="text-gray-300 text-sm font-light">Niedziela: 10:00-23:00</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="border-t border-gray-700 mt-12 pt-8">
-            <div className="flex flex-col md:flex-row justify-between items-center">
-              <p className="text-gray-400 text-xs font-light">© {new Date().getFullYear()} Basma Mezze i Grill. Wszystkie prawa zastrzeżone.</p>
-              <div className="flex space-x-6 mt-4 md:mt-0">
-                <Link href="/regulamin" className="text-gray-400 hover:text-[#BA9D76] text-xs transition-colors">
-                  Regulamin
-                </Link>
-                <Link
-                  href="/polityka-prywatnosci"
-                  className="text-gray-400 hover:text-[#BA9D76] text-xs transition-colors"
-                >
-                  Polityka prywatności
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <MainFooter />
     </div>
   )
 }

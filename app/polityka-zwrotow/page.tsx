@@ -1,7 +1,8 @@
 import { MainNavbar } from "@/components/main-navbar"
-import { RefreshCw } from "lucide-react"
+import { MainFooter } from "@/components/main-footer"
+import { RefreshCw, ArrowLeft } from "lucide-react"
 import { Archivo } from "next/font/google"
-
+import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
 const archivo = Archivo({
@@ -14,6 +15,17 @@ export default function PolitykaZwrotowPage() {
     return (
         <div className="min-h-screen bg-gradient-to-br from-[#597FB1] via-[#326096] to-[#2B2B2B] text-white">
             <MainNavbar />
+
+            {/* Back Navigation */}
+            <div className="container mx-auto px-4 pt-6 relative z-10">
+                <Link
+                    href="/"
+                    className="inline-flex items-center gap-2 text-white/70 hover:text-[#BA9D76] transition-colors duration-300 group"
+                >
+                    <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform duration-300" />
+                    <span className={`text-sm font-light ${archivo.className}`}>Wróć na stronę główną</span>
+                </Link>
+            </div>
 
             {/* Hero Section */}
             <section className="relative py-16 overflow-hidden">
@@ -149,6 +161,7 @@ export default function PolitykaZwrotowPage() {
                     </Card>
                 </div>
             </main>
+            <MainFooter />
         </div>
     )
 }

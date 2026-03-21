@@ -2,7 +2,8 @@ import Image from "next/image"
 import Link from "next/link"
 import { ArrowLeft, Mail, Users, Clock, Heart } from "lucide-react"
 import { Archivo } from "next/font/google"
-
+import { MainNavbar } from "@/components/main-navbar"
+import { MainFooter } from "@/components/main-footer"
 import { Button } from "@/components/ui/button"
 
 const archivo = Archivo({
@@ -14,18 +15,18 @@ const archivo = Archivo({
 export default function KarieraPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#597FB1] via-[#326096] to-[#2B2B2B] text-white">
-      {/* Header */}
-      <header className="sticky top-0 z-50 backdrop-blur-md bg-[#597FB1]/80 border-b border-white/10">
-        <div className="container mx-auto px-4 py-4">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 text-white/80 hover:text-[#BA9D76] transition-colors duration-300"
-          >
-            <ArrowLeft className="h-5 w-5" />
-            <span className={`font-light ${archivo.className}`}>Powrót do strony głównej</span>
-          </Link>
-        </div>
-      </header>
+      <MainNavbar />
+
+      {/* Back Navigation */}
+      <div className="container mx-auto px-4 pt-6 relative z-10">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 text-white/70 hover:text-[#BA9D76] transition-colors duration-300 group"
+        >
+          <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform duration-300" />
+          <span className={`text-sm font-light ${archivo.className}`}>Wróć na stronę główną</span>
+        </Link>
+      </div>
 
       {/* Hero Section */}
       <section className="relative py-20 md:py-32 overflow-hidden">
@@ -168,29 +169,7 @@ export default function KarieraPage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="relative py-12 text-white overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-gradient-to-t from-[#2B2B2B] via-[#326096]/60 to-[#2B2B2B]/50"></div>
-        </div>
-
-        <div className="relative z-10">
-          <div className="container mx-auto px-4 text-center">
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <Image
-                src="/images/basma-blue-logo.png"
-                alt="Basma Mezze i Grill"
-                width={120}
-                height={60}
-                className="object-contain"
-              />
-            </div>
-            <p className={`text-white/70 text-sm font-light ${archivo.className}`}>
-              © {new Date().getFullYear()} Basma Mezze i Grill. Wszelkie prawa zastrzeżone.
-            </p>
-          </div>
-        </div>
-      </footer>
+      <MainFooter />
     </div>
   )
 }

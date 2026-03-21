@@ -86,10 +86,10 @@ const MOODS: { id: Mood; label: string; icon: any; color: string }[] = [
 ]
 
 const RECOMMENDATIONS: Record<Mood, string[]> = {
-    spicy: ["szakszuka-kofta", "syrian-sandwich", "adana-kebap", "spicy-eggplant", "harissa"],
-    light: ["tabbouleh", "fattoush", "greek-sandwich", "labneh", "hummus-classic"],
-    sweet: ["kunafa", "dubai-dream", "creme-brulee-basma", "labneh-sweet"],
-    hearty: ["meat-platter-2", "lamb-chops", "kofty-jagniece", "szakszuka-kofta"],
+    spicy: ["szakszuka-kofta", "adana-kebap", "kofty-jagniece", "wrap-turecki", "chicken-taouk", "grilled-halloumi"],
+    light: ["tabbouleh", "fattoush", "greek-salad", "labneh", "hummus-classic", "wrap-syryjski", "halloumi-salad"],
+    sweet: ["dubai-dream", "creme-brulee-basma", "labneh-sweet", "warm-apple-pie", "sekerpare", "labneh-cheesecake"],
+    hearty: ["meat-platter-2", "meat-platter-4", "lamb-chops", "kofty-jagniece", "szakszuka-kofta", "all-mezze-set"],
 }
 
 export function FloatingChefBot() {
@@ -147,7 +147,7 @@ export function FloatingChefBot() {
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 className="fixed bottom-6 right-6 z-50 group"
-                aria-label="Basma Quick Help"
+                aria-label="Chef John — Tu pomogę!"
             >
                 <div className="relative">
                     {/* Pulsing glow effect */}
@@ -181,8 +181,11 @@ export function FloatingChefBot() {
                             <div className="bg-gradient-to-r from-[#BA9D76]/30 to-[#BA9D76]/20 border-b border-[#BA9D76]/30 p-4">
                                 <div className="flex items-center justify-between mb-3">
                                     <div className="flex items-center gap-2">
-                                        <ChefHat className="h-5 w-5 text-[#BA9D76]" />
-                                        <h3 className={`text-white font-semibold ${archivo.className}`}>Basma Quick Help</h3>
+                                        <ChefHat className="h-6 w-6 text-[#BA9D76]" />
+                                        <div>
+                                            <h3 className={`text-white font-semibold leading-tight ${archivo.className}`}>Chef John</h3>
+                                            <p className={`text-[#BA9D76] text-xs font-light leading-tight ${archivo.className}`}>Tu pomogę! 👨‍🍳</p>
+                                        </div>
                                     </div>
                                     <button
                                         onClick={() => setIsOpen(false)}
