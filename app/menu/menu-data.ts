@@ -319,9 +319,10 @@ export const menuData: MenuCategory[] = [
           },
           {
             id: "all-mezze-set",
-            name: "Zestaw Wszystkich Mezze z 4 Falafelami",
-            description: "Kompletny zestaw wszystkich mezze z dodatkiem 4 falafelów",
+            name: "Menu degustacyjne",
+            description: "Zestaw wszystkich mezze z 4x kibbeh i 4x falafel",
             price: "199 zł",
+            image: "/images/menu/MEZZE PLATTER 4 JERUSALEM.JPG",
             allergens: [1, 4, 7, 8, 10, 11],
           },
         ],
@@ -643,7 +644,7 @@ export const menuData: MenuCategory[] = [
           },
           {
             id: "basmati-rice",
-            name: "Ryż Basmati",
+            name: "Ryż Basmati (z przyprawami bliskiego wschodu)",
             description: "Z pomidorami i aromatycznymi przyprawami",
             price: "10 zł",
             image: "/images/menu/ryz-basmati.jpg",
@@ -723,7 +724,7 @@ export const menuData: MenuCategory[] = [
             name: "Basma",
             description: "Autorski sos Basma",
             price: "7 zł",
-            image: "/images/menu/toum-sauce.jpeg",
+            image: "/images/menu/Sos BASMA.JPG",
             allergens: [],
           },
         ],
@@ -1019,6 +1020,7 @@ export const menuData: MenuCategory[] = [
             name: "Prosecco Free",
             description: "Kieliszek (150 ml)",
             price: "19 zł",
+            image: "/images/menu/prosecco.jpg",
             allergens: [],
           },
           {
@@ -1215,13 +1217,6 @@ export const menuData: MenuCategory[] = [
             price: "32 zł",
             image: "/images/menu/whisky-sour-basma.jpg",
             allergens: [3],
-          },
-          {
-            id: "saffron-rum",
-            name: "Saffron Rum",
-            description: "Planteray dark / szafran / syrop cukrowy / sok grejpfrutowy",
-            price: "32 zł",
-            allergens: [],
           },
           {
             id: "basma-martini",
