@@ -134,6 +134,8 @@ export function MainFooter() {
                   <p>ul. Krakowskie Przedmieście 3</p>
                   <p>20-002 Lublin</p>
                   <p>NIP: 714 185 55 52</p>
+                  <p>Tel: +48 574 933 988</p>
+                  <p>Email: basmalublin@gmail.com</p>
                 </div>
 
                 <div className={`flex items-start gap-2 text-sm text-white/80 font-light mt-4 ${archivo.className}`}>
