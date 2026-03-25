@@ -426,15 +426,32 @@ export default function CheckoutPage() {
                                                                 onChange={(e) => setStreetSearch(e.target.value)}
                                                                 placeholder="Szukaj ulicy..."
                                                                 autoFocus
-                                                                className={`w-full pl-8 pr-3 py-2 text-sm border border-gray-200 rounded-lg bg-gray-50 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-[#BA9D76]/40 focus:border-[#BA9D76] ${archivo.className}`}
+                                                                className={`w-full pl-8 pr-3 py-2 text-sm text-gray-900 border border-gray-200 rounded-lg bg-gray-50 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-[#BA9D76]/40 focus:border-[#BA9D76] ${archivo.className}`}
                                                             />
                                                         </div>
                                                     </div>
                                                     {/* Options list */}
                                                     <div className="max-h-48 overflow-y-auto">
                                                         {filteredStreets.length === 0 ? (
-                                                            <div className={`px-3 py-4 text-sm text-gray-400 text-center ${archivo.className}`}>
-                                                                Nie znaleziono ulicy
+                                                            <div className="px-3 py-3 space-y-2">
+                                                                <p className={`text-sm text-gray-400 text-center ${archivo.className}`}>
+                                                                    Nie znaleziono ulicy na liście
+                                                                </p>
+                                                                {streetSearch.trim().length > 0 && (
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => {
+                                                                            setForm({ ...form, street: streetSearch.trim() })
+                                                                            setStreetDropdownOpen(false)
+                                                                            setStreetSearch("")
+                                                                            setAddressConfirmed(false)
+                                                                            setDeliveryInfo(null)
+                                                                        }}
+                                                                        className={`w-full text-left px-3 py-2.5 text-sm bg-[#BA9D76]/10 text-[#BA9D76] font-medium rounded-lg hover:bg-[#BA9D76]/20 transition-colors ${archivo.className}`}
+                                                                    >
+                                                                        Użyj: „{streetSearch.trim()}"
+                                                                    </button>
+                                                                )}
                                                             </div>
                                                         ) : (
                                                             filteredStreets.map((street) => (
