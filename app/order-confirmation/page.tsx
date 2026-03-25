@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
-import { CheckCircle, Home, BookOpen, Phone, Clock, MapPin, Package } from "lucide-react"
+import { CheckCircle, Home, BookOpen, Phone, Clock, MapPin, Package, CreditCard, Banknote, Wallet } from "lucide-react"
 import { Archivo } from "next/font/google"
 import { Button } from "@/components/ui/button"
 import { CartItem } from "@/context/cart-context"
@@ -34,6 +34,7 @@ interface OrderData {
     subtotal: number
     deliveryFee: number
     totalPrice: number
+    paymentMethod: "p24" | "cash" | "card_on_delivery"
 }
 
 export default function OrderConfirmationPage() {
@@ -72,19 +73,45 @@ export default function OrderConfirmationPage() {
                     </p>
                 </div>
 
-                {/* Order Number Card */}
-                <div className="bg-white/10 backdrop-blur-lg border border-[#BA9D76]/30 rounded-2xl p-5 mb-6 flex items-center justify-between">
+                {/* Order Number & Payment Card */}
+                <div className="bg-white/10 backdrop-blur-lg border border-[#BA9D76]/30 rounded-2xl p-5 mb-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <p className="text-white/60 text-sm font-light">Numer zamówienia</p>
                         <p className="text-white font-bold text-2xl tracking-widest">#{order.orderNumber}</p>
                     </div>
-                    <div className="text-right">
-                        <p className="text-white/60 text-sm font-light">Typ zamówienia</p>
+                    <div>
+                        <p className="text-white/60 text-sm font-light">Metoda płatności</p>
                         <div className="flex items-center gap-2 mt-1">
-                            <span className="text-2xl">{isDelivery ? "🚚" : "📦"}</span>
-                            <p className="text-white font-semibold">
-                                {isDelivery ? "Dostawa do domu" : "Odbiór osobisty"}
-                            </p>
+                            {order.paymentMethod === 'p24' ? (
+                                <>
+                                    <Wallet className="h-5 w-5 text-[#BA9D76]" />
+                                    <p className="text-white font-semibold">Płatność Online</p>
+                                </>
+                            ) : order.paymentMethod === 'cash' ? (
+                                <>
+                                    <Banknote className="h-5 w-5 text-[#BA9D76]" />
+                                    <p className="text-white font-semibold">Gotówka przy odbiorze</p>
+                                </>
+                            ) : (
+                                <>
+                                    <CreditCard className="h-5 w-5 text-[#BA9D76]" />
+                                    <p className="text-white font-semibold">Karta przy odbiorze</p>
+                                </>
+                            )}
+                        </div>
+                    </div>
+                    <div className="sm:col-span-2 pt-3 border-t border-white/5">
+                        <p className="text-white/60 text-sm font-light">Typ i status zamówienia</p>
+                        <div className="flex items-center justify-between mt-1">
+                            <div className="flex items-center gap-2">
+                                <span className="text-2xl">{isDelivery ? "🚚" : "📦"}</span>
+                                <p className="text-white font-semibold">
+                                    {isDelivery ? "Dostawa do domu" : "Odbiór osobisty"}
+                                </p>
+                            </div>
+                            <span className="px-3 py-1 bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded-full text-xs font-bold uppercase tracking-wider">
+                                Oczekiwanie na potwierdzenie
+                            </span>
                         </div>
                     </div>
                 </div>

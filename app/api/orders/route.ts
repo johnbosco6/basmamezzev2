@@ -30,6 +30,7 @@ export async function POST(req: NextRequest) {
             subtotal,
             deliveryFee,
             totalPrice,
+            paymentMethod,
         } = body
 
         console.log(`Processing Order #${orderNumber} for ${name}`)
@@ -61,6 +62,7 @@ export async function POST(req: NextRequest) {
             subtotal: subtotal || 0,
             deliveryFee: deliveryFee || 0,
             totalAmount: totalPrice || 0,
+            paymentMethod: paymentMethod || 'p24',
             notes: notes || '',
             orderDate: new Date().toISOString(),
         }

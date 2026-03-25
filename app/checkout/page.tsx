@@ -8,7 +8,8 @@ import Link from "next/link"
 import {
     ArrowLeft, ShoppingBag, User, Phone, Mail, MessageSquare,
     CheckCircle, Minus, Plus, Trash2, MapPin, Truck,
-    Package, AlertCircle, Loader2, Home, Building2, ChevronDown, Search
+    Package, AlertCircle, Loader2, Home, Building2, ChevronDown, Search,
+    CreditCard, Banknote, Wallet
 } from "lucide-react"
 import { Archivo } from "next/font/google"
 import { Button } from "@/components/ui/button"
@@ -107,6 +108,7 @@ export default function CheckoutPage() {
     const [locationError, setLocationError] = useState("")
     const [addressConfirmed, setAddressConfirmed] = useState(false)
     const [acceptedTerms, setAcceptedTerms] = useState(false)
+    const [paymentMethod, setPaymentMethod] = useState<'p24' | 'cash' | 'card_on_delivery'>('p24')
 
     // Street dropdown state
     const [streetDropdownOpen, setStreetDropdownOpen] = useState(false)
@@ -240,7 +242,7 @@ export default function CheckoutPage() {
             const response = await fetch("/api/orders", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ ...orderData, paymentMethod: 'p24' }),
+                body: JSON.stringify({ ...orderData, paymentMethod }),
             })
 
             if (!response.ok) {
@@ -255,37 +257,44 @@ export default function CheckoutPage() {
 
 
         // Always save to sessionStorage
-        sessionStorage.setItem("basma-order", JSON.stringify(orderData))
+        sessionStorage.setItem("basma-order", JSON.stringify({ ...orderData, paymentMethod }))
 
-        // Trigger Przelewy24 Payment
-        try {
-            const p24Response = await fetch("/api/payments/p24/create", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    orderNumber,
-                    totalAmount: grandTotal,
-                    email: form.email || "klient@basma.pl", // Fallback if optional email missing
-                    name: form.name,
-                    phone: form.phone,
-                    orderType,
-                    deliveryAddress: orderData.deliveryAddress
-                }),
-            })
+        // Branching based on payment method
+        if (paymentMethod === 'p24') {
+            // Trigger Przelewy24 Payment
+            try {
+                const p24Response = await fetch("/api/payments/p24/create", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        orderNumber,
+                        totalAmount: grandTotal,
+                        email: form.email || "klient@basma.pl", // Fallback if optional email missing
+                        name: form.name,
+                        phone: form.phone,
+                        orderType,
+                        deliveryAddress: orderData.deliveryAddress
+                    }),
+                })
 
-            if (p24Response.ok) {
-                const { redirectUrl } = await p24Response.json()
-                clearCart()
-                // Redirect to P24
-                window.location.href = redirectUrl
-            } else {
-                const errorData = await p24Response.json()
-                throw new Error(errorData.error || "Błąd inicjalizacji płatności")
+                if (p24Response.ok) {
+                    const { redirectUrl } = await p24Response.json()
+                    clearCart()
+                    // Redirect to P24
+                    window.location.href = redirectUrl
+                } else {
+                    const errorData = await p24Response.json()
+                    throw new Error(errorData.error || "Błąd inicjalizacji płatności")
+                }
+            } catch (err: any) {
+                console.error("Payment redirect failed:", err)
+                alert(`Wystąpił błąd podczas inicjalizacji płatności: ${err.message}. Spróbuj ponownie lub skontaktuj się z nami.`)
+                setIsSubmitting(false)
             }
-        } catch (err: any) {
-            console.error("Payment redirect failed:", err)
-            alert(`Wystąpił błąd podczas inicjalizacji płatności: ${err.message}. Spróbuj ponownie lub skontaktuj się z nami.`)
-            setIsSubmitting(false)
+        } else {
+            // Cash or Card on Delivery
+            clearCart()
+            router.push("/order-confirmation")
         }
     }
 
@@ -644,6 +653,34 @@ export default function CheckoutPage() {
                                             className={`w-full px-4 py-3 border border-gray-200 rounded-xl bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#BA9D76]/40 focus:border-[#BA9D76] transition-colors resize-none ${archivo.className}`} />
                                     </div>
                                 </div>
+
+                                {/* PAYMENT METHOD SELECTOR */}
+                                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                                    <h2 className={`text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2 ${archivo.className}`}>
+                                        <CreditCard className="h-5 w-5 text-[#BA9D76]" />
+                                        Metoda Płatności
+                                    </h2>
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                        <button type="button" onClick={() => setPaymentMethod('p24')}
+                                            className={`p-4 rounded-xl border-2 transition-all duration-200 flex flex-col items-center gap-2 text-center ${paymentMethod === 'p24' ? "border-[#BA9D76] bg-[#BA9D76]/5 text-[#BA9D76]" : "border-gray-200 text-gray-500 hover:border-gray-300"}`}>
+                                            <Wallet className="h-6 w-6" />
+                                            <span className={`font-semibold text-sm ${archivo.className}`}>Płatność Online</span>
+                                            <span className="text-[10px] opacity-70 font-light">Przelewy24 / Blik / Karta</span>
+                                        </button>
+                                        <button type="button" onClick={() => setPaymentMethod('cash')}
+                                            className={`p-4 rounded-xl border-2 transition-all duration-200 flex flex-col items-center gap-2 text-center ${paymentMethod === 'cash' ? "border-[#BA9D76] bg-[#BA9D76]/5 text-[#BA9D76]" : "border-gray-200 text-gray-500 hover:border-gray-300"}`}>
+                                            <Banknote className="h-6 w-6" />
+                                            <span className={`font-semibold text-sm ${archivo.className}`}>Gotówka</span>
+                                            <span className="text-[10px] opacity-70 font-light">Płatność przy odbiorze</span>
+                                        </button>
+                                        <button type="button" onClick={() => setPaymentMethod('card_on_delivery')}
+                                            className={`p-4 rounded-xl border-2 transition-all duration-200 flex flex-col items-center gap-2 text-center ${paymentMethod === 'card_on_delivery' ? "border-[#BA9D76] bg-[#BA9D76]/5 text-[#BA9D76]" : "border-gray-200 text-gray-500 hover:border-gray-300"}`}>
+                                            <CreditCard className="h-6 w-6" />
+                                            <span className={`font-semibold text-sm ${archivo.className}`}>Karta</span>
+                                            <span className="text-[10px] opacity-70 font-light">Płatność terminalem u kierowcy</span>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
 
                             <div className="bg-[#597FB1]/5 border border-[#597FB1]/20 rounded-2xl p-4">
@@ -761,11 +798,18 @@ export default function CheckoutPage() {
                                         ) : geocodingAddress && orderType === "delivery" ? (
                                             <span className="flex items-center gap-2"><Loader2 className="h-4 w-4 animate-spin" />Obliczanie dostawy...</span>
                                         ) : (
-                                            <span className="flex items-center gap-2"><CheckCircle className="h-5 w-5" />Złóż Zamówienie · {grandTotal.toFixed(0)} zł</span>
+                                            <span className="flex items-center gap-2">
+                                                <CheckCircle className="h-5 w-5" />
+                                                {paymentMethod === 'p24' ? 'Zapłać Online' : 'Złóż Zamówienie'} · {grandTotal.toFixed(0)} zł
+                                            </span>
                                         )}
                                     </Button>
                                     <p className={`text-xs text-center text-gray-400 mt-2 font-light ${archivo.className}`}>
-                                        Płatność online przy składaniu zamówienia
+                                        {paymentMethod === 'p24' 
+                                            ? 'Płatność online przy składaniu zamówienia' 
+                                            : paymentMethod === 'cash' 
+                                                ? 'Zapłacisz gotówką przy odbiorze' 
+                                                : 'Zapłacisz kartą u kierowcy'}
                                     </p>
                                 </div>
                             </div>
