@@ -840,14 +840,18 @@ export default function CheckoutPage() {
 
                                     <button
                                         type="button"
+                                        disabled={true}
                                         onClick={() => setPaymentMethod('cash')}
-                                        className={`p-4 rounded-xl border-2 transition-all duration-200 flex items-center gap-4 text-left ${paymentMethod === 'cash' ? "border-[#BA9D76] bg-[#BA9D76]/5 text-[#BA9D76]" : "border-gray-100 text-gray-600 hover:border-gray-200"}`}
+                                        className={`p-4 rounded-xl border-2 transition-all duration-200 flex items-center gap-4 text-left opacity-50 grayscale cursor-not-allowed ${paymentMethod === 'cash' ? "border-[#BA9D76] bg-[#BA9D76]/5 text-[#BA9D76]" : "border-gray-100 text-gray-400 hover:border-gray-100"}`}
                                     >
                                         <div className={`w-12 h-12 rounded-full flex items-center justify-center ${paymentMethod === 'cash' ? "bg-[#BA9D76]/20" : "bg-gray-100"}`}>
                                             <Banknote className="h-6 w-6" />
                                         </div>
                                         <div className="flex-1">
-                                            <p className={`font-bold text-base ${archivo.className}`}>Gotówka przy odbiorze</p>
+                                            <div className="flex items-center gap-2">
+                                                <p className={`font-bold text-base ${archivo.className}`}>Gotówka przy odbiorze</p>
+                                                <span className="text-[10px] bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full font-medium">Tymczasowo niedostępne</span>
+                                            </div>
                                             <p className="text-xs opacity-70 font-light">Zapłać kurierowi lub w restauracji</p>
                                         </div>
                                         {paymentMethod === 'cash' && <CheckCircle className="h-6 w-6" />}
@@ -855,14 +859,18 @@ export default function CheckoutPage() {
 
                                     <button
                                         type="button"
+                                        disabled={true}
                                         onClick={() => setPaymentMethod('card_on_delivery')}
-                                        className={`p-4 rounded-xl border-2 transition-all duration-200 flex items-center gap-4 text-left ${paymentMethod === 'card_on_delivery' ? "border-[#BA9D76] bg-[#BA9D76]/5 text-[#BA9D76]" : "border-gray-100 text-gray-600 hover:border-gray-200"}`}
+                                        className={`p-4 rounded-xl border-2 transition-all duration-200 flex items-center gap-4 text-left opacity-50 grayscale cursor-not-allowed ${paymentMethod === 'card_on_delivery' ? "border-[#BA9D76] bg-[#BA9D76]/5 text-[#BA9D76]" : "border-gray-100 text-gray-400 hover:border-gray-100"}`}
                                     >
                                         <div className={`w-12 h-12 rounded-full flex items-center justify-center ${paymentMethod === 'card_on_delivery' ? "bg-[#BA9D76]/20" : "bg-gray-100"}`}>
                                             <CreditCard className="h-6 w-6" />
                                         </div>
                                         <div className="flex-1">
-                                            <p className={`font-bold text-base ${archivo.className}`}>Karta przy odbiorze</p>
+                                            <div className="flex items-center gap-2">
+                                                <p className={`font-bold text-base ${archivo.className}`}>Karta przy odbiorze</p>
+                                                <span className="text-[10px] bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full font-medium">Tymczasowo niedostępne</span>
+                                            </div>
                                             <p className="text-xs opacity-70 font-light">Płatność terminalem u kierowcy</p>
                                         </div>
                                         {paymentMethod === 'card_on_delivery' && <CheckCircle className="h-6 w-6" />}
@@ -876,7 +884,8 @@ export default function CheckoutPage() {
                                     </div>
                                     <Button
                                         onClick={handleFinalConfirm}
-                                        className="h-12 px-8 bg-[#BA9D76] hover:bg-[#a88a63] text-white font-bold rounded-xl shadow-lg transition-all"
+                                        disabled={paymentMethod !== 'p24'}
+                                        className="h-12 px-8 bg-[#BA9D76] hover:bg-[#a88a63] text-white font-bold rounded-xl shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
                                         Potwierdzam
                                     </Button>
