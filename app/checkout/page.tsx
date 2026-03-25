@@ -126,11 +126,11 @@ export default function CheckoutPage() {
     }, [])
 
     useEffect(() => {
-        if (items.length === 0 && !isSubmitting) {
-            const t = setTimeout(() => { if (items.length === 0) router.push("/menu") }, 800)
+        if ((items.length === 0 || totalPrice < 40) && !isSubmitting) {
+            const t = setTimeout(() => { if (items.length === 0 || totalPrice < 40) router.push("/menu") }, 800)
             return () => clearTimeout(t)
         }
-    }, [items.length, isSubmitting, router])
+    }, [items.length, totalPrice, isSubmitting, router])
 
     // ── Auto-geocode when street + houseNumber are filled ─────────────────────
     useEffect(() => {

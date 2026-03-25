@@ -161,12 +161,21 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                                 {totalPrice.toFixed(0)} zł
                             </span>
                         </div>
-                        <Link href="/checkout" onClick={onClose} className="block">
-                            <Button className="w-full bg-[#BA9D76] hover:bg-[#a88a63] text-white font-semibold text-base py-6 shadow-lg rounded-2xl flex items-center justify-center gap-2">
-                                Przejdź do Zamówienia
-                                <ChevronRight className="h-4 w-4" />
-                            </Button>
-                        </Link>
+                        {totalPrice < 40 ? (
+                            <div className="space-y-2">
+                                <Button disabled className="w-full bg-black/40 text-white/50 font-semibold text-base py-6 rounded-2xl flex items-center justify-center gap-2 cursor-not-allowed">
+                                    Brakuje {(40 - totalPrice).toFixed(0)} zł do minimum
+                                </Button>
+                                <p className={`text-xs text-center text-white/50 font-light ${archivo.className}`}>Minimalna kwota zamówienia to 40 zł</p>
+                            </div>
+                        ) : (
+                            <Link href="/checkout" onClick={onClose} className="block">
+                                <Button className="w-full bg-[#BA9D76] hover:bg-[#a88a63] text-white font-semibold text-base py-6 shadow-lg rounded-2xl flex items-center justify-center gap-2">
+                                    Przejdź do Zamówienia
+                                    <ChevronRight className="h-4 w-4" />
+                                </Button>
+                            </Link>
+                        )}
                     </div>
                 )}
             </div>
@@ -273,12 +282,21 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                                 {totalPrice.toFixed(0)} zł
                             </span>
                         </div>
-                        <Link href="/checkout" onClick={onClose} className="block">
-                            <Button className="w-full bg-[#BA9D76] hover:bg-[#a88a63] text-white font-semibold text-base py-5 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] flex items-center justify-center gap-2">
-                                Przejdź do Zamówienia
-                                <ChevronRight className="h-4 w-4" />
-                            </Button>
-                        </Link>
+                        {totalPrice < 40 ? (
+                            <div className="space-y-2">
+                                <Button disabled className="w-full bg-black/40 text-white/50 font-semibold text-base py-5 rounded-xl flex items-center justify-center gap-2 cursor-not-allowed border border-white/10">
+                                    Brakuje {(40 - totalPrice).toFixed(0)} zł do minimum
+                                </Button>
+                                <p className={`text-xs text-center text-white/50 font-light ${archivo.className}`}>Minimalna kwota zamówienia to 40 zł</p>
+                            </div>
+                        ) : (
+                            <Link href="/checkout" onClick={onClose} className="block">
+                                <Button className="w-full bg-[#BA9D76] hover:bg-[#a88a63] text-white font-semibold text-base py-5 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] flex items-center justify-center gap-2">
+                                    Przejdź do Zamówienia
+                                    <ChevronRight className="h-4 w-4" />
+                                </Button>
+                            </Link>
+                        )}
                     </div>
                 )}
             </div>

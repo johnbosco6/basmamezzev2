@@ -235,6 +235,10 @@ ${shareData.url}`)
         </div>
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center max-w-3xl mx-auto">
+            <div className="inline-flex items-center gap-2 bg-amber-100 border border-amber-200 text-amber-800 px-4 py-1.5 rounded-full text-sm font-semibold mb-6 shadow-sm">
+                <ShoppingCart className="h-4 w-4" />
+                Minimalna kwota zamówienia wynosi: 40 zł
+            </div>
             <h1 className={`text-4xl md:text-5xl font-semibold mb-6 text-gray-900 ${archivo.className}`}>Nasze Menu</h1>
             <p className={`text-xl text-gray-700 font-light ${archivo.className}`}>
               Odkryj autentyczne smaki Bliskiego Wschodu w każdym daniu
