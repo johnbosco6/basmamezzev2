@@ -1,14 +1,7 @@
 import { Resend } from 'resend'
-import { Novu } from '@novu/node'
 
 // Initialize Resend client (safe at module level — no side effects)
 const resend = new Resend(process.env.RESEND_API_KEY)
-
-// Novu is initialized lazily inside each function to avoid crashing during Vercel build
-// when env vars aren't yet available
-function getNovu() {
-    return new Novu(process.env.NOVU_API_KEY || '')
-}
 
 // ─── Types ───────────────────────────────────────────────
 interface OrderItem {
@@ -245,57 +238,29 @@ function buildStatusUpdateHTML(orderNumber: string, customerName: string, newSta
 // ═══════════════════════════════════════════════════════════
 
 /**
- * Send order confirmation email via Resend + trigger Novu workflow.
+ * Send order confirmation email via Resend.
  * Called from /api/orders after saving to Sanity.
  */
 export async function sendOrderConfirmation(order: OrderDetails) {
-    const results = { resend: false, novu: false }
-
-    // 1) Send email via Resend
     if (process.env.RESEND_API_KEY && order.customerEmail) {
         try {
             await resend.emails.send({
-                from: 'Basma Mezze & Grill <onboarding@resend.dev>',
+                from: 'Basma Mezze & Grill <basmalublin@gmail.com>',
                 to: order.customerEmail,
                 subject: `Potwierdzenie zamówienia #${order.orderNumber} — Basma Mezze`,
                 html: buildOrderConfirmationHTML(order),
             })
-            results.resend = true
             console.log(`[Notifications] ✅ Confirmation email sent to ${order.customerEmail}`)
+            return { resend: true }
         } catch (err) {
             console.error('[Notifications] ❌ Resend email failed:', err)
         }
     }
-
-    // 2) Trigger Novu workflow (for multi-channel orchestration)
-    if (process.env.NOVU_API_KEY) {
-        try {
-            const novu = getNovu()
-            await novu.trigger('order-confirmation', {
-                to: {
-                    subscriberId: order.customerEmail || order.customerPhone,
-                    email: order.customerEmail,
-                    phone: order.customerPhone,
-                },
-                payload: {
-                    orderNumber: order.orderNumber,
-                    customerName: order.customerName,
-                    totalAmount: order.totalAmount,
-                    items: order.items.map(i => `${i.quantity}x ${i.name}`).join(', '),
-                },
-            })
-            results.novu = true
-            console.log(`[Notifications] ✅ Novu workflow triggered for order ${order.orderNumber}`)
-        } catch (err) {
-            console.error('[Notifications] ❌ Novu trigger failed:', err)
-        }
-    }
-
-    return results
+    return { resend: false }
 }
 
 /**
- * Send order status update email via Resend + trigger Novu workflow.
+ * Send order status update email via Resend for specific priority statuses.
  * Called from admin-actions when staff change order status.
  */
 export async function sendOrderStatusUpdate(
@@ -305,53 +270,31 @@ export async function sendOrderStatusUpdate(
     customerPhone: string,
     newStatus: string
 ) {
-    const results = { resend: false, novu: false }
+    // Only send Resend notifications for specific required statuses
+    const priorityStatuses = ['confirmed', 'preparing', 'out_for_delivery']
+    if (!priorityStatuses.includes(newStatus)) {
+        return { resend: false, skipped: true }
+    }
 
-    // 1) Send status update email via Resend
     if (process.env.RESEND_API_KEY && customerEmail) {
         try {
             const statusLabels: { [key: string]: string } = {
                 confirmed: 'Potwierdzone',
                 preparing: 'W przygotowaniu',
                 out_for_delivery: 'W drodze',
-                delivered: 'Dostarczone',
-                picked_up: 'Odebrane',
             }
             await resend.emails.send({
-                from: 'Basma Mezze & Grill <onboarding@resend.dev>',
+                from: 'Basma Mezze & Grill <basmalublin@gmail.com>',
                 to: customerEmail,
                 subject: `Zamówienie #${orderNumber} — ${statusLabels[newStatus] || newStatus}`,
                 html: buildStatusUpdateHTML(orderNumber, customerName, newStatus),
             })
-            results.resend = true
-            console.log(`[Notifications] ✅ Status update email sent for #${orderNumber}`)
+            console.log(`[Notifications] ✅ Status update email sent for #${orderNumber} (${newStatus})`)
+            return { resend: true }
         } catch (err) {
             console.error('[Notifications] ❌ Resend status email failed:', err)
         }
     }
 
-    // 2) Trigger Novu workflow
-    if (process.env.NOVU_API_KEY) {
-        try {
-            const novu = getNovu()
-            await novu.trigger('order-status-update', {
-                to: {
-                    subscriberId: customerEmail || customerPhone,
-                    email: customerEmail,
-                    phone: customerPhone,
-                },
-                payload: {
-                    orderNumber,
-                    customerName,
-                    newStatus,
-                },
-            })
-            results.novu = true
-            console.log(`[Notifications] ✅ Novu status workflow triggered for #${orderNumber}`)
-        } catch (err) {
-            console.error('[Notifications] ❌ Novu status trigger failed:', err)
-        }
-    }
-
-    return results
+    return { resend: false }
 }
