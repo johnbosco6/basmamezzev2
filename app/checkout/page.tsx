@@ -22,17 +22,23 @@ const RESTAURANT_LON = 22.5685
 
 // ─── Delivery fee tiers ───────────────────────────────────────────────────────
 function getDeliveryFee(km: number): number {
-    if (km <= 1) return 8
-    if (km <= 4) return 12
-    if (km <= 9) return 16
+    if (km <= 3) return 12
+    if (km <= 5) return 14
+    if (km <= 6) return 16
+    if (km <= 7) return 18
+    if (km <= 8) return 20
+    if (km <= 9) return 22
     return 24
 }
 
 function getDeliveryLabel(km: number): string {
-    if (km <= 1) return "do 1 km"
-    if (km <= 4) return "1–4 km"
-    if (km <= 9) return "5–9 km"
-    return "10+ km"
+    if (km <= 3) return "0–3 km"
+    if (km <= 5) return "3–5 km"
+    if (km <= 6) return "5–6 km"
+    if (km <= 7) return "6–7 km"
+    if (km <= 8) return "7–8 km"
+    if (km <= 9) return "8–9 km"
+    return "9+ km"
 }
 
 // ─── Haversine distance (km) ──────────────────────────────────────────────────
@@ -288,17 +294,16 @@ export default function CheckoutPage() {
     const PricingTable = () => (
         <div className="grid grid-cols-2 gap-1.5 text-xs mt-3">
             {[
-                { label: "do 1 km", price: "8 zł" },
-                { label: "1–4 km", price: "12 zł" },
-                { label: "5–9 km", price: "16 zł" },
-                { label: "10+ km", price: "24 zł" },
-            ].map((tier) => {
-                const active = deliveryInfo && (
-                    (tier.label === "do 1 km" && deliveryInfo.distanceKm <= 1) ||
-                    (tier.label === "1–4 km" && deliveryInfo.distanceKm > 1 && deliveryInfo.distanceKm <= 4) ||
-                    (tier.label === "5–9 km" && deliveryInfo.distanceKm > 4 && deliveryInfo.distanceKm <= 9) ||
-                    (tier.label === "10+ km" && deliveryInfo.distanceKm > 9)
-                )
+                { label: "0–3 km", price: "12 zł", max: 3 },
+                { label: "3–5 km", price: "14 zł", max: 5 },
+                { label: "5–6 km", price: "16 zł", max: 6 },
+                { label: "6–7 km", price: "18 zł", max: 7 },
+                { label: "7–8 km", price: "20 zł", max: 8 },
+                { label: "8–9 km", price: "22 zł", max: 9 },
+                { label: "9+ km", price: "24 zł", max: Infinity },
+            ].map((tier, i, arr) => {
+                const prevMax = i === 0 ? 0 : arr[i - 1].max
+                const active = deliveryInfo && deliveryInfo.distanceKm > prevMax && deliveryInfo.distanceKm <= tier.max
                 return (
                     <div key={tier.label} className={`flex items-center justify-between px-3 py-2 rounded-lg border transition-all ${active ? "bg-[#BA9D76]/15 border-[#BA9D76]/50 text-[#BA9D76] font-semibold" : "bg-gray-50 border-gray-200 text-gray-500 font-light"}`}>
                         <span className={archivo.className}>{tier.label}</span>
@@ -350,7 +355,7 @@ export default function CheckoutPage() {
                                         className={`p-4 rounded-xl border-2 transition-all duration-200 flex flex-col items-center gap-2 ${orderType === "delivery" ? "border-[#BA9D76] bg-[#BA9D76]/5 text-[#BA9D76]" : "border-gray-200 text-gray-500 hover:border-gray-300"}`}>
                                         <Home className="h-7 w-7" />
                                         <span className={`font-semibold text-sm ${archivo.className}`}>Dostawa do Domu</span>
-                                        <span className="text-xs opacity-70 font-light">od 8 zł · płatność online</span>
+                                        <span className="text-xs opacity-70 font-light">od 12 zł · płatność online</span>
                                     </button>
                                     <button type="button" onClick={() => { setOrderType("pickup"); setDeliveryInfo(null); setAddressConfirmed(false); setLocationError("") }}
                                         className={`p-4 rounded-xl border-2 transition-all duration-200 flex flex-col items-center gap-2 ${orderType === "pickup" ? "border-[#BA9D76] bg-[#BA9D76]/5 text-[#BA9D76]" : "border-gray-200 text-gray-500 hover:border-gray-300"}`}>
