@@ -390,25 +390,6 @@ export default function HomePage() {
                 <h3 className={`text-2xl font-semibold mb-6 text-white ${archivo.className}`}>Odwiedź Nas</h3>
                 <div className="space-y-4">
                   <div className="flex items-start gap-4">
-                    <MapPin className="h-6 w-6 mt-1 flex-shrink-0 text-[#BA9D76]" />
-                    <div>
-                      <h4 className={`font-semibold text-lg text-white ${archivo.className}`}>Lokalizacja</h4>
-                      <a
-                        href="https://www.google.com/maps/dir//Krakowskie+Przedmie%C5%9Bcie+3,+20-002+Lublin/@51.2476527,22.4823717,12z/data=!4m8!4m7!1m0!1m5!1m1!1s0x4722578b335bb407:0x1cda20df03762b0a!2m2!1d22.5647719!2d51.2476816?entry=ttu&g_ep=EgoyMDI1MDYzMC4wIKXMDSoASAFQAw%3D%3D&q=BASMA+Mezze+%26+Grill+Opinie&sa=X&ved=2ahUKEwjbl43C1aqOAxVeIxAIHepIBXAQ0bkNegQIIRAD&biw=1536&bih=738&dpr=1.25"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={`text-white/90 hover:text-[#BA9D76] transition-colors duration-300 font-light cursor-pointer hover:underline block mb-1 ${archivo.className}`}
-                      >
-                        ul. Krakowskie Przedmieście 3
-                        <br />
-                        20-002 Lublin, Polska
-                      </a>
-                      <p className={`text-xs text-white/70 font-light ${archivo.className}`}>
-                        Kliknij aby otworzyć w Google Maps
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-4">
                     <Clock className="h-6 w-6 mt-1 flex-shrink-0 text-[#BA9D76]" />
                     <div>
                       <h4 className={`font-semibold text-lg text-white ${archivo.className}`}>Godziny Otwarcia</h4>
@@ -421,20 +402,39 @@ export default function HomePage() {
                       </div>
                     </div>
                   </div>
+                  
                   <div className="flex items-start gap-4">
-                    <Phone className="h-6 w-6 mt-1 flex-shrink-0 text-[#BA9D76]" />
-                    <div>
-                      <h4 className={`font-semibold text-lg text-white ${archivo.className}`}>Kontakt</h4>
-                      <p className={`text-white/90 font-light ${archivo.className}`}>
-                        +48 574 933 988
-                        <br />
-                        basmalublin@gmail.com
-                      </p>
-                      
-                      <div className={`mt-4 text-sm text-white/70 font-light space-y-1 p-4 bg-white/5 rounded-xl border border-white/10 ${archivo.className}`}>
-                        <p className="text-[#BA9D76] font-medium mb-1">Dane firmowe:</p>
-                        <p>Jakub Wiśniewski Browar Dziki Wschód</p>
-                        <p>NIP: 714 185 55 52</p>
+                    <MapPin className="h-6 w-6 mt-1 flex-shrink-0 text-[#BA9D76]" />
+                    <div className="w-full">
+                      <div className="bg-white/5 p-6 rounded-xl border border-[#BA9D76]/20 space-y-5">
+                        <div>
+                          <h4 className={`font-medium text-[#BA9D76] mb-2 ${archivo.className}`}>Lokalizacja</h4>
+                          <a
+                            href="https://www.google.com/maps/dir//Krakowskie+Przedmie%C5%9Bcie+3,+20-002+Lublin/@51.2476527,22.4823717,12z/data=!4m8!4m7!1m0!1m5!1m1!1s0x4722578b335bb407:0x1cda20df03762b0a!2m2!1d22.5647719!2d51.2476816?entry=ttu&g_ep=EgoyMDI1MDYzMC4wIKXMDSoASAFQAw%3D%3D&q=BASMA+Mezze+%26+Grill+Opinie&sa=X&ved=2ahUKEwjbl43C1aqOAxVeIxAIHepIBXAQ0bkNegQIIRAD&biw=1536&bih=738&dpr=1.25"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={`text-white/90 hover:text-[#BA9D76] transition-colors duration-300 font-light cursor-pointer hover:underline block ${archivo.className}`}
+                          >
+                            ul. Krakowskie Przedmieście 3
+                            <br />
+                            20-002 Lublin, Polska
+                          </a>
+                        </div>
+                        <div>
+                          <h4 className={`font-medium text-[#BA9D76] mb-2 ${archivo.className}`}>Kontakt</h4>
+                          <p className={`text-white/90 font-light ${archivo.className}`}>
+                            +48 574 933 988
+                            <br />
+                            basmalublin@gmail.com
+                          </p>
+                        </div>
+                        <div className="pt-2 border-t border-white/10">
+                          <h4 className={`font-medium text-[#BA9D76] mb-2 ${archivo.className}`}>Dane firmowe</h4>
+                          <div className={`text-sm text-white/80 font-light space-y-1 ${archivo.className}`}>
+                            <p>Jakub Wiśniewski Browar Dziki Wschód</p>
+                            <p>NIP: 714 185 55 52</p>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
