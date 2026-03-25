@@ -337,6 +337,13 @@ export default function CheckoutPage() {
                 </div>
             </header>
 
+            <div className="container mx-auto px-4 pt-4 max-w-6xl">
+                <div className="flex items-center justify-center gap-2 bg-amber-50 border border-amber-200 text-amber-800 px-4 py-2.5 rounded-xl text-sm font-semibold shadow-sm">
+                    <AlertCircle className="h-4 w-4 flex-shrink-0" />
+                    Minimalna kwota zamówienia wynosi: 40 zł
+                </div>
+            </div>
+
             <div className="container mx-auto px-4 py-8 max-w-6xl">
                 <form onSubmit={handleSubmit}>
                     <div className="grid lg:grid-cols-5 gap-8">
