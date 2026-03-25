@@ -4,7 +4,7 @@ import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { createClient } from 'next-sanity'
 
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'basma2024'
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || ''
 const SESSION_COOKIE = 'admin_session'
 const STAFF_COOKIE = 'current_staff'
 const SHIFT_ID_COOKIE = 'shift_id'
