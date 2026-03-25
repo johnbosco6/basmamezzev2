@@ -127,16 +127,26 @@ export function MainFooter() {
                   <Mail className="h-4 w-4 text-[#BA9D76]" />
                   <span>basmalublin@gmail.com</span>
                 </div>
-                <div className={`flex items-center gap-2 text-sm text-white/80 font-light ${archivo.className}`}>
-                  <MapPin className="h-4 w-4 text-[#BA9D76]" />
-                  <a
-                    href="https://www.google.com/maps/dir//Krakowskie+Przedmie%C5%9Bcie+3,+20-002+Lublin/@51.2476527,22.4823717,12z"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hover:text-[#BA9D76] transition-colors duration-300 hover:underline"
-                  >
-                    Krakowskie Przedmieście 3
-                  </a>
+                <div className={`flex items-start gap-2 text-sm text-white/80 font-light ${archivo.className}`}>
+                  <MapPin className="h-4 w-4 text-[#BA9D76] mt-1" />
+                  <div>
+                    <a
+                      href="https://www.google.com/maps/dir//Krakowskie+Przedmie%C5%9Bcie+3,+20-002+Lublin/@51.2476527,22.4823717,12z"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:text-[#BA9D76] transition-colors duration-300 hover:underline block mb-3"
+                    >
+                      Krakowskie Przedmieście 3<br />
+                      20-002 Lublin
+                    </a>
+                    <div className="text-white/60 text-xs space-y-1 mt-2 p-3 bg-white/5 rounded-lg border border-white/10">
+                      <p className="text-[#BA9D76] font-medium mb-1">Dane firmowe:</p>
+                      <p>Jakub Wiśniewski Browar Dziki Wschód</p>
+                      <p>ul. Krakowskie Przedmieście 3</p>
+                      <p>20-002 Lublin</p>
+                      <p>NIP: 714 185 55 52</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

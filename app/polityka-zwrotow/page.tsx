@@ -58,7 +58,7 @@ export default function PolitykaZwrotowPage() {
                                     <p>
                                         Właścicielem restauracji Basma Mezze & Grill jest:
                                         <br />
-                                        <strong>Basma Mezze & Grill</strong>
+                                        <strong>Jakub Wiśniewski Browar Dziki Wschód</strong>
                                         <br />
                                         ul. Krakowskie Przedmieście 3
                                         <br />

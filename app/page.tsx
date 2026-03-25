@@ -397,15 +397,21 @@ export default function HomePage() {
                         href="https://www.google.com/maps/dir//Krakowskie+Przedmie%C5%9Bcie+3,+20-002+Lublin/@51.2476527,22.4823717,12z/data=!4m8!4m7!1m0!1m5!1m1!1s0x4722578b335bb407:0x1cda20df03762b0a!2m2!1d22.5647719!2d51.2476816?entry=ttu&g_ep=EgoyMDI1MDYzMC4wIKXMDSoASAFQAw%3D%3D&q=BASMA+Mezze+%26+Grill+Opinie&sa=X&ved=2ahUKEwjbl43C1aqOAxVeIxAIHepIBXAQ0bkNegQIIRAD&biw=1536&bih=738&dpr=1.25"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className={`text-white/90 hover:text-[#BA9D76] transition-colors duration-300 font-light cursor-pointer hover:underline ${archivo.className}`}
+                        className={`text-white/90 hover:text-[#BA9D76] transition-colors duration-300 font-light cursor-pointer hover:underline block mb-1 ${archivo.className}`}
                       >
                         ul. Krakowskie Przedmieście 3
                         <br />
                         20-002 Lublin, Polska
                       </a>
-                      <p className={`text-xs text-white/70 mt-1 font-light ${archivo.className}`}>
+                      <p className={`text-xs text-white/70 mb-4 font-light ${archivo.className}`}>
                         Kliknij aby otworzyć w Google Maps
                       </p>
+                      
+                      <div className={`text-sm text-white/70 font-light space-y-1 p-4 bg-white/5 rounded-xl border border-white/10 ${archivo.className}`}>
+                        <p className="text-[#BA9D76] font-medium mb-1">Dane firmowe:</p>
+                        <p>Jakub Wiśniewski Browar Dziki Wschód</p>
+                        <p>NIP: 714 185 55 52</p>
+                      </div>
                     </div>
                   </div>
                   <div className="flex items-start gap-4">
@@ -617,16 +623,26 @@ export default function HomePage() {
                       <Mail className="h-4 w-4 text-[#BA9D76]" />
                       <span>basmalublin@gmail.com</span>
                     </div>
-                    <div className={`flex items-center gap-2 text-sm text-white/80 font-light ${archivo.className}`}>
-                      <MapPin className="h-4 w-4 text-[#BA9D76]" />
-                      <a
-                        href="https://www.google.com/maps/dir//Krakowskie+Przedmie%C5%9Bcie+3,+20-002+Lublin/@51.2476527,22.4823717,12z/data=!4m8!4m7!1m0!1m5!1m1!1s0x4722578b335bb407:0x1cda20df03762b0a!2m2!1d22.5647719!2d51.2476816?entry=ttu&g_ep=EgoyMDI1MDYzMC4wIKXMDSoASAFQAw%3D%3D"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="hover:text-[#BA9D76] transition-colors duration-300 hover:underline"
-                      >
-                        Krakowskie Przedmieście 3
-                      </a>
+                    <div className={`flex items-start gap-2 text-sm text-white/80 font-light ${archivo.className}`}>
+                      <MapPin className="h-4 w-4 text-[#BA9D76] mt-1" />
+                      <div>
+                        <a
+                          href="https://www.google.com/maps/dir//Krakowskie+Przedmie%C5%9Bcie+3,+20-002+Lublin/@51.2476527,22.4823717,12z/data=!4m8!4m7!1m0!1m5!1m1!1s0x4722578b335bb407:0x1cda20df03762b0a!2m2!1d22.5647719!2d51.2476816?entry=ttu&g_ep=EgoyMDI1MDYzMC4wIKXMDSoASAFQAw%3D%3D"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="hover:text-[#BA9D76] transition-colors duration-300 hover:underline block mb-3"
+                        >
+                          Krakowskie Przedmieście 3<br />
+                          20-002 Lublin
+                        </a>
+                        <div className="text-white/60 text-xs space-y-1 mt-2 p-3 bg-white/5 rounded-lg border border-white/10">
+                          <p className="text-[#BA9D76] font-medium mb-1">Dane firmowe:</p>
+                          <p>Jakub Wiśniewski Browar Dziki Wschód</p>
+                          <p>ul. Krakowskie Przedmieście 3</p>
+                          <p>20-002 Lublin</p>
+                          <p>NIP: 714 185 55 52</p>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>

@@ -56,8 +56,8 @@ export default function PolitykaPrywatnosciPage() {
                 </h2>
                 <div className={`space-y-3 text-sm leading-relaxed font-light ${archivo.className}`}>
                   <p>
-                    Administratorem Państwa danych osobowych jest restauracja Basma Mezze & Grill z siedzibą przy ul.
-                    Krakowskie Przedmieście 3, 20-002 Lublin.
+                    Administratorem Państwa danych osobowych jest <strong>Jakub Wiśniewski Browar Dziki Wschód</strong> (prowadzący restaurację Basma Mezze & Grill) z siedzibą przy ul.
+                    Krakowskie Przedmieście 3, 20-002 Lublin. NIP: 714 185 55 52.
                   </p>
                   <p>Kontakt z administratorem: basmalublin@gmail.com, tel. +48 574 933 988</p>
                 </div>

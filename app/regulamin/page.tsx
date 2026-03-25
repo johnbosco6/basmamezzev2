@@ -218,9 +218,9 @@ export default function RegulaminPage() {
 
               <div className="mt-8 p-4 bg-[#BA9D76]/20 rounded-lg border border-[#BA9D76]/30">
                 <p className="text-sm text-white/90 font-light">
-                  <strong>Kontakt:</strong>
+                  <strong>Dane firmowe:</strong>
                   <br />
-                  Basma Mezze & Grill
+                  Jakub Wiśniewski Browar Dziki Wschód
                   <br />
                   ul. Krakowskie Przedmieście 3
                   <br />
