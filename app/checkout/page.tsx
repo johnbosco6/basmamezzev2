@@ -3,13 +3,14 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from "react"
 import { useCart } from "@/context/cart-context"
 import { useRouter } from "next/navigation"
+import { motion, AnimatePresence } from "framer-motion"
 import Image from "next/image"
 import Link from "next/link"
 import {
     ArrowLeft, ShoppingBag, User, Phone, Mail, MessageSquare,
     CheckCircle, Minus, Plus, Trash2, MapPin, Truck,
     Package, AlertCircle, Loader2, Home, Building2, ChevronDown, Search,
-    CreditCard, Banknote, Wallet
+    CreditCard, Banknote, Wallet, X
 } from "lucide-react"
 import { Archivo } from "next/font/google"
 import { Button } from "@/components/ui/button"
@@ -109,6 +110,7 @@ export default function CheckoutPage() {
     const [addressConfirmed, setAddressConfirmed] = useState(false)
     const [acceptedTerms, setAcceptedTerms] = useState(false)
     const [paymentMethod, setPaymentMethod] = useState<'p24' | 'cash' | 'card_on_delivery'>('p24')
+    const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false)
 
     // Street dropdown state
     const [streetDropdownOpen, setStreetDropdownOpen] = useState(false)
@@ -212,6 +214,11 @@ export default function CheckoutPage() {
         const errs = validate()
         if (Object.keys(errs).length > 0) { setErrors(errs); return }
         setErrors({})
+        setIsPaymentModalOpen(true)
+    }
+
+    const handleFinalConfirm = async () => {
+        setIsPaymentModalOpen(false)
         setIsSubmitting(true)
         const orderNumber = Math.floor(1000 + Math.random() * 9000).toString()
         const orderData = {
@@ -653,34 +660,6 @@ export default function CheckoutPage() {
                                             className={`w-full px-4 py-3 border border-gray-200 rounded-xl bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#BA9D76]/40 focus:border-[#BA9D76] transition-colors resize-none ${archivo.className}`} />
                                     </div>
                                 </div>
-
-                                {/* PAYMENT METHOD SELECTOR */}
-                                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                                    <h2 className={`text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2 ${archivo.className}`}>
-                                        <CreditCard className="h-5 w-5 text-[#BA9D76]" />
-                                        Metoda Płatności
-                                    </h2>
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                                        <button type="button" onClick={() => setPaymentMethod('p24')}
-                                            className={`p-4 rounded-xl border-2 transition-all duration-200 flex flex-col items-center gap-2 text-center ${paymentMethod === 'p24' ? "border-[#BA9D76] bg-[#BA9D76]/5 text-[#BA9D76]" : "border-gray-200 text-gray-500 hover:border-gray-300"}`}>
-                                            <Wallet className="h-6 w-6" />
-                                            <span className={`font-semibold text-sm ${archivo.className}`}>Płatność Online</span>
-                                            <span className="text-[10px] opacity-70 font-light">Przelewy24 / Blik / Karta</span>
-                                        </button>
-                                        <button type="button" onClick={() => setPaymentMethod('cash')}
-                                            className={`p-4 rounded-xl border-2 transition-all duration-200 flex flex-col items-center gap-2 text-center ${paymentMethod === 'cash' ? "border-[#BA9D76] bg-[#BA9D76]/5 text-[#BA9D76]" : "border-gray-200 text-gray-500 hover:border-gray-300"}`}>
-                                            <Banknote className="h-6 w-6" />
-                                            <span className={`font-semibold text-sm ${archivo.className}`}>Gotówka</span>
-                                            <span className="text-[10px] opacity-70 font-light">Płatność przy odbiorze</span>
-                                        </button>
-                                        <button type="button" onClick={() => setPaymentMethod('card_on_delivery')}
-                                            className={`p-4 rounded-xl border-2 transition-all duration-200 flex flex-col items-center gap-2 text-center ${paymentMethod === 'card_on_delivery' ? "border-[#BA9D76] bg-[#BA9D76]/5 text-[#BA9D76]" : "border-gray-200 text-gray-500 hover:border-gray-300"}`}>
-                                            <CreditCard className="h-6 w-6" />
-                                            <span className={`font-semibold text-sm ${archivo.className}`}>Karta</span>
-                                            <span className="text-[10px] opacity-70 font-light">Płatność terminalem u kierowcy</span>
-                                        </button>
-                                    </div>
-                                </div>
                             </div>
 
                             <div className="bg-[#597FB1]/5 border border-[#597FB1]/20 rounded-2xl p-4">
@@ -798,26 +777,115 @@ export default function CheckoutPage() {
                                         ) : geocodingAddress && orderType === "delivery" ? (
                                             <span className="flex items-center gap-2"><Loader2 className="h-4 w-4 animate-spin" />Obliczanie dostawy...</span>
                                         ) : (
-                                            <span className="flex items-center gap-2">
-                                                <CheckCircle className="h-5 w-5" />
-                                                {paymentMethod === 'p24' ? 'Zapłać Online' : 'Złóż Zamówienie'} · {grandTotal.toFixed(0)} zł
-                                            </span>
+                                            "Złóż Zamówienie"
                                         )}
                                     </Button>
-                                    <p className={`text-xs text-center text-gray-400 mt-2 font-light ${archivo.className}`}>
-                                        {paymentMethod === 'p24' 
-                                            ? 'Płatność online przy składaniu zamówienia' 
-                                            : paymentMethod === 'cash' 
-                                                ? 'Zapłacisz gotówką przy odbiorze' 
-                                                : 'Zapłacisz kartą u kierowcy'}
+                                    <p className={`text-[10px] text-center text-gray-400 mt-2 font-light px-4 ${archivo.className}`}>
+                                        Klikając przycisk powyżej, potwierdzasz zamówienie i przejdziesz do wyboru metody płatności.
                                     </p>
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 </form>
             </div>
+
+            {/* PAYMENT MODAL */}
+            <AnimatePresence>
+                {isPaymentModalOpen && (
+                    <>
+                        <motion.div
+                            key="backdrop"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setIsPaymentModalOpen(false)}
+                            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100]"
+                        />
+                        <motion.div
+                            key="modal"
+                            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                            className="fixed inset-0 m-auto w-full max-w-lg h-fit bg-white rounded-3xl shadow-2xl z-[101] overflow-hidden"
+                        >
+                            <div className="bg-gradient-to-r from-[#2B2B2B] to-[#326096] p-6 text-white relative">
+                                <button
+                                    onClick={() => setIsPaymentModalOpen(false)}
+                                    type="button"
+                                    className="absolute right-4 top-4 w-8 h-8 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-colors"
+                                >
+                                    <X className="h-4 w-4" />
+                                </button>
+                                <h3 className={`text-xl font-bold mb-1 ${archivo.className}`}>Wybierz metodę płatności</h3>
+                                <p className="text-white/70 text-sm font-light">Ostatni krok przed potwierdzeniem zamówienia</p>
+                            </div>
+
+                            <div className="p-6 space-y-4">
+                                <div className="grid gap-3">
+                                    <button
+                                        type="button"
+                                        onClick={() => setPaymentMethod('p24')}
+                                        className={`p-4 rounded-xl border-2 transition-all duration-200 flex items-center gap-4 text-left ${paymentMethod === 'p24' ? "border-[#BA9D76] bg-[#BA9D76]/5 text-[#BA9D76]" : "border-gray-100 text-gray-600 hover:border-gray-200"}`}
+                                    >
+                                        <div className={`w-12 h-12 rounded-full flex items-center justify-center ${paymentMethod === 'p24' ? "bg-[#BA9D76]/20" : "bg-gray-100"}`}>
+                                            <Wallet className="h-6 w-6" />
+                                        </div>
+                                        <div className="flex-1">
+                                            <p className={`font-bold text-base ${archivo.className}`}>Płatność Online</p>
+                                            <p className="text-xs opacity-70 font-light">Przelewy24 / Blik / Karta</p>
+                                        </div>
+                                        {paymentMethod === 'p24' && <CheckCircle className="h-6 w-6" />}
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        onClick={() => setPaymentMethod('cash')}
+                                        className={`p-4 rounded-xl border-2 transition-all duration-200 flex items-center gap-4 text-left ${paymentMethod === 'cash' ? "border-[#BA9D76] bg-[#BA9D76]/5 text-[#BA9D76]" : "border-gray-100 text-gray-600 hover:border-gray-200"}`}
+                                    >
+                                        <div className={`w-12 h-12 rounded-full flex items-center justify-center ${paymentMethod === 'cash' ? "bg-[#BA9D76]/20" : "bg-gray-100"}`}>
+                                            <Banknote className="h-6 w-6" />
+                                        </div>
+                                        <div className="flex-1">
+                                            <p className={`font-bold text-base ${archivo.className}`}>Gotówka przy odbiorze</p>
+                                            <p className="text-xs opacity-70 font-light">Zapłać kurierowi lub w restauracji</p>
+                                        </div>
+                                        {paymentMethod === 'cash' && <CheckCircle className="h-6 w-6" />}
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        onClick={() => setPaymentMethod('card_on_delivery')}
+                                        className={`p-4 rounded-xl border-2 transition-all duration-200 flex items-center gap-4 text-left ${paymentMethod === 'card_on_delivery' ? "border-[#BA9D76] bg-[#BA9D76]/5 text-[#BA9D76]" : "border-gray-100 text-gray-600 hover:border-gray-200"}`}
+                                    >
+                                        <div className={`w-12 h-12 rounded-full flex items-center justify-center ${paymentMethod === 'card_on_delivery' ? "bg-[#BA9D76]/20" : "bg-gray-100"}`}>
+                                            <CreditCard className="h-6 w-6" />
+                                        </div>
+                                        <div className="flex-1">
+                                            <p className={`font-bold text-base ${archivo.className}`}>Karta przy odbiorze</p>
+                                            <p className="text-xs opacity-70 font-light">Płatność terminalem u kierowcy</p>
+                                        </div>
+                                        {paymentMethod === 'card_on_delivery' && <CheckCircle className="h-6 w-6" />}
+                                    </button>
+                                </div>
+
+                                <div className="bg-gray-50 rounded-2xl p-4 mt-6 flex items-center justify-between border border-gray-100">
+                                    <div>
+                                        <p className="text-gray-500 text-xs font-light">Do zapłaty:</p>
+                                        <p className={`text-2xl font-bold text-gray-900 ${archivo.className}`}>{grandTotal.toFixed(0)} zł</p>
+                                    </div>
+                                    <Button
+                                        onClick={handleFinalConfirm}
+                                        className="h-12 px-8 bg-[#BA9D76] hover:bg-[#a88a63] text-white font-bold rounded-xl shadow-lg transition-all"
+                                    >
+                                        Potwierdzam
+                                    </Button>
+                                </div>
+                            </div>
+                        </motion.div>
+                    </>
+                )}
+            </AnimatePresence>
         </div>
     )
 }
