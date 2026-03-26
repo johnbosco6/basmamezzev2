@@ -63,7 +63,7 @@ export default function OrderConfirmationPage() {
             <div className="container mx-auto px-4 py-12 max-w-2xl">
 
                 {/* Success Header */}
-                <div className="text-center mb-8">
+                <div className="text-center mb-6">
                     <div className="inline-flex items-center justify-center w-20 h-20 bg-green-500/20 border-2 border-green-400/40 rounded-full mb-5">
                         <CheckCircle className="h-10 w-10 text-green-400" />
                     </div>
@@ -71,6 +71,19 @@ export default function OrderConfirmationPage() {
                     <p className="text-white/70 font-light text-lg">
                         Dziękujemy, <span className="text-[#BA9D76] font-semibold">{order.name.split(" ")[0]}</span>!
                     </p>
+                </div>
+
+                {/* Email Verification Banner */}
+                <div className="bg-gradient-to-r from-[#BA9D76]/20 to-[#a88a63]/20 border border-[#BA9D76]/40 rounded-2xl p-4 mb-6 flex flex-col sm:flex-row items-center gap-4 shadow-lg">
+                    <div className="h-12 w-12 rounded-full bg-[#BA9D76]/20 flex items-center justify-center flex-shrink-0 border border-[#BA9D76]/30">
+                        <span className="text-2xl">📧</span>
+                    </div>
+                    <div className="text-center sm:text-left">
+                        <p className="text-white font-bold text-sm mb-0.5">Sprawdź swoją skrzynkę e-mail</p>
+                        <p className="text-white/80 font-light text-xs">
+                            Wysłaliśmy potwierdzenie Twojego zamówienia na adres <span className="font-semibold text-white">{order.email}</span>. W razie braku wiadomości prosimy o sprawdzenie folderu SPAM.
+                        </p>
+                    </div>
                 </div>
 
                 {/* Order Number & Payment Card */}
