@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef, useMemo } from "react"
 import { useCart } from "@/context/cart-context"
 import { useRouter } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
+import { validatePromoCode } from "@/app/actions/promo-actions"
 import Image from "next/image"
 import Link from "next/link"
 import {
@@ -112,6 +113,13 @@ export default function CheckoutPage() {
     const [paymentMethod, setPaymentMethod] = useState<'p24' | 'cash' | 'card_on_delivery'>('p24')
     const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false)
 
+    // Promo code state
+    const [promoInput, setPromoInput] = useState("")
+    const [promoError, setPromoError] = useState("")
+    const [promoSuccess, setPromoSuccess] = useState("")
+    const [discountPercent, setDiscountPercent] = useState(0)
+    const [isVerifyingPromo, setIsVerifyingPromo] = useState(false)
+
     // Street dropdown state
     const [streetDropdownOpen, setStreetDropdownOpen] = useState(false)
     const [streetSearch, setStreetSearch] = useState("")
@@ -209,7 +217,31 @@ export default function CheckoutPage() {
     }
 
     const deliveryFee = orderType === "delivery" && deliveryInfo ? deliveryInfo.fee : 0
-    const grandTotal = totalPrice + deliveryFee
+    const foodTotal = totalPrice
+    const discountAmount = discountPercent > 0 ? (foodTotal * discountPercent) / 100 : 0
+    const grandTotal = foodTotal - discountAmount + deliveryFee
+
+    const handleApplyPromo = async () => {
+        setPromoError("")
+        setPromoSuccess("")
+        if (!promoInput.trim()) return
+
+        setIsVerifyingPromo(true)
+        try {
+            const res = await validatePromoCode(promoInput)
+            if (res.valid && res.discountPercent) {
+                setDiscountPercent(res.discountPercent)
+                setPromoSuccess(`Zastosowano zniżkę ${res.discountPercent}%!`)
+            } else {
+                setDiscountPercent(0)
+                setPromoError(res.message || "Błędny kod")
+            }
+        } catch (error) {
+            setPromoError("Wystąpił błąd. Spróbuj ponownie.")
+        } finally {
+            setIsVerifyingPromo(false)
+        }
+    }
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -243,6 +275,8 @@ export default function CheckoutPage() {
             items,
             subtotal: totalPrice,
             deliveryFee,
+            discountAmount,
+            promoCode: discountPercent > 0 ? promoInput.trim() : null,
             totalPrice: grandTotal,
         }
 
@@ -722,6 +756,41 @@ export default function CheckoutPage() {
                                     ))}
                                 </div>
 
+                                {/* Promo Code Section */}
+                                <div className="border-t border-gray-100 bg-white px-6 py-4">
+                                    <div className="flex items-center gap-2">
+                                        <input
+                                            type="text"
+                                            value={promoInput}
+                                            onChange={(e) => setPromoInput(e.target.value)}
+                                            placeholder="Kod rabatowy (opcjonalnie)"
+                                            className={`flex-1 px-3 py-2 border rounded-lg text-sm bg-gray-50 focus:outline-none focus:ring-1 focus:ring-[#BA9D76]/50 focus:border-[#BA9D76] uppercase ${archivo.className} ${promoError ? 'border-red-300' : 'border-gray-200'}`}
+                                            disabled={discountPercent > 0}
+                                        />
+                                        {discountPercent > 0 ? (
+                                            <Button
+                                                type="button"
+                                                onClick={() => { setDiscountPercent(0); setPromoInput(""); setPromoSuccess("") }}
+                                                variant="outline"
+                                                className="h-9 px-3 text-red-500 hover:text-red-600 hover:bg-red-50 border-red-200 rounded-lg text-xs"
+                                            >
+                                                Usuń
+                                            </Button>
+                                        ) : (
+                                            <Button
+                                                type="button"
+                                                onClick={handleApplyPromo}
+                                                disabled={!promoInput.trim() || isVerifyingPromo}
+                                                className="h-9 px-4 bg-gray-900 hover:bg-gray-800 text-white rounded-lg text-xs"
+                                            >
+                                                {isVerifyingPromo ? "..." : "Dodaj"}
+                                            </Button>
+                                        )}
+                                    </div>
+                                    {promoError && <p className="text-red-500 text-xs mt-1.5 font-medium">{promoError}</p>}
+                                    {promoSuccess && <p className="text-green-600 text-xs mt-1.5 font-medium">{promoSuccess}</p>}
+                                </div>
+
                                 {/* Totals */}
                                 <div className="border-t border-gray-100 px-6 py-4 space-y-2 bg-gray-50">
                                     <div className="flex justify-between text-sm text-gray-600">
@@ -738,6 +807,12 @@ export default function CheckoutPage() {
                                             {deliveryFee > 0 ? `+${deliveryFee} zł` : "GRATIS"}
                                         </span>
                                     </div>
+                                    {discountAmount > 0 && (
+                                        <div className="flex justify-between text-sm text-green-600">
+                                            <span className={`font-medium ${archivo.className}`}>Zniżka ({discountPercent}%)</span>
+                                            <span className={`font-semibold ${archivo.className}`}>-{discountAmount.toFixed(2)} zł</span>
+                                        </div>
+                                    )}
                                     <div className="border-t border-gray-200 pt-2 flex justify-between">
                                         <span className={`font-bold text-gray-900 ${archivo.className}`}>Razem</span>
                                         <span className={`font-bold text-xl text-[#BA9D76] ${archivo.className}`}>{grandTotal.toFixed(0)} zł</span>

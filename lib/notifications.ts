@@ -19,6 +19,8 @@ interface OrderDetails {
     items: OrderItem[]
     subtotal: number
     deliveryFee: number
+    discountAmount?: number
+    promoCode?: string
     totalAmount: number
     customerAddress?: {
         street?: string
@@ -144,6 +146,12 @@ function buildOrderConfirmationHTML(order: OrderDetails): string {
                                     <tr>
                                         <td style="padding: 6px 0; font-family: Arial, sans-serif; font-size: 14px; color: #666;">Dostawa</td>
                                         <td style="padding: 6px 0; font-family: Arial, sans-serif; font-size: 14px; color: #333; text-align: right;">${order.deliveryFee.toFixed(2)} zł</td>
+                                    </tr>
+                                    ` : ''}
+                                    ${order.discountAmount && order.discountAmount > 0 ? `
+                                    <tr>
+                                        <td style="padding: 6px 0; font-family: Arial, sans-serif; font-size: 14px; color: #4ade80; font-weight: bold;">Zniżka ${order.promoCode ? `(${order.promoCode})` : ''}</td>
+                                        <td style="padding: 6px 0; font-family: Arial, sans-serif; font-size: 14px; color: #4ade80; text-align: right; font-weight: bold;">-${order.discountAmount.toFixed(2)} zł</td>
                                     </tr>
                                     ` : ''}
                                     <tr>

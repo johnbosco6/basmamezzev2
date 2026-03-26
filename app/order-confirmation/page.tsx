@@ -33,6 +33,8 @@ interface OrderData {
     items: CartItem[]
     subtotal: number
     deliveryFee: number
+    discountAmount?: number
+    promoCode?: string | null
     totalPrice: number
     paymentMethod: "p24" | "cash" | "card_on_delivery"
 }
@@ -212,9 +214,15 @@ export default function OrderConfirmationPage() {
                         {isDelivery && (
                             <div className="flex justify-between text-sm">
                                 <span className="text-white/60 font-light">Dostawa</span>
-                                <span className="text-white/80 font-medium">+{order.deliveryFee} zł</span>
+                                <span className="text-white/80 font-medium">+{order.deliveryFee.toFixed(2)} zł</span>
                             </div>
                         )}
+                        {order.discountAmount && order.discountAmount > 0 ? (
+                            <div className="flex justify-between text-sm">
+                                <span className="text-green-400 font-light">Zniżka {order.promoCode ? `(${order.promoCode})` : ''}</span>
+                                <span className="text-green-400 font-medium">-{order.discountAmount.toFixed(2)} zł</span>
+                            </div>
+                        ) : null}
                         <div className="border-t border-white/10 pt-2 flex justify-between">
                             <span className="text-white/70 font-light">Razem</span>
                             <span className="text-[#BA9D76] font-bold text-xl">{order.totalPrice.toFixed(0)} zł</span>

@@ -29,6 +29,8 @@ export async function POST(req: NextRequest) {
             items,
             subtotal,
             deliveryFee,
+            discountAmount,
+            promoCode,
             totalPrice,
             paymentMethod,
         } = body
@@ -61,6 +63,8 @@ export async function POST(req: NextRequest) {
             })),
             subtotal: subtotal || 0,
             deliveryFee: deliveryFee || 0,
+            discountAmount: discountAmount || 0,
+            promoCode: promoCode || '',
             totalAmount: totalPrice || 0,
             paymentMethod: paymentMethod || 'p24',
             notes: notes || '',
@@ -88,6 +92,8 @@ export async function POST(req: NextRequest) {
                 })),
                 subtotal: subtotal || 0,
                 deliveryFee: deliveryFee || 0,
+                discountAmount: discountAmount || 0,
+                promoCode: promoCode || null,
                 totalAmount: totalPrice || 0,
                 customerAddress: deliveryAddress,
             }).catch(err => console.error('[Order API] Notification error:', err))
