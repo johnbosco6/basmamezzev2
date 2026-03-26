@@ -197,6 +197,8 @@ export default function CheckoutPage() {
         if (!form.name.trim()) e.name = "Imię i nazwisko jest wymagane"
         if (!form.phone.trim()) e.phone = "Numer telefonu jest wymagany"
         else if (!/^[\d\s\+\-()]{7,}$/.test(form.phone)) e.phone = "Podaj prawidłowy numer"
+        if (!form.email.trim()) e.email = "Adres email jest wymagany"
+        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = "Podaj prawidłowy adres email"
         if (orderType === "delivery") {
             if (!form.street.trim()) e.street = "Ulica jest wymagana"
             if (!form.houseNumber.trim()) e.houseNumber = "Numer budynku jest wymagany"
@@ -276,7 +278,7 @@ export default function CheckoutPage() {
                     body: JSON.stringify({
                         orderNumber,
                         totalAmount: grandTotal,
-                        email: form.email || "klient@basma.pl", // Fallback if optional email missing
+                        email: form.email,
                         name: form.name,
                         phone: form.phone,
                         orderType,
@@ -638,14 +640,15 @@ export default function CheckoutPage() {
                                     {/* Email */}
                                     <div>
                                         <label className={`block text-sm font-medium text-gray-700 mb-1.5 ${archivo.className}`}>
-                                            Email <span className="text-gray-400 text-xs font-light">(opcjonalnie)</span>
+                                            Email <span className="text-red-500">*</span>
                                         </label>
                                         <div className="relative">
                                             <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                                             <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })}
                                                 placeholder="email@example.com"
-                                                className={`w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#BA9D76]/40 focus:border-[#BA9D76] transition-colors ${archivo.className}`} />
+                                                className={`w-full pl-10 pr-4 py-3 border rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#BA9D76]/40 focus:border-[#BA9D76] transition-colors ${errors.email ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50"} ${archivo.className}`} />
                                         </div>
+                                        {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
                                     </div>
 
                                     {/* Notes */}
