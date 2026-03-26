@@ -3,6 +3,7 @@ import { Archivo } from 'next/font/google'
 import Image from 'next/image'
 import { isAuthenticated } from '@/app/actions/auth-actions'
 import { redirect } from 'next/navigation'
+import { PasswordInput } from './password-input'
 
 const archivo = Archivo({
     subsets: ["latin"],
@@ -52,15 +53,7 @@ export default async function AdminLoginPage() {
                             <label htmlFor="password" className="block text-sm font-medium text-white/60 mb-2">
                                 Hasło
                             </label>
-                            <input
-                                type="password"
-                                id="password"
-                                name="password"
-                                required
-                                autoFocus
-                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-[#BA9D76]/50 transition-all"
-                                placeholder="Wprowadź hasło administratora"
-                            />
+                            <PasswordInput />
                         </div>
 
                         <button
