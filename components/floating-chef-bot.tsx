@@ -250,7 +250,7 @@ export function FloatingChefBot() {
                                 </div>
 
                                 {/* Special Events Menu Button */}
-                                <Link href="/menu#specjalne-okazje" onClick={() => setIsOpen(false)} className="block w-full">
+                                <Link href="https://www.basmamezze.pl/special-events" onClick={() => setIsOpen(false)} className="block w-full">
                                     <Button className="w-full bg-gradient-to-r from-[#BA9D76] to-[#8B7355] hover:from-[#A68B66] hover:to-[#7A6548] text-white border-none shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
                                         <Calendar className="mr-2 h-4 w-4" />
                                         <span className={archivo.className}>Menu na Specjalne Okazje</span>
