@@ -79,7 +79,7 @@ export const menuData: MenuCategory[] = [
               "Grillowany bakłażan, jajko, świeże warzywa, hummus, pietruszka, mięta, sosy: pilpelchuma i amba, podane na wypiekanej na miejscu picie",
             price: "45 zł",
             image: "/images/menu/sabich-dish-new.jpeg",
-            allergens: [1, 3, 7, 11],
+            allergens: [1, 3, 7, 10, 11],
           },
           {
             id: "arabic-sandwich",
@@ -88,7 +88,7 @@ export const menuData: MenuCategory[] = [
               "Wypiekany na miejscu turecki bajgiel - simit, z koftą jagnięcą, harissą aioli, piklowaną kapustą i ogórkiem, pietruszką i miętą",
             price: "45 zł",
             image: "/images/menu/kanapka-arabska.jpg",
-            allergens: [1, 3, 7, 10, 11],
+            allergens: [1, 3, 11],
           },
           {
             id: "syrian-sandwich",
@@ -97,7 +97,7 @@ export const menuData: MenuCategory[] = [
               "Wypiekany na miejscu turecki bajgiel - simit, z pikantnym kurczakiem taouk, harissą, ubijaną fetą, piklowaną kapustą, pietruszką, miętą i cebulą",
             price: "42 zł",
             image: "/images/menu/syrian-sandwich-breakfast-updated.jpeg",
-            allergens: [1, 3, 7, 10, 11],
+            allergens: [1, 7, 10, 11],
           },
           {
             id: "greek-sandwich",
@@ -106,7 +106,7 @@ export const menuData: MenuCategory[] = [
               "Halloumi, oliwki, labneh, sos pilpelchuma, sałata, marynowana papryka, natka pietruszki, serwowane na chlebie pita",
             price: "45 zł",
             image: "/images/menu/kanapka-grecka.jpg",
-            allergens: [1, 7, 10, 11],
+            allergens: [1, 7, 10, 11, 12],
           },
 
         ],
@@ -212,7 +212,7 @@ export const menuData: MenuCategory[] = [
             description: "Pasta z białej fasoli i masła sezamowego z przyprawami",
             price: "9 zł",
             image: "/images/menu/hummus-white-bean.jpg",
-            allergens: [1, 11],
+            allergens: [7, 11],
           },
           {
             id: "mix-pikli",
@@ -220,7 +220,7 @@ export const menuData: MenuCategory[] = [
             description: "Chrupiące warzywa w aromatycznej zalewie octowej",
             price: "9 zł",
             image: "/images/menu/mixed-pickles-mezze.jpeg",
-            allergens: [10],
+            allergens: [10, 12],
           },
           {
             id: "labneh",
@@ -236,7 +236,7 @@ export const menuData: MenuCategory[] = [
             description: "Kremowy serek z dodatkiem mięty i natki pietruszki",
             price: "11 zł",
             image: "/images/menu/labneh-mietowy.jpg",
-            allergens: [7, 11],
+            allergens: [7],
           },
           {
             id: "labneh-sweet",
@@ -268,7 +268,7 @@ export const menuData: MenuCategory[] = [
             description: "Smażona kulka z kaszy bulgur z jagnięciną, cebulą i przyprawami",
             price: "11 zł",
             image: "/images/menu/kibbeh.jpg",
-            allergens: [1],
+            allergens: [1, 8],
           },
           {
             id: "tabbouleh-basma",
@@ -276,7 +276,7 @@ export const menuData: MenuCategory[] = [
             description: "Sałatka z kaszą bulgur, suszoną morelą, migdałami, miodem i wodą z kwiatów pomarańczy",
             price: "12 zł",
             image: "/images/menu/tabbouleh-basma-mezze.jpeg",
-            allergens: [1, 8, 10],
+            allergens: [1, 8, 10, 12],
           },
           {
             id: "muhammara",
@@ -300,14 +300,14 @@ export const menuData: MenuCategory[] = [
             description: "Grillowana papryka podana na labneh",
             price: "12 zł",
             image: "/images/menu/grilled-pepper-labneh.jpg",
-            allergens: [7],
+            allergens: [7, 11],
           },
           {
             id: "labneh-basma",
             name: "Labneh by BASMA",
             description: "Kremowy serek z konfitowanym czosnkiem, natką pietruszki i prażonym sezamem",
             price: "13 zł",
-            image: "/images/menu/labneh-basma.jpg",
+            allergens: [7, 11],
           },
           {
             id: "ubijana-feta",
@@ -343,7 +343,7 @@ export const menuData: MenuCategory[] = [
             description: "3x falafel, hummus, labneh, grillowany bakłażan, mix pikli, pita",
             price: "46 zł",
             image: "/images/menu/mezze-platter-basma-premium.jpeg",
-            allergens: [3, 7],
+            allergens: [1, 7, 10, 11, 12],
           },
           {
             id: "arabski-talerz",
@@ -351,7 +351,7 @@ export const menuData: MenuCategory[] = [
             description: "2x falafel, hummus, labneh, tabbouleh, muhammara, mix pikli, pita",
             price: "46 zł",
             image: "/images/menu/mezze-platter-arabic-premium.jpeg",
-            allergens: [1, 7, 11, 12],
+            allergens: [1, 7, 10, 11, 12],
           },
           {
             id: "libanski-talerz",
@@ -359,7 +359,7 @@ export const menuData: MenuCategory[] = [
             description: "2x Kibbeh, Hummus z białej fasoli, tabbouleh, grillowana papryka na labneh, mix pikli, pita",
             price: "46 zł",
             image: "/images/menu/mezze-platter-jerusalem.jpeg", // Placeholder image or appropriate one
-            allergens: [1, 7, 10, 11],
+            allergens: [1, 3, 7, 8, 10, 11, 12],
           },
           {
             id: "jerozolimski-talerz",
@@ -367,7 +367,7 @@ export const menuData: MenuCategory[] = [
             description: "3x falafel, baba ghanoush, tabbouleh by BASMA, muhammara, mix pikli, pita",
             price: "48 zł",
             image: "/images/menu/mezze-platter-jerusalem.jpeg",
-            allergens: [1, 7, 8, 10, 11],
+            allergens: [1, 7, 8, 10, 11, 12],
           },
           {
             id: "grecki-talerz",
@@ -375,7 +375,7 @@ export const menuData: MenuCategory[] = [
             description: "2x falafel, grillowany bakłażan, oliwki, tzatziki, ubita feta, mix pikli, pita",
             price: "49 zł",
             image: "/images/menu/mezze-platter-greek.jpeg",
-            allergens: [1, 7, 10, 11],
+            allergens: [1, 7, 10, 11, 12],
           },
           {
             id: "weganski-talerz",
@@ -383,7 +383,7 @@ export const menuData: MenuCategory[] = [
             description: "3x falafel, hummus, tabbouleh, muhammara, mix pikli, pita",
             price: "45 zł",
             image: "/images/menu/mezze-platter-basma-premium.jpeg",
-            allergens: [1, 8, 11, 12],
+            allergens: [1, 8, 10, 11, 12],
           },
         ],
       },
@@ -426,7 +426,7 @@ export const menuData: MenuCategory[] = [
             description: "Z sosami toum i pilpelchuma, piklami i natką pietruszki",
             price: "64 zł",
             image: "/images/menu/adana-mutton-kebab-new.jpeg",
-            allergens: [3, 10],
+            allergens: [3, 10, 12],
           },
           {
             id: "kofty-jagniece",
@@ -434,7 +434,7 @@ export const menuData: MenuCategory[] = [
             description: "Z sosami zhoug i harissa, piklami, natką pietruszki i cebulą z sumakiem",
             price: "74 zł",
             image: "/images/menu/lamb-kofta-with-sauces-new.jpeg",
-            allergens: [7, 10],
+            allergens: [7, 10, 12],
           },
 
           {
@@ -443,7 +443,7 @@ export const menuData: MenuCategory[] = [
             description: "z labneh, orzechami pinii, piklami, natką pietruszki, cebulą i czarnuszką",
             price: "139 zł",
             image: "/images/menu/lamb-chops-with-labneh-new.jpeg",
-            allergens: [7, 8, 10],
+            allergens: [7, 8, 10, 12],
           },
           {
             id: "meat-platter-2",
@@ -452,7 +452,7 @@ export const menuData: MenuCategory[] = [
               "Adana kebab 1/2, kofta jagnięca 1/2, comber jagnięcy 1/2, kurczak shish joojeh, kurczak shish taouk, sosy: zhoug, toum, harissa, pilpelchuma, basma, 2x pita, ryż, frytki z sumakiem, mix pikli",
             price: "249 zł",
             image: "/images/menu/meat-platter-for-two-new.jpeg",
-            allergens: [1, 3, 7, 8, 10, 11],
+            allergens: [1, 3, 7, 8, 10, 11, 12],
           },
           {
             id: "meat-platter-4",
@@ -461,7 +461,7 @@ export const menuData: MenuCategory[] = [
               "Comber jagnięcy, adana kebap, kofty jagnięce, kurczak shish joojeh, kurczak shish taouk, sosy: zhoug, toum, harissa, pilpelchuma, basma, 4x pita, ryż, frytki z sumakiem, mix pikli",
             price: "439 zł",
             image: "/images/menu/meat-platter-for-four-new.jpeg",
-            allergens: [1, 3, 7, 8, 10, 11],
+            allergens: [1, 3, 7, 8, 10, 11, 12],
           },
         ],
       },
@@ -483,7 +483,7 @@ export const menuData: MenuCategory[] = [
             description: "Z chutney morelowym, orzechową dukkah, kolendrą i sosem pilpelchuma",
             price: "55 zł",
             image: "/images/menu/halloumi-danie.jpg",
-            allergens: [7, 8],
+            allergens: [7, 8, 12],
           },
           {
             id: "cauliflower-labneh",
@@ -532,7 +532,7 @@ export const menuData: MenuCategory[] = [
             description: "Ser feta, ogórek, pomidor, oliwki, cebula, papryka, oliwa, oregano",
             price: "52 zł",
             image: "/images/menu/salatka-grecka.jpg",
-            allergens: [7, 12],
+            allergens: [1, 7],
           },
           {
             id: "halloumi-salad",
@@ -540,7 +540,7 @@ export const menuData: MenuCategory[] = [
             description: "Halloumi, sałata, ogórek, pomidor, oliwki, natka pietruszki, kolendra, dresing miodowy",
             price: "55 zł",
             image: "/images/menu/salatka-halloumi.jpg",
-            allergens: [7],
+            allergens: [1, 7],
           },
         ],
       },
@@ -586,9 +586,8 @@ export const menuData: MenuCategory[] = [
             name: "Sekerpare",
             description: "2 x ciasteczko z orzechem laskowym, nasączone syropem",
             price: "9 zł",
-            image: "/images/menu/sekerpare.jpg",
+            allergens: [1, 8],
           },
-
           {
             id: "dubai-dream",
             name: "Dubajski Sen",
@@ -604,7 +603,7 @@ export const menuData: MenuCategory[] = [
             description: "Autorska wersja klasycznego deseru",
             price: "35 zł",
             image: "/images/menu/creme-brulee.jpeg",
-            allergens: [3, 7, 8],
+            allergens: [3, 7],
           },
           {
             id: "labneh-cheesecake",
@@ -612,7 +611,7 @@ export const menuData: MenuCategory[] = [
             description: "Sernik z labneh podawany z melasą z daktyli",
             price: "25 zł",
             image: "/images/menu/sernik-labneh.jpg",
-            allergens: [3, 7, 12],
+            allergens: [7],
           },
           {
             id: "warm-apple-pie",
@@ -621,7 +620,7 @@ export const menuData: MenuCategory[] = [
               "Jabłka, gruszki, rodzynki, kruszonka, krem tahini, lody waniliowe",
             price: "32 zł",
             image: "/images/menu/szarlotka.jpg",
-            allergens: [1, 3, 8, 11],
+            allergens: [1, 7, 11],
           },
         ],
       },
@@ -648,7 +647,7 @@ export const menuData: MenuCategory[] = [
             description: "Z pomidorami i aromatycznymi przyprawami",
             price: "10 zł",
             image: "/images/menu/ryz-basmati.jpg",
-            allergens: [],
+            allergens: [1],
           },
           {
             id: "arabic-salad",
@@ -664,7 +663,7 @@ export const menuData: MenuCategory[] = [
             description: "Chrupiące frytki z aromatycznym sumakiem",
             price: "13 zł",
             image: "/images/menu/sumac-fries.jpeg",
-            allergens: [],
+            allergens: [1],
           },
           {
             id: "ayran",
@@ -725,7 +724,7 @@ export const menuData: MenuCategory[] = [
             description: "Autorski sos Basma",
             price: "7 zł",
             image: "/images/menu/Sos BASMA.JPG",
-            allergens: [],
+            allergens: [3],
           },
         ],
       },
@@ -752,6 +751,7 @@ export const menuData: MenuCategory[] = [
             description: "Herbata arabska, syrop z bzu, miód, woda z kwiatów pomarańczy",
             price: "18 zł",
             image: "/images/menu/herbata-sezonowa.jpg",
+            allergens: [12],
           },
 
           {
@@ -917,7 +917,7 @@ export const menuData: MenuCategory[] = [
             description: "Jallab / prażone migdały / mięta / sok cytrynowy / woda gazowana",
             price: "25 zł",
             image: "/images/menu/jallab-lemonade.jpg",
-            allergens: [8],
+            allergens: [8, 12],
           },
 
           {
@@ -926,7 +926,7 @@ export const menuData: MenuCategory[] = [
             description: "Sok z granatu / woda różana / sok z cytryny / mięta",
             price: "25 zł",
             image: "/images/menu/basma-sour-lemonade.jpg",
-            allergens: [],
+            allergens: [1, 12],
           },
           {
             id: "yaffa-lemonade",
@@ -949,7 +949,7 @@ export const menuData: MenuCategory[] = [
             description: "Sprissetto / prosecco zero / woda gazowana / pomarańcza",
             price: "25 zł",
             image: "/images/menu/orange-spritz-free.jpg",
-            allergens: [],
+            allergens: [12],
           },
           {
             id: "limoncello-free",
@@ -957,7 +957,7 @@ export const menuData: MenuCategory[] = [
             description: "Limoncello zero / prosecco zero / woda gazowana",
             price: "25 zł",
             image: "/images/menu/limoncello-free.jpg",
-            allergens: [],
+            allergens: [12],
           },
           {
             id: "orange-rosemary",
@@ -965,7 +965,7 @@ export const menuData: MenuCategory[] = [
             description: "Tonik / woda z kwiatów pomarańczy / rozmaryn / syrop cukrowy / sok z cytryny / woda gazowana",
             price: "25 zł",
             image: "/images/menu/orange-rosemary.jpg",
-            allergens: [],
+            allergens: [12],
           },
         ],
       },
@@ -1183,7 +1183,7 @@ export const menuData: MenuCategory[] = [
             description: "Planteray dark / cukier trzcinowy / limonka / mięta / woda gazowana",
             price: "35 zł",
             image: "/images/menu/mojito.jpg",
-            allergens: [],
+            allergens: [12],
           },
           {
             id: "mango-frizz",
@@ -1200,7 +1200,7 @@ export const menuData: MenuCategory[] = [
               "Likier melon / puree marakuja / woda z kwiatów pomarańczy / sok z cytryny / syrop cukrowy / białko",
             price: "35 zł",
             image: "/images/menu/sweet-sahara.jpg",
-            allergens: [3],
+            allergens: [3, 12],
           },
           {
             id: "asmar",
@@ -1209,6 +1209,7 @@ export const menuData: MenuCategory[] = [
               "Jagermeister / czerwone wino / sok jabłkowy / puree z gruszki / sok z cytryny / melasa z daktyli",
             price: "34 zł",
             image: "/images/menu/asmar.jpg",
+            allergens: [12],
           },
           {
             id: "whisky-sour-basma",
@@ -1216,7 +1217,7 @@ export const menuData: MenuCategory[] = [
             description: "Bushmills original / syrop z granatu / białko / angostura / sok z cytryny",
             price: "32 zł",
             image: "/images/menu/whisky-sour-basma.jpg",
-            allergens: [3],
+            allergens: [3, 12],
           },
           {
             id: "basma-martini",
@@ -1224,7 +1225,7 @@ export const menuData: MenuCategory[] = [
             description: "Distil No.9 / puree lychee / sok z cytryny / syrop różany",
             price: "32 zł",
             image: "/images/menu/basma-martini.jpg",
-            allergens: [],
+            allergens: [12],
           },
           {
             id: "nour",
@@ -1232,6 +1233,7 @@ export const menuData: MenuCategory[] = [
             description: "Martini bianco / puree z gruszki / syrop waniliowy / kardamon",
             price: "29 zł",
             image: "/images/menu/nour.jpg",
+            allergens: [12],
           },
           {
             id: "ginger-girl",
