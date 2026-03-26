@@ -116,3 +116,17 @@ export async function getOrders() {
         return []
     }
 }
+
+export async function getActiveOrders() {
+    try {
+        const query = `*[_type == "order" && status != "delivered" && status != "picked_up" && status != "cancelled"] | order(orderDate desc) {
+            _id,
+            status,
+            orderDate
+        }`
+        return await client.fetch(query, {}, { cache: "no-store" })
+    } catch (error) {
+        console.error('Failed to fetch active orders:', error)
+        return []
+    }
+}

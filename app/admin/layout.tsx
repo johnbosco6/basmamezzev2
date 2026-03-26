@@ -1,6 +1,7 @@
 import { ReactNode } from 'react'
 import { Metadata } from 'next'
 import { PWARegistration } from '@/components/admin/pwa-registration'
+import { OrderNotification } from '@/components/admin/order-notification'
 
 export const metadata: Metadata = {
     title: 'Basma Admin Dashboard',
@@ -23,6 +24,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     return (
         <>
             <PWARegistration />
+            <OrderNotification />
             {children}
         </>
     )
