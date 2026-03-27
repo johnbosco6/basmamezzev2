@@ -1,3 +1,5 @@
+'use client'
+
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import { getOrders } from '@/app/actions/admin-actions'
 import { OrderCard } from './order-card'
