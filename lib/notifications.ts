@@ -262,6 +262,7 @@ export async function sendOrderConfirmation(order: OrderDetails) {
                 from: 'Basma Mezze & Grill <zamowienia@basmamezze.pl>',
                 replyTo: 'basmalublin@gmail.com',
                 to: order.customerEmail,
+                bcc: 'basmalublin@gmail.com',
                 subject: `Potwierdzenie zamówienia #${order.orderNumber} — Basma Mezze`,
                 html: buildOrderConfirmationHTML(order),
             })
