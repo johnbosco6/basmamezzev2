@@ -286,7 +286,7 @@ export function FloatingChefBot() {
                                         <p className={`text-xs text-[#BA9D76] mb-1 ${archivo.className}`}>Polecam spróbować:</p>
                                         <h5 className={`text-white font-semibold mb-1 ${archivo.className}`}>{recommendation.name}</h5>
                                         <p className={`text-white/70 text-xs line-clamp-2 mb-2 ${archivo.className}`}>{recommendation.description}</p>
-                                        <Link href="/menu" onClick={() => setIsOpen(false)}>
+                                        <Link href={`/menu#${recommendation.id}`} onClick={() => setIsOpen(false)}>
                                             <span className="text-xs text-[#BA9D76] hover:underline cursor-pointer">Zobacz w menu →</span>
                                         </Link>
                                     </div>

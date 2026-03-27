@@ -179,6 +179,19 @@ ${shareData.url}`)
     }
   }
 
+  // Handle hash scroll on mount
+  useEffect(() => {
+    if (mounted && window.location.hash) {
+      const id = window.location.hash.substring(1)
+      setTimeout(() => {
+        const element = document.getElementById(id)
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth" })
+        }
+      }, 500) // Small delay to ensure items are rendered
+    }
+  }, [mounted])
+
   return (
     <div className="min-h-screen bg-white text-gray-900">
 
@@ -375,7 +388,8 @@ ${shareData.url}`)
                                         return (
                                           <div
                                             key={itemIndex}
-                                            className={`group relative flex flex-col md:flex-row gap-4 p-4 rounded-xl border transition-all duration-500
+                                            id={item.id}
+                                            className={`group relative flex flex-col md:flex-row gap-4 p-4 rounded-xl border transition-all duration-500 scroll-mt-[280px]
                                             ${isSafe
                                                 ? "bg-white border-gray-200 hover:border-[#BA9D76]/40 hover:shadow-md"
                                                 : "bg-gray-50 border-gray-100 opacity-40 grayscale-[0.8] scale-[0.98]"}`}
@@ -507,7 +521,8 @@ ${shareData.url}`)
                                   return (
                                     <div
                                       key={itemIndex}
-                                      className={`group relative flex flex-col md:flex-row gap-4 p-4 rounded-xl border transition-all duration-500
+                                      id={item.id}
+                                      className={`group relative flex flex-col md:flex-row gap-4 p-4 rounded-xl border transition-all duration-500 scroll-mt-[280px]
                                       ${isSafe
                                           ? "bg-white border-gray-200 hover:border-[#BA9D76]/40 hover:shadow-md"
                                           : "bg-gray-50 border-gray-100 opacity-40 grayscale-[0.8] scale-[0.98]"}`}
@@ -600,7 +615,8 @@ ${shareData.url}`)
                         return (
                           <div
                             key={itemIndex}
-                            className={`group relative flex flex-col md:flex-row gap-6 p-6 rounded-2xl border transition-all duration-500
+                            id={item.id}
+                            className={`group relative flex flex-col md:flex-row gap-6 p-6 rounded-2xl border transition-all duration-500 scroll-mt-[320px]
                             ${isSafe
                                 ? "bg-white border-gray-200 hover:border-[#BA9D76]/40 hover:shadow-lg hover:scale-[1.02]"
                                 : "bg-gray-50 border-gray-100 opacity-40 grayscale-[0.8] scale-[0.98]"}`}
