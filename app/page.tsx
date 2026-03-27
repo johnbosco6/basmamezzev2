@@ -17,6 +17,35 @@ const archivo = Archivo({
 
 export default function HomePage() {
   const [selectedImage, setSelectedImage] = useState<{ src: string; alt: string } | null>(null)
+  
+  // Newsletter state
+  const [email, setEmail] = useState("")
+  const [subscribeStatus, setSubscribeStatus] = useState<"idle" | "loading" | "success" | "error">("idle")
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!email || !email.includes('@')) return
+
+    setSubscribeStatus("loading")
+    try {
+      const res = await fetch("/api/newsletter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      })
+      if (res.ok) {
+        setSubscribeStatus("success")
+        setEmail("")
+        setTimeout(() => setSubscribeStatus("idle"), 3000)
+      } else {
+        setSubscribeStatus("error")
+        setTimeout(() => setSubscribeStatus("idle"), 3000)
+      }
+    } catch (err) {
+      setSubscribeStatus("error")
+      setTimeout(() => setSubscribeStatus("idle"), 3000)
+    }
+  }
 
   // Add this function after the useState declaration
   const scrollToSection = (sectionId: string) => {
@@ -603,19 +632,37 @@ export default function HomePage() {
                     <p className={`text-sm text-white/80 font-light ${archivo.className}`}>
                       Zapisz się na ekskluzywne oferty i aktualności
                     </p>
-                    <div className="flex gap-2">
-                      <input
-                        type="email"
-                        placeholder="Twój email"
-                        className={`flex-1 px-3 py-2 text-sm rounded-lg bg-white/20 border border-[#BA9D76]/30 text-white placeholder:text-white/60 focus:outline-none focus:ring-2 focus:ring-[#BA9D76]/50 font-light ${archivo.className}`}
-                      />
-                      <Button
-                        size="sm"
-                        className="bg-[#BA9D76]/80 hover:bg-[#BA9D76] border border-[#BA9D76]/50 text-white"
-                      >
-                        <Mail className="h-4 w-4" />
-                      </Button>
-                    </div>
+                    <form onSubmit={handleSubscribe} className="flex flex-col gap-2">
+                      <div className="flex gap-2">
+                        <input
+                          type="email"
+                          placeholder="Twój email"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          required
+                          disabled={subscribeStatus === "loading"}
+                          className={`flex-1 px-3 py-2 text-sm rounded-lg bg-white/20 border border-[#BA9D76]/30 text-white placeholder:text-white/60 focus:outline-none focus:ring-2 focus:ring-[#BA9D76]/50 font-light ${archivo.className} disabled:opacity-50`}
+                        />
+                        <Button
+                          type="submit"
+                          size="sm"
+                          disabled={subscribeStatus === "loading"}
+                          className="bg-[#BA9D76]/80 hover:bg-[#BA9D76] border border-[#BA9D76]/50 text-white disabled:opacity-50"
+                        >
+                          {subscribeStatus === "loading" ? (
+                            <div className="h-4 w-4 rounded-full border-2 border-white border-t-transparent animate-spin" />
+                          ) : (
+                            <Mail className="h-4 w-4" />
+                          )}
+                        </Button>
+                      </div>
+                      {subscribeStatus === "success" && (
+                        <span className="text-green-400 text-xs font-light">Dziękujemy! Twój email został zapisany.</span>
+                      )}
+                      {subscribeStatus === "error" && (
+                        <span className="text-red-400 text-xs font-light">Wystąpił błąd. Spróbuj powonie.</span>
+                      )}
+                    </form>
                   </div>
 
                   <div className="space-y-3">

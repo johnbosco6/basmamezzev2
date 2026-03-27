@@ -99,6 +99,25 @@ export async function POST(req: NextRequest) {
             }).catch(err => console.error('[Order API] Notification error:', err))
         }
 
+        // Auto-subscribe customer to marketing collection
+        if (email) {
+            writeClient.fetch(`*[_type == "subscriber" && email == $email][0]`, { email })
+                .then(async (existing) => {
+                    if (!existing) {
+                        await writeClient.create({
+                            _type: 'subscriber',
+                            email: email,
+                            phone: phone || '',
+                            firstName: name || '',
+                            source: 'order',
+                            subscribedAt: new Date().toISOString()
+                        })
+                        console.log(`[Marketing] Added new subscriber from order: ${email}`)
+                    }
+                })
+                .catch(err => console.error('[Marketing] Subscriber save error:', err))
+        }
+
         return NextResponse.json({ ok: true, id: result._id, orderNumber })
     } catch (err: any) {
         console.error('Order save error details:', err)
