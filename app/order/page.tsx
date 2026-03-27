@@ -298,7 +298,7 @@ export default function OrderPage() {
                                         </h3>
 
                                         <div className="grid gap-6 md:gap-8">
-                                            {category.items.map((item, itemIndex) => {
+                                            {category.items.filter(item => !item.notAvailableOnline).map((item, itemIndex) => {
                                                 const isSafe = isDishSafe(item.allergens)
                                                 const canOrder = item.price && parsePrice(item.price) > 0 && !(["specjalne-okazje", "sniadania", "napoje", "alkohole"].includes(section.id))
 

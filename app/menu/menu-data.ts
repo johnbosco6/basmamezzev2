@@ -9,6 +9,7 @@ export interface MenuItem {
     name: string
     price: string
   }>
+  notAvailableOnline?: boolean
 }
 
 export interface PackageGroup {
@@ -672,6 +673,7 @@ export const menuData: MenuCategory[] = [
             price: "8 zł",
             image: "/images/menu/ayran-fresh.jpeg",
             allergens: [7],
+            notAvailableOnline: true,
           },
           {
             id: "mix-pikli-side",
