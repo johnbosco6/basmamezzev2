@@ -17,15 +17,6 @@ export async function POST(req: NextRequest) {
         }, { status: 403 })
     }
 
-    // Check for token existence (don't log the token itself for security)
-    if (!process.env.SANITY_API_TOKEN) {
-        console.error('CRITICAL: SANITY_API_TOKEN is missing in environment variables')
-        return NextResponse.json({
-            ok: false,
-            error: 'Server configuration error: Missing API Token'
-        }, { status: 500 })
-    }
-
     try {
         const body = await req.json()
         const {
@@ -44,6 +35,14 @@ export async function POST(req: NextRequest) {
             totalPrice,
             paymentMethod,
         } = body
+
+        // 0.1 Check distance (Server-side safety)
+        if (orderType === 'delivery' && deliveryAddress && parseFloat(deliveryAddress.distanceKm) >= 10) {
+            return NextResponse.json({
+                error: 'Delivery location too far (max 10km)',
+                status: 'too-far'
+            }, { status: 403 })
+        }
 
         console.log(`Processing Order #${orderNumber} for ${name}`)
 

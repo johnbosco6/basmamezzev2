@@ -32,7 +32,8 @@ function getDeliveryFee(km: number): number {
     if (km <= 7) return 18
     if (km <= 8) return 20
     if (km <= 9) return 22
-    return 24
+    if (km < 10) return 24
+    return -1 // Too far
 }
 
 function getDeliveryLabel(km: number): string {
@@ -42,7 +43,8 @@ function getDeliveryLabel(km: number): string {
     if (km <= 7) return "6–7 km"
     if (km <= 8) return "7–8 km"
     if (km <= 9) return "8–9 km"
-    return "9+ km"
+    if (km < 10) return "9–10 km"
+    return "Poza zasięgiem"
 }
 
 // ─── Haversine distance (km) ──────────────────────────────────────────────────
@@ -182,13 +184,19 @@ export default function CheckoutPage() {
                 const result = await geocodeAddress(fullAddress)
                 if (result) {
                     const km = haversineKm(RESTAURANT_LAT, RESTAURANT_LON, result.lat, result.lon)
-                    setDeliveryInfo({
-                        lat: result.lat,
-                        lon: result.lon,
-                        distanceKm: km,
-                        fee: getDeliveryFee(km),
-                    })
-                    setAddressConfirmed(true)
+                    if (km >= 10) {
+                        setLocationError("Przepraszamy, dowozimy tylko w promieniu 10 km od restauracji. Twój adres jest oddalony o " + km.toFixed(1) + " km.")
+                        setDeliveryInfo(null)
+                        setAddressConfirmed(false)
+                    } else {
+                        setDeliveryInfo({
+                            lat: result.lat,
+                            lon: result.lon,
+                            distanceKm: km,
+                            fee: getDeliveryFee(km),
+                        })
+                        setAddressConfirmed(true)
+                    }
                 } else {
                     setLocationError("Nie udało się znaleźć podanego adresu. Sprawdź dane lub skontaktuj się z nami: +48 574 933 988")
                 }
@@ -212,7 +220,8 @@ export default function CheckoutPage() {
         if (orderType === "delivery") {
             if (!form.street.trim()) e.street = "Ulica jest wymagana"
             if (!form.houseNumber.trim()) e.houseNumber = "Numer budynku jest wymagany"
-            if (!deliveryInfo) e._delivery = "Poczekaj chwilę — koszt dostawy jest obliczany..."
+            if (locationError) e._location = locationError
+            else if (!deliveryInfo) e._delivery = "Poczekaj chwilę — koszt dostawy jest obliczany..."
         }
         if (!acceptedTerms) e.terms = "Musisz zaakceptować regulamin, aby złożyć zamówienie"
         return e
@@ -472,79 +481,51 @@ export default function CheckoutPage() {
                                             <label className={`block text-xs font-medium text-gray-700 mb-1.5 ${archivo.className}`}>
                                                 Ulica <span className="text-red-500">*</span>
                                             </label>
-                                            {/* Dropdown trigger */}
-                                            <button
-                                                type="button"
-                                                onClick={() => { setStreetDropdownOpen(!streetDropdownOpen); setStreetSearch("") }}
-                                                className={`w-full px-3 py-2.5 border rounded-xl text-left flex items-center justify-between transition-colors text-sm ${errors.street ? "border-red-400 bg-red-50" : streetDropdownOpen ? "border-[#BA9D76] ring-2 ring-[#BA9D76]/40 bg-white" : "border-gray-200 bg-gray-50 hover:border-gray-300"} ${archivo.className}`}
-                                            >
-                                                <span className={form.street ? "text-gray-900" : "text-gray-400"}>
-                                                    {form.street || "Wybierz ulicę..."}
-                                                </span>
-                                                <ChevronDown className={`h-4 w-4 text-gray-400 transition-transform ${streetDropdownOpen ? "rotate-180" : ""}`} />
-                                            </button>
+                                            <div className="relative">
+                                                <input
+                                                    type="text"
+                                                    value={form.street}
+                                                    onChange={(e) => {
+                                                        const val = e.target.value
+                                                        setForm({ ...form, street: val })
+                                                        setStreetSearch(val)
+                                                        setStreetDropdownOpen(val.length > 0)
+                                                        setAddressConfirmed(false)
+                                                        setDeliveryInfo(null)
+                                                        setLocationError("")
+                                                    }}
+                                                    onFocus={() => {
+                                                        if (form.street.length > 0) setStreetDropdownOpen(true)
+                                                    }}
+                                                    placeholder="Wpisz nazwę ulicy..."
+                                                    className={`w-full px-3 py-2.5 border rounded-xl text-sm transition-colors ${errors.street ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50 focus:border-[#BA9D76] focus:ring-2 focus:ring-[#BA9D76]/40 focus:bg-white"} ${archivo.className}`}
+                                                />
+                                                <ChevronDown className={`absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none transition-transform ${streetDropdownOpen ? "rotate-180" : ""}`} />
+                                            </div>
 
-                                            {/* Dropdown panel */}
-                                            {streetDropdownOpen && (
+                                            {/* Dropdown panel for suggestions */}
+                                            {streetDropdownOpen && filteredStreets.length > 0 && (
                                                 <div className="absolute z-50 mt-1 w-full bg-white border border-gray-200 rounded-xl shadow-xl overflow-hidden animate-in fade-in slide-in-from-top-1 duration-150">
-                                                    {/* Search input */}
-                                                    <div className="p-2 border-b border-gray-100">
-                                                        <div className="relative">
-                                                            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
-                                                            <input
-                                                                type="text"
-                                                                value={streetSearch}
-                                                                onChange={(e) => setStreetSearch(e.target.value)}
-                                                                placeholder="Szukaj ulicy..."
-                                                                autoFocus
-                                                                className={`w-full pl-8 pr-3 py-2 text-sm text-gray-900 border border-gray-200 rounded-lg bg-gray-50 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-[#BA9D76]/40 focus:border-[#BA9D76] ${archivo.className}`}
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                    {/* Options list */}
                                                     <div className="max-h-48 overflow-y-auto">
-                                                        {filteredStreets.length === 0 ? (
-                                                            <div className="px-3 py-3 space-y-2">
-                                                                <p className={`text-sm text-gray-400 text-center ${archivo.className}`}>
-                                                                    Nie znaleziono ulicy na liście
-                                                                </p>
-                                                                {streetSearch.trim().length > 0 && (
-                                                                    <button
-                                                                        type="button"
-                                                                        onClick={() => {
-                                                                            setForm({ ...form, street: streetSearch.trim() })
-                                                                            setStreetDropdownOpen(false)
-                                                                            setStreetSearch("")
-                                                                            setAddressConfirmed(false)
-                                                                            setDeliveryInfo(null)
-                                                                        }}
-                                                                        className={`w-full text-left px-3 py-2.5 text-sm bg-[#BA9D76]/10 text-[#BA9D76] font-medium rounded-lg hover:bg-[#BA9D76]/20 transition-colors ${archivo.className}`}
-                                                                    >
-                                                                        Użyj: „{streetSearch.trim()}"
-                                                                    </button>
-                                                                )}
-                                                            </div>
-                                                        ) : (
-                                                            filteredStreets.map((street) => (
-                                                                <button
-                                                                    key={street}
-                                                                    type="button"
-                                                                    onClick={() => {
-                                                                        setForm({ ...form, street })
-                                                                        setStreetDropdownOpen(false)
-                                                                        setStreetSearch("")
-                                                                        setAddressConfirmed(false)
-                                                                        setDeliveryInfo(null)
-                                                                    }}
-                                                                    className={`w-full text-left px-3 py-2 text-sm transition-colors ${form.street === street
-                                                                        ? "bg-[#BA9D76]/10 text-[#BA9D76] font-semibold"
-                                                                        : "text-gray-700 hover:bg-gray-50"
-                                                                        } ${archivo.className}`}
-                                                                >
-                                                                    {street}
-                                                                </button>
-                                                            ))
-                                                        )}
+                                                        {filteredStreets.map((street) => (
+                                                            <button
+                                                                key={street}
+                                                                type="button"
+                                                                onClick={() => {
+                                                                    setForm({ ...form, street })
+                                                                    setStreetDropdownOpen(false)
+                                                                    setStreetSearch("")
+                                                                    setAddressConfirmed(false)
+                                                                    setDeliveryInfo(null)
+                                                                }}
+                                                                className={`w-full text-left px-3 py-2.5 text-sm transition-colors ${form.street === street
+                                                                    ? "bg-[#BA9D76]/10 text-[#BA9D76] font-semibold"
+                                                                    : "text-gray-700 hover:bg-gray-50"
+                                                                    } ${archivo.className}`}
+                                                            >
+                                                                {street}
+                                                            </button>
+                                                        ))}
                                                     </div>
                                                 </div>
                                             )}
