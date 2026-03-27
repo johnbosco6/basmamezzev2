@@ -43,8 +43,7 @@ export function isRestaurantOpenForOrders() {
   if (!todayHours) return { isOpen: false, reason: "closed_today" }
 
   const openMinutes = timeToMinutes(todayHours.start)
-  const closeMinutes = timeToMinutes(todayHours.end)
-  const lastOrderMinutes = closeMinutes - 30
+  const lastOrderMinutes = 21 * 60 // 21:00 (9 PM) is the hard cutoff
 
   if (currentTime < openMinutes) {
     return { 
@@ -58,7 +57,7 @@ export function isRestaurantOpenForOrders() {
     return { 
       isOpen: false, 
       reason: "too_late", 
-      closeTime: todayHours.end 
+      closeTime: "21:00" 
     }
   }
 
