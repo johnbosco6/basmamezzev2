@@ -6,7 +6,8 @@ import Image from "next/image"
 import Link from "next/link"
 import { Archivo } from "next/font/google"
 import { Button } from "@/components/ui/button"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
+import { isRestaurantOpenForOrders, formatNextOpening } from "@/lib/hours"
 
 const archivo = Archivo({ subsets: ["latin"], weight: ["200", "400", "600", "700"], display: "swap" })
 
@@ -17,6 +18,13 @@ interface CartDrawerProps {
 
 export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
     const { items, removeItem, updateQty, totalItems, totalPrice } = useCart()
+    const [orderStatus, setOrderStatus] = useState(isRestaurantOpenForOrders())
+
+    useEffect(() => {
+        if (isOpen) {
+            setOrderStatus(isRestaurantOpenForOrders())
+        }
+    }, [isOpen])
 
     // Prevent body scroll when drawer is open on mobile
     useEffect(() => {
@@ -161,7 +169,16 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                                 {totalPrice.toFixed(0)} zł
                             </span>
                         </div>
-                        {totalPrice < 40 ? (
+                        {!orderStatus.isOpen ? (
+                            <div className="space-y-2">
+                                <Button disabled className="w-full bg-red-500/20 text-red-400 font-semibold text-base py-6 rounded-2xl flex items-center justify-center gap-2 cursor-not-allowed border border-red-500/30">
+                                    Restauracja zamknięta
+                                </Button>
+                                <p className={`text-xs text-center text-white/50 font-light ${archivo.className}`}>
+                                    Zapraszamy {formatNextOpening()}
+                                </p>
+                            </div>
+                        ) : totalPrice < 40 ? (
                             <div className="space-y-2">
                                 <Button disabled className="w-full bg-black/40 text-white/50 font-semibold text-base py-6 rounded-2xl flex items-center justify-center gap-2 cursor-not-allowed">
                                     Brakuje {(40 - totalPrice).toFixed(0)} zł do minimum
@@ -282,7 +299,16 @@ export function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                                 {totalPrice.toFixed(0)} zł
                             </span>
                         </div>
-                        {totalPrice < 40 ? (
+                        {!orderStatus.isOpen ? (
+                            <div className="space-y-2">
+                                <Button disabled className="w-full bg-red-500/20 text-red-400 font-semibold text-base py-5 rounded-xl flex items-center justify-center gap-2 cursor-not-allowed border border-red-500/30">
+                                    Restauracja zamknięta
+                                </Button>
+                                <p className={`text-xs text-center text-white/50 font-light ${archivo.className}`}>
+                                    Zapraszamy {formatNextOpening()}
+                                </p>
+                            </div>
+                        ) : totalPrice < 40 ? (
                             <div className="space-y-2">
                                 <Button disabled className="w-full bg-black/40 text-white/50 font-semibold text-base py-5 rounded-xl flex items-center justify-center gap-2 cursor-not-allowed border border-white/10">
                                     Brakuje {(40 - totalPrice).toFixed(0)} zł do minimum

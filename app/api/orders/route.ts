@@ -1,11 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { writeClient } from '@/lib/sanity'
 import { sendOrderConfirmation } from '@/lib/notifications'
+import { isRestaurantOpenForOrders } from '@/lib/hours'
 
 export const dynamic = 'force-dynamic'
 
 export async function POST(req: NextRequest) {
     console.log('--- Incoming Order Save Request ---')
+
+    // 0. Check opening hours (Server-side safety)
+    const orderStatus = isRestaurantOpenForOrders()
+    if (!orderStatus.isOpen) {
+        return NextResponse.json({
+            error: 'Restaurant is closed for orders',
+            status: 'closed'
+        }, { status: 403 })
+    }
 
     // Check for token existence (don't log the token itself for security)
     if (!process.env.SANITY_API_TOKEN) {

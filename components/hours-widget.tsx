@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { Clock, CheckCircle, XCircle } from "lucide-react"
 import { Archivo } from "next/font/google"
+import { OPENING_HOURS } from "@/lib/hours"
 
 const archivo = Archivo({
   subsets: ["latin"],
@@ -10,30 +11,8 @@ const archivo = Archivo({
   display: "swap",
 })
 
-interface OpeningHours {
-  day: number // 0 = Sunday, 1 = Monday, etc.
-  breakfast: { start: string; end: string }
-  restaurant: { start: string; end: string }
-}
-
-const OPENING_HOURS: OpeningHours[] = [
-  // Sunday (0)
-  { day: 0, breakfast: { start: "10:00", end: "12:00" }, restaurant: { start: "12:00", end: "23:00" } },
-  // Monday (1)
-  { day: 1, breakfast: { start: "12:00", end: "12:00" }, restaurant: { start: "12:00", end: "23:00" } },
-  // Tuesday (2)
-  { day: 2, breakfast: { start: "12:00", end: "12:00" }, restaurant: { start: "12:00", end: "23:00" } },
-  // Wednesday (3)
-  { day: 3, breakfast: { start: "12:00", end: "12:00" }, restaurant: { start: "12:00", end: "23:00" } },
-  // Thursday (4)
-  { day: 4, breakfast: { start: "12:00", end: "12:00" }, restaurant: { start: "12:00", end: "23:00" } },
-  // Friday (5)
-  { day: 5, breakfast: { start: "12:00", end: "12:00" }, restaurant: { start: "12:00", end: "24:00" } },
-  // Saturday (6)
-  { day: 6, breakfast: { start: "10:00", end: "12:00" }, restaurant: { start: "12:00", end: "24:00" } },
-]
-
 function timeToMinutes(time: string): number {
+  if (time === "00:00" || time === "24:00") return 24 * 60
   const [hours, minutes] = time.split(":").map(Number)
   return hours * 60 + minutes
 }
@@ -46,8 +25,8 @@ function getCurrentStatus() {
   const todayHours = OPENING_HOURS.find((h) => h.day === currentDay)
   if (!todayHours) return { isOpen: false, nextOpening: null }
 
-  const openStart = timeToMinutes(todayHours.breakfast.start) // Using breakfast start as opening time
-  const closeEnd = todayHours.restaurant.end === "24:00" ? 24 * 60 : timeToMinutes(todayHours.restaurant.end)
+  const openStart = timeToMinutes(todayHours.start)
+  const closeEnd = timeToMinutes(todayHours.end)
 
   // Check if currently open (from breakfast start to restaurant end)
   if (currentTime >= openStart && currentTime < closeEnd) {
@@ -59,14 +38,14 @@ function getCurrentStatus() {
 
   // Check if opens later today
   if (currentTime < openStart) {
-    nextOpening = `Dziś o ${todayHours.breakfast.start}`
+    nextOpening = `Dziś o ${todayHours.start}`
   } else {
     // Find next day's opening
     const tomorrow = (currentDay + 1) % 7
     const tomorrowHours = OPENING_HOURS.find((h) => h.day === tomorrow)
     if (tomorrowHours) {
       const dayNames = ["Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"]
-      nextOpening = `${dayNames[tomorrow]} o ${tomorrowHours.breakfast.start}`
+      nextOpening = `${dayNames[tomorrow]} o ${tomorrowHours.start}`
     }
   }
 

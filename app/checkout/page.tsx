@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from "react"
 import { useCart } from "@/context/cart-context"
 import { useRouter } from "next/navigation"
+import { isRestaurantOpenForOrders, formatNextOpening } from "@/lib/hours"
 import { motion, AnimatePresence } from "framer-motion"
 import { validatePromoCode } from "@/app/actions/promo-actions"
 import Image from "next/image"
@@ -103,6 +104,7 @@ export default function CheckoutPage() {
     })
     const [errors, setErrors] = useState<Record<string, string>>({})
     const [isSubmitting, setIsSubmitting] = useState(false)
+    const [submitError, setSubmitError] = useState("")
 
     // Delivery distance/fee state
     const [deliveryInfo, setDeliveryInfo] = useState<DeliveryInfo | null>(null)
@@ -245,6 +247,15 @@ export default function CheckoutPage() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
+        setSubmitError("")
+
+        // Check opening hours
+        const orderStatus = isRestaurantOpenForOrders()
+        if (!orderStatus.isOpen) {
+            setSubmitError(`Restauracja jest obecnie zamknięta. Zapraszamy ${formatNextOpening()}.`)
+            return
+        }
+
         const errs = validate()
         if (Object.keys(errs).length > 0) { setErrors(errs); return }
         setErrors({})
@@ -252,6 +263,14 @@ export default function CheckoutPage() {
     }
 
     const handleFinalConfirm = async () => {
+        // Final sanity check for opening hours
+        const orderStatus = isRestaurantOpenForOrders()
+        if (!orderStatus.isOpen) {
+            alert(`Przepraszamy, restauracja została właśnie zamknięta. Nie możemy przyjąć Twojego zamówienia. Zapraszamy ${formatNextOpening()}.`)
+            setIsPaymentModalOpen(false)
+            return
+        }
+
         setIsPaymentModalOpen(false)
         setIsSubmitting(true)
         const orderNumber = Math.floor(1000 + Math.random() * 9000).toString()
@@ -844,6 +863,13 @@ export default function CheckoutPage() {
                                             {errors.terms && <p className={`text-red-500 text-xs mt-1.5 font-medium ${archivo.className}`}>{errors.terms}</p>}
                                         </div>
                                     </div>
+
+                                    {submitError && (
+                                        <div className="flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded-xl animate-in fade-in slide-in-from-top-1 duration-200">
+                                            <AlertCircle className="h-4 w-4 text-red-500 flex-shrink-0 mt-0.5" />
+                                            <p className={`text-xs text-red-600 font-medium ${archivo.className}`}>{submitError}</p>
+                                        </div>
+                                    )}
 
                                     <Button
                                         type="submit"
