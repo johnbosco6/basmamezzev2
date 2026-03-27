@@ -31,10 +31,21 @@ interface OrderDetails {
     }
 }
 
+// ─── Escape HTML Helper ──────────────────────────────────
+function escapeHTML(str: string): string {
+    if (!str) return ''
+    return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;')
+}
+
 // ─── Format Address Helper ───────────────────────────────
 function formatAddress(address: any): string {
     if (!address) return ''
-    if (typeof address === 'string') return address
+    if (typeof address === 'string') return escapeHTML(address)
     const parts = []
     if (address.street) {
         let s = address.street
@@ -43,7 +54,7 @@ function formatAddress(address: any): string {
         parts.push(s)
     }
     if (address.city) parts.push(`${address.postcode || ''} ${address.city}`.trim())
-    return parts.join(', ')
+    return parts.map(p => escapeHTML(p)).join(', ')
 }
 
 // ─── HTML Email Builder ──────────────────────────────────
@@ -51,7 +62,7 @@ function buildOrderConfirmationHTML(order: OrderDetails): string {
     const itemRows = order.items.map(item => `
         <tr>
             <td style="padding: 12px 0; border-bottom: 1px solid #eee; font-family: Arial, sans-serif; font-size: 14px; color: #333;">
-                ${item.name}
+                ${escapeHTML(item.name)}
             </td>
             <td style="padding: 12px 0; border-bottom: 1px solid #eee; font-family: Arial, sans-serif; font-size: 14px; color: #666; text-align: center;">
                 ${item.quantity}
@@ -92,7 +103,7 @@ function buildOrderConfirmationHTML(order: OrderDetails): string {
                         <tr>
                             <td style="padding: 30px 30px 10px;">
                                 <p style="font-family: Arial, sans-serif; font-size: 16px; color: #333; margin: 0;">
-                                    Dzień dobry <strong>${order.customerName}</strong>,
+                                    Dzień dobry <strong>${escapeHTML(order.customerName)}</strong>,
                                 </p>
                                 <p style="font-family: Arial, sans-serif; font-size: 14px; color: #666; margin: 10px 0 0;">
                                     Dziękujemy za Twoje zamówienie! Oto szczegóły:
@@ -150,7 +161,7 @@ function buildOrderConfirmationHTML(order: OrderDetails): string {
                                     ` : ''}
                                     ${order.discountAmount && order.discountAmount > 0 ? `
                                     <tr>
-                                        <td style="padding: 6px 0; font-family: Arial, sans-serif; font-size: 14px; color: #4ade80; font-weight: bold;">Zniżka ${order.promoCode ? `(${order.promoCode})` : ''}</td>
+                                        <td style="padding: 6px 0; font-family: Arial, sans-serif; font-size: 14px; color: #4ade80; font-weight: bold;">Zniżka ${order.promoCode ? `(${escapeHTML(order.promoCode)})` : ''}</td>
                                         <td style="padding: 6px 0; font-family: Arial, sans-serif; font-size: 14px; color: #4ade80; text-align: right; font-weight: bold;">-${order.discountAmount.toFixed(2)} zł</td>
                                     </tr>
                                     ` : ''}

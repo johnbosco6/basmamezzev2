@@ -10,6 +10,7 @@ export interface MenuItem {
     price: string
   }>
   notAvailableOnline?: boolean
+  notAvailableForDelivery?: boolean
 }
 
 export interface PackageGroup {
@@ -597,6 +598,7 @@ export const menuData: MenuCategory[] = [
             price: "29 zł",
             image: "/images/menu/dubai-dream.jpeg",
             allergens: [1, 3, 7, 8],
+            notAvailableForDelivery: true,
           },
           {
             id: "creme-brulee-basma",
@@ -605,6 +607,7 @@ export const menuData: MenuCategory[] = [
             price: "35 zł",
             image: "/images/menu/creme-brulee.jpeg",
             allergens: [3, 7],
+            notAvailableForDelivery: true,
           },
           {
             id: "labneh-cheesecake",
@@ -622,6 +625,7 @@ export const menuData: MenuCategory[] = [
             price: "32 zł",
             image: "/images/menu/szarlotka.jpg",
             allergens: [1, 7, 11],
+            notAvailableForDelivery: true,
           },
         ],
       },

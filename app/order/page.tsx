@@ -320,6 +320,11 @@ export default function OrderPage() {
                                                                         </h4>
                                                                     </div>
                                                                     <div className="flex items-center gap-2 flex-shrink-0">
+                                                                        {item.notAvailableForDelivery && (
+                                                                            <Badge variant="outline" className="border-amber-400 text-amber-600 bg-amber-50 text-[10px] uppercase font-bold px-2 py-0.5 whitespace-nowrap">
+                                                                                🏠 Tylko odbiór
+                                                                            </Badge>
+                                                                        )}
                                                                         {item.price && (
                                                                             <span className={`text-[#BA9D76] text-sm font-semibold ${archivo.className} whitespace-nowrap`}>
                                                                                 {item.price}

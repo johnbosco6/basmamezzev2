@@ -16,6 +16,7 @@ import {
 } from "lucide-react"
 import { Archivo } from "next/font/google"
 import { Button } from "@/components/ui/button"
+import { menuData } from "../menu/menu-data"
 import { LUBLIN_STREETS } from "@/lib/lublin-streets"
 
 const archivo = Archivo({ subsets: ["latin"], weight: ["200", "400", "600", "700"], display: "swap" })
@@ -114,8 +115,26 @@ export default function CheckoutPage() {
     const [locationError, setLocationError] = useState("")
     const [addressConfirmed, setAddressConfirmed] = useState(false)
     const [acceptedTerms, setAcceptedTerms] = useState(false)
-    const [paymentMethod, setPaymentMethod] = useState<'p24' | 'cash' | 'card_on_delivery'>('p24')
+    const [paymentMethod, setPaymentMethod] = useState<string | null>(null)
     const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false)
+
+    // Check for items that cannot be delivered (e.g. ice cream desserts)
+    const restrictedItemsInCart = useMemo(() => {
+        // Find all items in menuData that have notAvailableForDelivery: true
+        const restrictedIds = new Set<string>()
+        menuData.forEach(section => {
+            section.categories.forEach(cat => {
+                cat.items.forEach(item => {
+                    if (item.notAvailableForDelivery) {
+                        restrictedIds.add(item.id)
+                    }
+                })
+            })
+        })
+        return items.filter(cartItem => restrictedIds.has(cartItem.id))
+    }, [items])
+
+    const hasDeliveryRestriction = orderType === "delivery" && restrictedItemsInCart.length > 0
 
     // Promo code state
     const [promoInput, setPromoInput] = useState("")
@@ -798,9 +817,27 @@ export default function CheckoutPage() {
                                         </div>
                                     )}
 
+                                    {hasDeliveryRestriction && (
+                                        <div className="flex items-start gap-3 p-4 bg-amber-50 border-2 border-amber-200 rounded-2xl animate-in fade-in slide-in-from-bottom-2 duration-300">
+                                            <AlertCircle className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                                            <div>
+                                                <p className={`text-sm font-bold text-amber-800 ${archivo.className}`}>
+                                                    Ograniczenie Dostawy
+                                                </p>
+                                                <p className={`text-xs text-amber-700 font-light mt-1 leading-relaxed ${archivo.className}`}>
+                                                    Twoje zamówienie zawiera produkty, których nie możemy dostarczyć (np. desery z lodami): 
+                                                    <span className="font-semibold block mt-1">
+                                                        {restrictedItemsInCart.map(i => i.name).join(", ")}
+                                                    </span>
+                                                    Usuń je z koszyka lub wybierz <span className="font-bold underline cursor-pointer" onClick={() => setOrderType("pickup")}>odbiór osobisty</span>.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    )}
+
                                     <Button
                                         type="submit"
-                                        disabled={isSubmitting || items.length === 0}
+                                        disabled={isSubmitting || items.length === 0 || hasDeliveryRestriction}
                                         className="w-full bg-gradient-to-r from-[#BA9D76] to-[#a88a63] hover:from-[#a88a63] hover:to-[#96794f] text-white font-semibold text-base py-5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
                                         {isSubmitting ? (
