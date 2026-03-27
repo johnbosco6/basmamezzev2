@@ -253,7 +253,8 @@ export async function sendOrderConfirmation(order: OrderDetails) {
     if (process.env.RESEND_API_KEY && order.customerEmail) {
         try {
             await resend.emails.send({
-                from: 'Basma Mezze & Grill <basmalublin@gmail.com>',
+                from: 'Basma Mezze & Grill <zamowienia@basmamezze.pl>',
+                replyTo: 'basmalublin@gmail.com',
                 to: order.customerEmail,
                 subject: `Potwierdzenie zamówienia #${order.orderNumber} — Basma Mezze`,
                 html: buildOrderConfirmationHTML(order),
@@ -292,7 +293,8 @@ export async function sendOrderStatusUpdate(
                 out_for_delivery: 'W drodze',
             }
             await resend.emails.send({
-                from: 'Basma Mezze & Grill <basmalublin@gmail.com>',
+                from: 'Basma Mezze & Grill <zamowienia@basmamezze.pl>',
+                replyTo: 'basmalublin@gmail.com',
                 to: customerEmail,
                 subject: `Zamówienie #${orderNumber} — ${statusLabels[newStatus] || newStatus}`,
                 html: buildStatusUpdateHTML(orderNumber, customerName, newStatus),
