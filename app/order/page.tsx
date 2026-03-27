@@ -12,7 +12,6 @@ import { Badge } from "@/components/ui/badge"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { menuData, allergenMap } from "../menu/menu-data"
 import { useCart, parsePrice } from "@/context/cart-context"
-import { CartDrawer } from "@/components/cart-drawer"
 import { MainNavbar } from "@/components/main-navbar"
 
 const archivo = Archivo({
@@ -36,8 +35,7 @@ const IconMap = {
 }
 
 export default function OrderPage() {
-    const { addItem, totalItems, totalPrice } = useCart()
-    const [cartOpen, setCartOpen] = useState(false)
+    const { addItem, totalItems, totalPrice, setCartOpen } = useCart()
     const [justAdded, setJustAdded] = useState<string | null>(null)
     const [mounted, setMounted] = useState(false)
 
@@ -187,9 +185,6 @@ export default function OrderPage() {
 
     return (
         <div className="min-h-screen bg-white text-gray-900 pt-[240px] md:pt-[200px]">
-            {/* Cart Drawer */}
-            <CartDrawer isOpen={cartOpen} onClose={() => setCartOpen(false)} />
-
             <MainNavbar />
 
             {/* Sticky Filter Bar */}

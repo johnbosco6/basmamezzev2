@@ -62,6 +62,8 @@ interface CartContextValue {
   clearCart: () => void
   totalItems: number
   totalPrice: number
+  isCartOpen: boolean
+  setCartOpen: (open: boolean) => void
 }
 
 const CartContext = createContext<CartContextValue | null>(null)
@@ -70,6 +72,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   // Always start with empty state — same on server and client → no hydration mismatch
   const [state, dispatch] = useReducer(cartReducer, { items: [] })
   const [hydrated, setHydrated] = useState(false)
+  const [isCartOpen, setCartOpen] = useState(false)
 
   // After hydration: load persisted cart from localStorage
   useEffect(() => {
@@ -104,7 +107,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <CartContext.Provider
-      value={{ items: state.items, addItem, removeItem, updateQty, clearCart, totalItems, totalPrice }}
+      value={{ items: state.items, addItem, removeItem, updateQty, clearCart, totalItems, totalPrice, isCartOpen, setCartOpen }}
     >
       {children}
     </CartContext.Provider>

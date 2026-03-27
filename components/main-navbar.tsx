@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { Home, BookOpen, ShoppingBag, Phone, CalendarDays, MessageCircle, Megaphone } from "lucide-react"
 import { Archivo } from "next/font/google"
 import { HeaderHoursWidget } from "@/components/header-hours-widget"
+import { useCart } from "@/context/cart-context"
 
 const archivo = Archivo({
     subsets: ["latin"],
@@ -16,6 +17,7 @@ const archivo = Archivo({
 
 export function MainNavbar() {
     const pathname = usePathname()
+    const { totalItems, setCartOpen } = useCart()
     const isHomePage = pathname === "/"
     
     // Scroll tracking for hide/show behavior
@@ -113,7 +115,28 @@ export function MainNavbar() {
                         <span className={`text-[10px] md:text-xs font-light ${archivo.className}`}>Kontakt</span>
                     </Link>
                 </nav>
-                <div className="flex-1 flex justify-end"></div>
+                <div className="flex-1 flex justify-end">
+                    <button
+                        onClick={() => setCartOpen(true)}
+                        className="relative p-2 rounded-full bg-white/10 hover:bg-[#BA9D76]/20 transition-all duration-300 group"
+                        aria-label="Otwórz koszyk"
+                    >
+                        <ShoppingBag className="h-5 w-5 text-white transition-colors group-hover:text-[#BA9D76]" />
+                        <AnimatePresence>
+                            {totalItems > 0 && (
+                                <motion.span
+                                    initial={{ scale: 0, opacity: 0 }}
+                                    animate={{ scale: 1, opacity: 1 }}
+                                    exit={{ scale: 0, opacity: 0 }}
+                                    key="cart-badge"
+                                    className="absolute -top-1 -right-1 bg-[#BA9D76] text-white text-[10px] font-bold min-w-[18px] h-[18px] flex items-center justify-center rounded-full px-1 shadow-lg border border-white/20"
+                                >
+                                    {totalItems}
+                                </motion.span>
+                            )}
+                        </AnimatePresence>
+                    </button>
+                </div>
             </div>
 
             {/* Secondary Navigation & Hours - Combined on mobile to save space */}
