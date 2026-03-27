@@ -416,7 +416,7 @@ export default function CheckoutPage() {
                                         <span className={`font-semibold text-sm ${archivo.className}`}>Dostawa do Domu</span>
                                         <span className="text-xs opacity-70 font-light">od 12 zł · płatność online</span>
                                     </button>
-                                    <button type="button" onClick={() => { setOrderType("pickup"); setDeliveryInfo(null); setAddressConfirmed(false); setLocationError("") }}
+                                    <button type="button" onClick={() => { setOrderType("pickup"); setDeliveryInfo(null); setAddressConfirmed(false); setLocationError(""); setPaymentMethod("p24") }}
                                         className={`p-4 rounded-xl border-2 transition-all duration-200 flex flex-col items-center gap-2 ${orderType === "pickup" ? "border-[#BA9D76] bg-[#BA9D76]/5 text-[#BA9D76]" : "border-gray-200 text-gray-500 hover:border-gray-300"}`}>
                                         <Package className="h-7 w-7" />
                                         <span className={`font-semibold text-sm ${archivo.className}`}>Odbiór Osobisty</span>
@@ -916,35 +916,45 @@ export default function CheckoutPage() {
                                         {paymentMethod === 'p24' && <CheckCircle className="h-6 w-6" />}
                                     </button>
 
-                                    <button
-                                        type="button"
-                                        onClick={() => setPaymentMethod('cash')}
-                                        className={`p-4 rounded-xl border-2 transition-all duration-200 flex items-center gap-4 text-left ${paymentMethod === 'cash' ? "border-[#BA9D76] bg-[#BA9D76]/5 text-[#BA9D76]" : "border-gray-100 text-gray-600 hover:border-gray-200"}`}
-                                    >
-                                        <div className={`w-12 h-12 rounded-full flex items-center justify-center ${paymentMethod === 'cash' ? "bg-[#BA9D76]/20" : "bg-gray-100"}`}>
-                                            <Banknote className="h-6 w-6" />
+                                    {orderType === 'pickup' ? (
+                                        <div className="bg-[#BA9D76]/5 border border-[#BA9D76]/20 rounded-xl p-4 text-center">
+                                            <p className={`text-sm text-[#BA9D76] font-medium ${archivo.className}`}>
+                                                Przy odbiorze osobistym dostępna jest wyłącznie płatność online.
+                                            </p>
                                         </div>
-                                        <div className="flex-1">
-                                            <p className={`font-bold text-base ${archivo.className}`}>Gotówka przy odbiorze</p>
-                                            <p className="text-xs opacity-70 font-light mt-1">Zapłać kurierowi lub w restauracji</p>
-                                        </div>
-                                        {paymentMethod === 'cash' && <CheckCircle className="h-6 w-6" />}
-                                    </button>
+                                    ) : (
+                                        <>
+                                            <button
+                                                type="button"
+                                                onClick={() => setPaymentMethod('cash')}
+                                                className={`p-4 rounded-xl border-2 transition-all duration-200 flex items-center gap-4 text-left ${paymentMethod === 'cash' ? "border-[#BA9D76] bg-[#BA9D76]/5 text-[#BA9D76]" : "border-gray-100 text-gray-600 hover:border-gray-200"}`}
+                                            >
+                                                <div className={`w-12 h-12 rounded-full flex items-center justify-center ${paymentMethod === 'cash' ? "bg-[#BA9D76]/20" : "bg-gray-100"}`}>
+                                                    <Banknote className="h-6 w-6" />
+                                                </div>
+                                                <div className="flex-1">
+                                                    <p className={`font-bold text-base ${archivo.className}`}>Gotówka przy odbiorze</p>
+                                                    <p className="text-xs opacity-70 font-light mt-1">Zapłać kurierowi lub w restauracji</p>
+                                                </div>
+                                                {paymentMethod === 'cash' && <CheckCircle className="h-6 w-6" />}
+                                            </button>
 
-                                    <button
-                                        type="button"
-                                        onClick={() => setPaymentMethod('card_on_delivery')}
-                                        className={`p-4 rounded-xl border-2 transition-all duration-200 flex items-center gap-4 text-left ${paymentMethod === 'card_on_delivery' ? "border-[#BA9D76] bg-[#BA9D76]/5 text-[#BA9D76]" : "border-gray-100 text-gray-600 hover:border-gray-200"}`}
-                                    >
-                                        <div className={`w-12 h-12 rounded-full flex items-center justify-center ${paymentMethod === 'card_on_delivery' ? "bg-[#BA9D76]/20" : "bg-gray-100"}`}>
-                                            <CreditCard className="h-6 w-6" />
-                                        </div>
-                                        <div className="flex-1">
-                                            <p className={`font-bold text-base ${archivo.className}`}>Karta przy odbiorze</p>
-                                            <p className="text-xs opacity-70 font-light mt-1">Płatność terminalem u kuriera/kierowcy</p>
-                                        </div>
-                                        {paymentMethod === 'card_on_delivery' && <CheckCircle className="h-6 w-6" />}
-                                    </button>
+                                            <button
+                                                type="button"
+                                                onClick={() => setPaymentMethod('card_on_delivery')}
+                                                className={`p-4 rounded-xl border-2 transition-all duration-200 flex items-center gap-4 text-left ${paymentMethod === 'card_on_delivery' ? "border-[#BA9D76] bg-[#BA9D76]/5 text-[#BA9D76]" : "border-gray-100 text-gray-600 hover:border-gray-200"}`}
+                                            >
+                                                <div className={`w-12 h-12 rounded-full flex items-center justify-center ${paymentMethod === 'card_on_delivery' ? "bg-[#BA9D76]/20" : "bg-gray-100"}`}>
+                                                    <CreditCard className="h-6 w-6" />
+                                                </div>
+                                                <div className="flex-1">
+                                                    <p className={`font-bold text-base ${archivo.className}`}>Karta przy odbiorze</p>
+                                                    <p className="text-xs opacity-70 font-light mt-1">Płatność terminalem u kuriera/kierowcy</p>
+                                                </div>
+                                                {paymentMethod === 'card_on_delivery' && <CheckCircle className="h-6 w-6" />}
+                                            </button>
+                                        </>
+                                    )}
                                 </div>
 
                                 <div className="bg-gray-50 rounded-2xl p-4 mt-6 flex items-center justify-between border border-gray-100">
