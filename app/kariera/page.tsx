@@ -14,7 +14,7 @@ const archivo = Archivo({
 
 export default function KarieraPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#597FB1] via-[#326096] to-[#2B2B2B] text-white">
+    <div className="min-h-screen bg-gradient-to-br from-[#597FB1] via-[#326096] to-[#2B2B2B] text-white pt-[180px] md:pt-[160px]">
       <MainNavbar />
 
       {/* Back Navigation */}

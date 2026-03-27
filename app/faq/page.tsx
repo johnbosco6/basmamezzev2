@@ -122,7 +122,7 @@ const faqData = [
 
 export default function FAQPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#597FB1] via-[#326096] to-[#2B2B2B]">
+    <div className="min-h-screen bg-gradient-to-br from-[#597FB1] via-[#326096] to-[#2B2B2B] pt-[220px] md:pt-[180px]">
       <MainNavbar />
 
       <div className="container mx-auto px-4 py-12">

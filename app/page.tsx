@@ -73,7 +73,7 @@ export default function HomePage() {
       <MainNavbar />
 
       {/* Hero Section */}
-      <section id="home" className="relative py-20 md:py-32 overflow-hidden min-h-[80vh] flex items-center scroll-mt-20">
+      <section id="home" className="relative pt-[260px] md:pt-[240px] pb-20 md:pb-32 overflow-hidden min-h-[80vh] flex items-center scroll-mt-20">
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-[url('/images/basma-evening-exterior.jpeg')] bg-cover bg-center" />
           <div className="absolute inset-0 bg-gradient-to-r from-[#2B2B2B]/60 via-[#326096]/50 to-[#2B2B2B]/60"></div>

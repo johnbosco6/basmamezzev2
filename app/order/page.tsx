@@ -186,14 +186,14 @@ export default function OrderPage() {
     }
 
     return (
-        <div className="min-h-screen bg-white text-gray-900">
+        <div className="min-h-screen bg-white text-gray-900 pt-[240px] md:pt-[200px]">
             {/* Cart Drawer */}
             <CartDrawer isOpen={cartOpen} onClose={() => setCartOpen(false)} />
 
             <MainNavbar />
 
             {/* Sticky Filter Bar */}
-            <div className="sticky top-0 z-40 bg-[#2B2B2B]/95 backdrop-blur-md border-b border-white/10 py-4 shadow-xl">
+            <div className="sticky top-0 md:top-0 z-40 bg-[#2B2B2B]/95 backdrop-blur-md border-b border-white/10 py-4 shadow-xl">
                 <div className="container mx-auto px-4">
                     <div className="flex items-center gap-3 mb-2">
                         <Filter className="h-4 w-4 text-[#BA9D76]" />
