@@ -151,7 +151,9 @@ export default async function AdminDashboardPage() {
                                                 <h4 className="font-bold text-[#BA9D76]">#{order.orderNumber?.slice(-4)}</h4>
                                                 <p className="text-white/70 text-sm truncate">{order.customerName}</p>
                                                 <p className="text-white/40 text-[10px] mt-0.5">
-                                                    {order.orderType === 'delivery' ? '🚗 Dostawa' : '📦 Odbiór'} · Zakończono:{' '}
+                                                    {order.orderType === 'delivery' ? '🚗 Dostawa' : '📦 Odbiór'} · {' '}
+                                                    {order.paymentMethod === 'p24' ? '💳 Online' : order.paymentMethod === 'cash' ? '💵 Gotówka' : '📟 Karta (kier.)'} · {' '}
+                                                    Zakończono:{' '}
                                                     {new Date(order.completedAt || order.orderDate).toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' })}
                                                 </p>
                                             </div>

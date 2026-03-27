@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { format } from 'date-fns'
 import { pl } from 'date-fns/locale'
-import { Phone, MapPin, Clock, CheckCircle, Truck, Utensils, Archive, Mail, Check, Loader2 } from 'lucide-react'
+import { Phone, MapPin, Clock, CheckCircle, Truck, Utensils, Archive, Mail, Check, Loader2, CreditCard, Banknote, Wallet } from 'lucide-react'
 import { updateOrderStatus, sendNotificationEmail } from '@/app/actions/admin-actions'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
@@ -27,6 +27,12 @@ const statusConfig: { [key: string]: { label: string; color: string; icon: any; 
     delivered: { label: 'Dostarczone', color: 'bg-green-500', icon: CheckCircle, glow: 'shadow-[0_0_10px_rgba(34,197,94,0.4)]' },
     picked_up: { label: 'Odebrane', color: 'bg-green-500', icon: CheckCircle, glow: 'shadow-[0_0_10px_rgba(34,197,94,0.4)]' },
     cancelled: { label: 'Anulowane', color: 'bg-red-500', icon: Archive, glow: 'shadow-[0_0_10px_rgba(239,68,68,0.4)]' },
+}
+
+const paymentConfig: { [key: string]: { label: string; icon: any; color: string } } = {
+    p24: { label: 'Płatność Online', icon: Wallet, color: 'text-blue-400' },
+    cash: { label: 'Gotówka przy odbiorze', icon: Banknote, color: 'text-green-400' },
+    card_on_delivery: { label: 'Karta przy odbiorze', icon: CreditCard, color: 'text-purple-400' },
 }
 
 interface OrderCardProps {
@@ -138,6 +144,18 @@ export function OrderCard({ order }: OrderCardProps) {
                         <div className="flex items-center gap-3 text-white/70">
                             <Phone className="w-3.5 h-3.5 text-[#BA9D76]" />
                             <a href={`tel:${order.customerPhone}`} className="hover:text-[#BA9D76] transition-colors break-all text-sm">{order.customerPhone}</a>
+                        </div>
+                        {/* Payment Method Badge */}
+                        <div className="flex items-center gap-3 py-1.5 px-3 bg-white/5 rounded-lg border border-white/5 w-fit">
+                            {(() => {
+                                const p = paymentConfig[order.paymentMethod] || paymentConfig.p24
+                                return (
+                                    <>
+                                        <p.icon className={`w-3.5 h-3.5 ${p.color}`} />
+                                        <span className={`text-[11px] font-bold uppercase tracking-wider ${p.color}`}>{p.label}</span>
+                                    </>
+                                )
+                            })()}
                         </div>
                         {order.customerEmail && (
                             <div className="flex items-center gap-3 text-white/70">

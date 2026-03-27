@@ -106,6 +106,7 @@ export async function getOrders() {
             subtotal,
             deliveryFee,
             totalAmount,
+            paymentMethod,
             notes,
             orderDate,
             completedAt
