@@ -746,6 +746,7 @@ export const menuData: MenuCategory[] = [
             price: "8 zł",
             image: "/images/menu/herbata-arabska.jpg",
             allergens: [],
+            notAvailableOnline: true,
           },
           {
             id: "autumn-tea",
@@ -754,6 +755,7 @@ export const menuData: MenuCategory[] = [
             price: "18 zł",
             image: "/images/menu/herbata-sezonowa.jpg",
             allergens: [12],
+            notAvailableOnline: true,
           },
 
           {
@@ -763,6 +765,7 @@ export const menuData: MenuCategory[] = [
             price: "10 zł",
             image: "/images/menu/espresso.jpg",
             allergens: [],
+            notAvailableOnline: true,
           },
           {
             id: "espresso-doppio",
@@ -771,6 +774,7 @@ export const menuData: MenuCategory[] = [
             price: "12 zł",
             image: "/images/menu/espresso-doppio.jpg",
             allergens: [],
+            notAvailableOnline: true,
           },
           {
             id: "americano",
@@ -779,6 +783,7 @@ export const menuData: MenuCategory[] = [
             price: "12 zł",
             image: "/images/menu/americano.jpg",
             allergens: [],
+            notAvailableOnline: true,
           },
           {
             id: "coffee-milk",
@@ -787,6 +792,7 @@ export const menuData: MenuCategory[] = [
             price: "14 zł",
             image: "/images/menu/kawa-z-mlekiem.jpg",
             allergens: [7],
+            notAvailableOnline: true,
           },
           {
             id: "cappuccino",
@@ -795,6 +801,7 @@ export const menuData: MenuCategory[] = [
             price: "16 zł",
             image: "/images/menu/cappuccino.jpg",
             allergens: [7],
+            notAvailableOnline: true,
           },
           {
             id: "flat-white",
@@ -802,6 +809,7 @@ export const menuData: MenuCategory[] = [
             description: "Espresso z mikrospienioną pianką",
             price: "17 zł",
             allergens: [7],
+            notAvailableOnline: true,
           },
           {
             id: "caffe-latte",
@@ -810,6 +818,7 @@ export const menuData: MenuCategory[] = [
             price: "18 zł",
             image: "/images/menu/latte.jpg",
             allergens: [7],
+            notAvailableOnline: true,
           },
           {
             id: "iced-coffee",
@@ -818,6 +827,7 @@ export const menuData: MenuCategory[] = [
             price: "18 zł",
             image: "/images/menu/kawa-mrozona.jpg",
             allergens: [7],
+            notAvailableOnline: true,
           },
           {
             id: "tonic-espresso",
@@ -826,6 +836,7 @@ export const menuData: MenuCategory[] = [
             price: "18 zł",
             image: "/images/menu/tonic-espresso.jpg",
             allergens: [],
+            notAvailableOnline: true,
           },
         ],
       },
@@ -837,24 +848,28 @@ export const menuData: MenuCategory[] = [
             name: "Grzaniec z Białym Winem",
             description: "Białe wino, syrop waniliowy, miód, korzenne przyprawy, pomarańcza",
             price: "25 zł",
+            notAvailableOnline: true,
           },
           {
             id: "mulled-red-wine",
             name: "Grzaniec z Czerwonym Winem",
             description: "Czerwone wino, sok pomarańczowy, syrop waniliowy, korzenne przyprawy, pomarańcza",
             price: "25 zł",
+            notAvailableOnline: true,
           },
           {
             id: "mulled-aperol",
             name: "Grzaniec z Aperolem",
             description: "Aperol, białe wino, sok jabłkowy, syrop brzoskwiniowy, korzenne przyprawy, pomarańcza",
             price: "29 zł",
+            notAvailableOnline: true,
           },
           {
             id: "mulled-nonalcoholic",
             name: "Grzaniec Bezalkoholowy",
             description: "Syrop ruby grape, sok z granatu, adriatico, korzenne przyprawy, pomarańcza",
             price: "29 zł",
+            notAvailableOnline: true,
           },
         ],
       },
@@ -944,6 +959,7 @@ export const menuData: MenuCategory[] = [
             price: "25 zł",
             image: "/images/menu/jallab-lemonade.jpg",
             allergens: [8, 12],
+            notAvailableOnline: true,
           },
 
           {
@@ -953,6 +969,7 @@ export const menuData: MenuCategory[] = [
             price: "25 zł",
             image: "/images/menu/basma-sour-lemonade.jpg",
             allergens: [1, 12],
+            notAvailableOnline: true,
           },
           {
             id: "yaffa-lemonade",
@@ -960,6 +977,7 @@ export const menuData: MenuCategory[] = [
             description: "Sok jabłkowy / sok z granatu / syrop cynamonowy / sok z cytryny",
             price: "25 zł",
             image: "/images/menu/yaffa-lemonade.jpg",
+            notAvailableOnline: true,
           },
           {
             id: "milk-dactyl",
@@ -968,6 +986,7 @@ export const menuData: MenuCategory[] = [
             price: "25 zł",
             image: "/images/menu/milk-dactyl.jpg",
             allergens: [1],
+            notAvailableOnline: true,
           },
           {
             id: "orange-spritz-free",
@@ -976,6 +995,7 @@ export const menuData: MenuCategory[] = [
             price: "25 zł",
             image: "/images/menu/orange-spritz-free.jpg",
             allergens: [12],
+            notAvailableOnline: true,
           },
           {
             id: "limoncello-free",
@@ -984,6 +1004,7 @@ export const menuData: MenuCategory[] = [
             price: "25 zł",
             image: "/images/menu/limoncello-free.jpg",
             allergens: [12],
+            notAvailableOnline: true,
           },
           {
             id: "orange-rosemary",
@@ -992,6 +1013,7 @@ export const menuData: MenuCategory[] = [
             price: "25 zł",
             image: "/images/menu/orange-rosemary.jpg",
             allergens: [12],
+            notAvailableOnline: true,
           },
         ],
       },

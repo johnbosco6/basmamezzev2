@@ -44,7 +44,7 @@ export default function OrderPage() {
     // Filter menu sections for online ordering
     const filteredMenuData = useMemo(() => {
         return menuData.filter(section =>
-            !["sniadania", "napoje", "alkohole", "specjalne-okazje"].includes(section.id)
+            !["sniadania", "alkohole", "specjalne-okazje"].includes(section.id)
         )
     }, [])
 
@@ -300,7 +300,7 @@ export default function OrderPage() {
                                         <div className="grid gap-6 md:gap-8">
                                             {category.items.filter(item => !item.notAvailableOnline).map((item, itemIndex) => {
                                                 const isSafe = isDishSafe(item.allergens)
-                                                const canOrder = item.price && parsePrice(item.price) > 0 && !(["specjalne-okazje", "sniadania", "napoje", "alkohole"].includes(section.id))
+                                                const canOrder = item.price && parsePrice(item.price) > 0 && !(["specjalne-okazje", "sniadania", "alkohole"].includes(section.id))
 
                                                 return (
                                                     <div

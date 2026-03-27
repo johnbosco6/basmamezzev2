@@ -124,28 +124,7 @@ export default function CheckoutPage() {
     const [discountPercent, setDiscountPercent] = useState(0)
     const [isVerifyingPromo, setIsVerifyingPromo] = useState(false)
 
-    // Street dropdown state
-    const [streetDropdownOpen, setStreetDropdownOpen] = useState(false)
-    const [streetSearch, setStreetSearch] = useState("")
-    const streetDropdownRef = useRef<HTMLDivElement>(null)
 
-    // Filter streets based on search
-    const filteredStreets = useMemo(() => {
-        if (!streetSearch.trim()) return LUBLIN_STREETS
-        const lower = streetSearch.toLowerCase()
-        return LUBLIN_STREETS.filter(s => s.toLowerCase().includes(lower))
-    }, [streetSearch])
-
-    // Close dropdown on outside click
-    useEffect(() => {
-        function handleClickOutside(e: MouseEvent) {
-            if (streetDropdownRef.current && !streetDropdownRef.current.contains(e.target as Node)) {
-                setStreetDropdownOpen(false)
-            }
-        }
-        document.addEventListener("mousedown", handleClickOutside)
-        return () => document.removeEventListener("mousedown", handleClickOutside)
-    }, [])
 
     useEffect(() => {
         if ((items.length === 0 || totalPrice < 40) && !isSubmitting) {
@@ -477,7 +456,7 @@ export default function CheckoutPage() {
 
                                     {/* Street Dropdown + House Number */}
                                     <div className="grid grid-cols-3 gap-3">
-                                        <div className="col-span-2 relative" ref={streetDropdownRef}>
+                                        <div className="col-span-2 relative">
                                             <label className={`block text-xs font-medium text-gray-700 mb-1.5 ${archivo.className}`}>
                                                 Ulica <span className="text-red-500">*</span>
                                             </label>
@@ -488,47 +467,14 @@ export default function CheckoutPage() {
                                                     onChange={(e) => {
                                                         const val = e.target.value
                                                         setForm({ ...form, street: val })
-                                                        setStreetSearch(val)
-                                                        setStreetDropdownOpen(val.length > 0)
                                                         setAddressConfirmed(false)
                                                         setDeliveryInfo(null)
                                                         setLocationError("")
                                                     }}
-                                                    onFocus={() => {
-                                                        if (form.street.length > 0) setStreetDropdownOpen(true)
-                                                    }}
                                                     placeholder="Wpisz nazwę ulicy..."
                                                     className={`w-full px-3 py-2.5 border rounded-xl text-sm transition-colors ${errors.street ? "border-red-400 bg-red-50" : "border-gray-200 bg-gray-50 focus:border-[#BA9D76] focus:ring-2 focus:ring-[#BA9D76]/40 focus:bg-white"} ${archivo.className}`}
                                                 />
-                                                <ChevronDown className={`absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none transition-transform ${streetDropdownOpen ? "rotate-180" : ""}`} />
                                             </div>
-
-                                            {/* Dropdown panel for suggestions */}
-                                            {streetDropdownOpen && filteredStreets.length > 0 && (
-                                                <div className="absolute z-50 mt-1 w-full bg-white border border-gray-200 rounded-xl shadow-xl overflow-hidden animate-in fade-in slide-in-from-top-1 duration-150">
-                                                    <div className="max-h-48 overflow-y-auto">
-                                                        {filteredStreets.map((street) => (
-                                                            <button
-                                                                key={street}
-                                                                type="button"
-                                                                onClick={() => {
-                                                                    setForm({ ...form, street })
-                                                                    setStreetDropdownOpen(false)
-                                                                    setStreetSearch("")
-                                                                    setAddressConfirmed(false)
-                                                                    setDeliveryInfo(null)
-                                                                }}
-                                                                className={`w-full text-left px-3 py-2.5 text-sm transition-colors ${form.street === street
-                                                                    ? "bg-[#BA9D76]/10 text-[#BA9D76] font-semibold"
-                                                                    : "text-gray-700 hover:bg-gray-50"
-                                                                    } ${archivo.className}`}
-                                                            >
-                                                                {street}
-                                                            </button>
-                                                        ))}
-                                                    </div>
-                                                </div>
-                                            )}
                                             {errors.street && <p className="text-red-500 text-xs mt-1">{errors.street}</p>}
                                         </div>
                                         <div>
