@@ -178,6 +178,9 @@ function buildOrderConfirmationHTML(order: OrderDetails): string {
                                 <p style="margin: 6px 0 0; font-family: Arial, sans-serif; font-size: 11px; color: rgba(255,255,255,0.4);">
                                     Ta wiadomość została wysłana automatycznie. Nie odpowiadaj na ten e-mail.
                                 </p>
+                                <p style="margin: 15px 0 0; font-family: Arial, sans-serif; font-size: 10px; color: rgba(255,255,255,0.3);">
+                                    Zgodnie z Twoim prawem do bycia zapomnianym, możesz w każdej chwili <a href="https://www.basmamezze.pl/unsubscribe?email=${encodeURIComponent(order.customerEmail)}" style="color: #BA9D76; text-decoration: underline;">usunąć swoje dane</a> z naszej bazy marketingowej.
+                                </p>
                             </td>
                         </tr>
                     </table>
@@ -190,7 +193,7 @@ function buildOrderConfirmationHTML(order: OrderDetails): string {
 }
 
 // ─── Status Update Email Builder ─────────────────────────
-function buildStatusUpdateHTML(orderNumber: string, customerName: string, newStatus: string): string {
+function buildStatusUpdateHTML(orderNumber: string, customerName: string, newStatus: string, customerEmail: string): string {
     const statusMessages: { [key: string]: { emoji: string; title: string; message: string } } = {
         confirmed: { emoji: '✅', title: 'Zamówienie Potwierdzone', message: 'Twoje zamówienie zostało potwierdzone i wkrótce zaczniemy je przygotowywać.' },
         preparing: { emoji: '👨‍🍳', title: 'Przygotowujemy Zamówienie', message: 'Nasz szef kuchni rozpoczął przygotowywanie Twojego zamówienia!' },
@@ -229,6 +232,9 @@ function buildStatusUpdateHTML(orderNumber: string, customerName: string, newSta
                             <td style="background: #2B2B2B; padding: 20px 30px; text-align: center;">
                                 <p style="margin: 0; font-family: Arial, sans-serif; font-size: 11px; color: rgba(255,255,255,0.4);">
                                     Basma Mezze & Grill — Ta wiadomość została wysłana automatycznie.
+                                </p>
+                                <p style="margin: 12px 0 0; font-family: Arial, sans-serif; font-size: 10px; color: rgba(255,255,255,0.3);">
+                                    Możesz w każdej chwili <a href="https://www.basmamezze.pl/unsubscribe?email=${encodeURIComponent(customerEmail)}" style="color: #BA9D76; text-decoration: underline;">usunąć swoje dane</a> z naszej bazy marketingowej.
                                 </p>
                             </td>
                         </tr>
@@ -297,7 +303,7 @@ export async function sendOrderStatusUpdate(
                 replyTo: 'basmalublin@gmail.com',
                 to: customerEmail,
                 subject: `Zamówienie #${orderNumber} — ${statusLabels[newStatus] || newStatus}`,
-                html: buildStatusUpdateHTML(orderNumber, customerName, newStatus),
+                html: buildStatusUpdateHTML(orderNumber, customerName, newStatus, customerEmail),
             })
             console.log(`[Notifications] ✅ Status update email sent for #${orderNumber} (${newStatus})`)
             return { resend: true }
