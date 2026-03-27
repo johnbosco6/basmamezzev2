@@ -187,7 +187,10 @@ export default function RegulaminPage() {
                     2. Aktualna wersja regulaminu jest dostępna w Restauracji oraz na stronie internetowej.
                   </p>
                   <p className={`font-light ${archivo.className}`}>
-                    3. W sprawach nieuregulowanych niniejszym regulaminem zastosowanie mają przepisy prawa polskiego.
+                    3. Składając zamówienie lub zapisując się do newslettera, Użytkownik wyraża zgodę na przetwarzanie danych kontaktowych (email, numer telefonu) w celach marketingowych zgodnie z Polityką Prywatności.
+                  </p>
+                  <p className={`font-light ${archivo.className}`}>
+                    4. W sprawach nieuregulowanych niniejszym regulaminem zastosowanie mają przepisy prawa polskiego.
                   </p>
                 </div>
               </section>

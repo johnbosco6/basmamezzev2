@@ -88,8 +88,9 @@ export default function PolitykaPrywatnosciPage() {
                     <li>• Realizacja zamówień i świadczenie usług gastronomicznych</li>
                     <li>• Obsługa rezerwacji stolików</li>
                     <li>• Wystawienie dokumentów księgowych (paragon, faktura)</li>
-                    <li>• Kontakt z klientami</li>
-                    <li>• Wysyłka newslettera (za zgodą)</li>
+                    <li>• Kontakt z klientami w sprawach dotyczących zamówień (SMS/E-mail)</li>
+                    <li>• Wysyłka newslettera oraz informacji o promocjach i ofertach specjalnych (za zgodą)</li>
+                    <li>• Prowadzenie bazy subskrybentów w celach marketingowych</li>
                     <li>• Zapewnienie bezpieczeństwa (monitoring)</li>
                     <li>• Rozpatrywanie reklamacji</li>
                   </ul>
@@ -104,7 +105,7 @@ export default function PolitykaPrywatnosciPage() {
                   <p>Przetwarzamy następujące kategorie danych osobowych:</p>
                   <ul className="ml-6 space-y-1">
                     <li>• Dane identyfikacyjne (imię, nazwisko)</li>
-                    <li>• Dane kontaktowe (numer telefonu, adres e-mail)</li>
+                    <li>• Dane kontaktowe (numer telefonu, adres e-mail) - zbierane podczas składania zamówienia lub zapisu do newslettera</li>
                     <li>• Dane dotyczące preferencji żywieniowych i alergii</li>
                     <li>• Dane z monitoringu (wizerunek)</li>
                     <li>• Dane dotyczące zamówień i historii wizyt</li>

@@ -662,6 +662,9 @@ export default function HomePage() {
                       {subscribeStatus === "error" && (
                         <span className="text-red-400 text-xs font-light">Wystąpił błąd. Spróbuj powonie.</span>
                       )}
+                      <p className="text-[10px] text-white/40 font-light mt-1">
+                        Zapisując się, akceptujesz naszą <Link href="/polityka-prywatnosci" className="underline hover:text-[#BA9D76]">politykę prywatności</Link>.
+                      </p>
                     </form>
                   </div>
 

@@ -839,7 +839,7 @@ export default function CheckoutPage() {
                                         </div>
                                         <div className="flex-1">
                                             <label htmlFor="terms" className={`text-sm text-gray-600 font-light cursor-pointer leading-tight block ${archivo.className}`}>
-                                                Akceptuję <Link href="/regulamin" target="_blank" className="font-medium text-[#BA9D76] hover:underline">regulamin</Link> sklepu oraz zgadzam się na przetwarzanie moich danych osobowych w celu realizacji zamówienia. <span className="text-red-500">*</span>
+                                                Akceptuję <Link href="/regulamin" target="_blank" className="font-medium text-[#BA9D76] hover:underline">regulamin</Link> sklepu oraz zgadzam się na przetwarzanie moich danych osobowych (w tym email i telefon) w celu realizacji zamówienia oraz w celach marketingowych zgodnie z <Link href="/polityka-prywatnosci" target="_blank" className="font-medium text-[#BA9D76] hover:underline">polityką prywatności</Link>. <span className="text-red-500">*</span>
                                             </label>
                                             {errors.terms && <p className={`text-red-500 text-xs mt-1.5 font-medium ${archivo.className}`}>{errors.terms}</p>}
                                         </div>
