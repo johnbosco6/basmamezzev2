@@ -87,7 +87,7 @@ interface DeliveryInfo {
 }
 
 export default function CheckoutPage() {
-    const { items, removeItem, updateQty, totalPrice, totalItems, clearCart } = useCart()
+    const { items, removeItem, updateQty, totalPrice, totalItems, clearCart, setCartOpen } = useCart()
     const router = useRouter()
 
     const [orderType, setOrderType] = useState<OrderType>("delivery")
@@ -116,7 +116,6 @@ export default function CheckoutPage() {
     const [addressConfirmed, setAddressConfirmed] = useState(false)
     const [acceptedTerms, setAcceptedTerms] = useState(false)
     const [paymentMethod, setPaymentMethod] = useState<string | null>(null)
-    const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false)
 
     // Check for items that cannot be delivered (e.g. ice cream desserts)
     const restrictedItemsInCart = useMemo(() => {
@@ -221,6 +220,7 @@ export default function CheckoutPage() {
             if (locationError) e._location = locationError
             else if (!deliveryInfo) e._delivery = "Poczekaj chwilę — koszt dostawy jest obliczany..."
         }
+        if (!paymentMethod) e.payment = "Wybierz metodę płatności"
         if (!acceptedTerms) e.terms = "Musisz zaakceptować regulamin, aby złożyć zamówienie"
         return e
     }
@@ -264,21 +264,18 @@ export default function CheckoutPage() {
         }
 
         const errs = validate()
-        if (Object.keys(errs).length > 0) { setErrors(errs); return }
-        setErrors({})
-        setIsPaymentModalOpen(true)
-    }
-
-    const handleFinalConfirm = async () => {
-        // Final sanity check for opening hours
-        const orderStatus = isRestaurantOpenForOrders()
-        if (!orderStatus.isOpen) {
-            alert(`Przepraszamy, restauracja została właśnie zamknięta. Nie możemy przyjąć Twojego zamówienia. Zapraszamy ${formatNextOpening()}.`)
-            setIsPaymentModalOpen(false)
+        if (Object.keys(errs).length > 0) {
+            setErrors(errs)
+            // Scroll to first error for better UX
+            const firstErrKey = Object.keys(errs)[0];
+            if (firstErrKey === 'payment') {
+                const payElement = document.getElementById('payment-section');
+                payElement?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
             return
         }
+        setErrors({})
 
-        setIsPaymentModalOpen(false)
         setIsSubmitting(true)
         const orderNumber = Math.floor(1000 + Math.random() * 9000).toString()
         const orderData = {
@@ -306,7 +303,7 @@ export default function CheckoutPage() {
             totalPrice: grandTotal,
         }
 
-        // Save to Sanity (non-blocking — but we log for debugging)
+        // Save to Sanity (non-blocking)
         try {
             const response = await fetch("/api/orders", {
                 method: "POST",
@@ -323,7 +320,6 @@ export default function CheckoutPage() {
         } catch (err) {
             console.error("Network error saving to Sanity:", err)
         }
-
 
         // Always save to sessionStorage
         sessionStorage.setItem("basma-order", JSON.stringify({ ...orderData, paymentMethod }))
@@ -407,10 +403,15 @@ export default function CheckoutPage() {
                         Finalizacja Zamówienia
                     </h1>
                     <div className="w-24 flex justify-end">
-                        <div className="flex items-center gap-2 bg-[#BA9D76]/20 border border-[#BA9D76]/30 rounded-full px-3 py-1.5">
-                            <ShoppingBag className="h-4 w-4 text-[#BA9D76]" />
+                        <button
+                            type="button"
+                            onClick={() => setCartOpen(true)}
+                            className="flex items-center gap-2 bg-white/10 hover:bg-[#BA9D76]/20 border border-white/20 rounded-full px-3 py-1.5 transition-all duration-300 group"
+                            aria-label="Otwórz koszyk"
+                        >
+                            <ShoppingBag className="h-4 w-4 text-white group-hover:text-[#BA9D76] transition-colors" />
                             <span className={`text-white text-sm font-semibold ${archivo.className}`}>{totalItems}</span>
-                        </div>
+                        </button>
                     </div>
                 </div>
             </header>
@@ -661,6 +662,71 @@ export default function CheckoutPage() {
                                             rows={3}
                                             className={`w-full px-4 py-3 border border-gray-200 rounded-xl bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#BA9D76]/40 focus:border-[#BA9D76] transition-colors resize-none ${archivo.className}`} />
                                     </div>
+
+                                    {/* PAYMENT METHOD SECTION */}
+                                    <div id="payment-section" className="pt-2 space-y-4">
+                                        <h2 className={`text-lg font-semibold text-gray-900 flex items-center gap-2 ${archivo.className}`}>
+                                            <Wallet className="h-5 w-5 text-[#BA9D76]" />
+                                            Wybierz Metodę Płatności
+                                        </h2>
+                                        <div className="grid gap-3">
+                                            <button
+                                                type="button"
+                                                onClick={() => setPaymentMethod('p24')}
+                                                className={`p-4 rounded-xl border-2 transition-all duration-200 flex items-center gap-4 text-left ${paymentMethod === 'p24' ? "border-[#BA9D76] bg-[#BA9D76]/5 text-[#BA9D76]" : "border-gray-100 text-gray-600 hover:border-gray-200"}`}
+                                            >
+                                                <div className={`w-12 h-12 rounded-full flex items-center justify-center ${paymentMethod === 'p24' ? "bg-[#BA9D76]/20" : "bg-gray-100"}`}>
+                                                    <Wallet className="h-6 w-6" />
+                                                </div>
+                                                <div className="flex-1">
+                                                    <p className={`font-bold text-base ${archivo.className}`}>Płatność Online</p>
+                                                    <p className="text-xs opacity-70 font-light text-gray-400 mt-1">Szybki przelew / BLIK / Karta</p>
+                                                </div>
+                                                {paymentMethod === 'p24' && <CheckCircle className="h-6 w-6 text-[#BA9D76]" />}
+                                            </button>
+
+                                            {orderType === 'pickup' ? (
+                                                <div className="bg-[#BA9D76]/5 border border-[#BA9D76]/20 rounded-xl p-4 text-center">
+                                                    <p className={`text-sm text-[#BA9D76] font-medium ${archivo.className}`}>
+                                                        Przy odbiorze osobistym dostępna jest wyłącznie płatność online.
+                                                    </p>
+                                                </div>
+                                            ) : (
+                                                <>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setPaymentMethod('cash')}
+                                                        className={`p-4 rounded-xl border-2 transition-all duration-200 flex items-center gap-4 text-left ${paymentMethod === 'cash' ? "border-[#BA9D76] bg-[#BA9D76]/5 text-[#BA9D76]" : "border-gray-100 text-gray-600 hover:border-gray-200"}`}
+                                                    >
+                                                        <div className={`w-12 h-12 rounded-full flex items-center justify-center ${paymentMethod === 'cash' ? "bg-[#BA9D76]/20" : "bg-gray-100"}`}>
+                                                            <Banknote className="h-6 w-6" />
+                                                        </div>
+                                                        <div className="flex-1">
+                                                            <p className={`font-bold text-base ${archivo.className}`}>Gotówka przy odbiorze</p>
+                                                            <p className="text-xs opacity-70 font-light text-gray-400 mt-1">Zapłać kierowcy w gotówce</p>
+                                                        </div>
+                                                        {paymentMethod === 'cash' && <CheckCircle className="h-6 w-6 text-[#BA9D76]" />}
+                                                    </button>
+
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setPaymentMethod('card_on_delivery')}
+                                                        className={`p-4 rounded-xl border-2 transition-all duration-200 flex items-center gap-4 text-left ${paymentMethod === 'card_on_delivery' ? "border-[#BA9D76] bg-[#BA9D76]/5 text-[#BA9D76]" : "border-gray-100 text-gray-600 hover:border-gray-200"}`}
+                                                    >
+                                                        <div className={`w-12 h-12 rounded-full flex items-center justify-center ${paymentMethod === 'card_on_delivery' ? "bg-[#BA9D76]/20" : "bg-gray-100"}`}>
+                                                            <CreditCard className="h-6 w-6" />
+                                                        </div>
+                                                        <div className="flex-1">
+                                                            <p className={`font-bold text-base ${archivo.className}`}>Karta przy odbiorze</p>
+                                                            <p className="text-xs opacity-70 font-light text-gray-400 mt-1">Płatność kartą/telefonem u kierowcy</p>
+                                                        </div>
+                                                        {paymentMethod === 'card_on_delivery' && <CheckCircle className="h-6 w-6 text-[#BA9D76]" />}
+                                                    </button>
+                                                </>
+                                            )}
+                                        </div>
+                                        {errors.payment && <p className="text-red-500 text-xs font-semibold animate-bounce shadow-sm bg-red-50 p-2 rounded-lg border border-red-200">{errors.payment}</p>}
+                                    </div>
                                 </div>
                             </div>
 
@@ -849,7 +915,7 @@ export default function CheckoutPage() {
                                         )}
                                     </Button>
                                     <p className={`text-[10px] text-center text-gray-400 mt-2 font-light px-4 ${archivo.className}`}>
-                                        Klikając przycisk powyżej, potwierdzasz zamówienie i przejdziesz do wyboru metody płatności.
+                                        Klikając przycisk powyżej, potwierdzasz zamówienie zgodnie z wybraną metodą płatności.
                                     </p>
                                 </div>
                             </div>
@@ -858,113 +924,7 @@ export default function CheckoutPage() {
                 </form>
             </div>
 
-            {/* PAYMENT MODAL */}
-            <AnimatePresence>
-                {isPaymentModalOpen && (
-                    <>
-                        <motion.div
-                            key="backdrop"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            onClick={() => setIsPaymentModalOpen(false)}
-                            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100]"
-                        />
-                        <motion.div
-                            key="modal"
-                            initial={{ opacity: 0, scale: 0.95, y: 20 }}
-                            animate={{ opacity: 1, scale: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                            className="fixed inset-0 m-auto w-full max-w-lg h-fit bg-white rounded-3xl shadow-2xl z-[101] overflow-hidden"
-                        >
-                            <div className="bg-gradient-to-r from-[#2B2B2B] to-[#326096] p-6 text-white relative">
-                                <button
-                                    onClick={() => setIsPaymentModalOpen(false)}
-                                    type="button"
-                                    className="absolute right-4 top-4 w-8 h-8 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-colors"
-                                >
-                                    <X className="h-4 w-4" />
-                                </button>
-                                <h3 className={`text-xl font-bold mb-1 ${archivo.className}`}>Wybierz metodę płatności</h3>
-                                <p className="text-white/70 text-sm font-light">Ostatni krok przed potwierdzeniem zamówienia</p>
-                            </div>
 
-                            <div className="p-6 space-y-4">
-                                <div className="grid gap-3">
-                                    <button
-                                        type="button"
-                                        onClick={() => setPaymentMethod('p24')}
-                                        className={`p-4 rounded-xl border-2 transition-all duration-200 flex items-center gap-4 text-left ${paymentMethod === 'p24' ? "border-[#BA9D76] bg-[#BA9D76]/5 text-[#BA9D76]" : "border-gray-100 text-gray-600 hover:border-gray-200"}`}
-                                    >
-                                        <div className={`w-12 h-12 rounded-full flex items-center justify-center ${paymentMethod === 'p24' ? "bg-[#BA9D76]/20" : "bg-gray-100"}`}>
-                                            <Wallet className="h-6 w-6" />
-                                        </div>
-                                        <div className="flex-1">
-                                            <p className={`font-bold text-base ${archivo.className}`}>Płatność Online</p>
-                                            <p className="text-xs opacity-70 font-light">Przelewy24 / Blik / Karta</p>
-                                        </div>
-                                        {paymentMethod === 'p24' && <CheckCircle className="h-6 w-6" />}
-                                    </button>
-
-                                    {orderType === 'pickup' ? (
-                                        <div className="bg-[#BA9D76]/5 border border-[#BA9D76]/20 rounded-xl p-4 text-center">
-                                            <p className={`text-sm text-[#BA9D76] font-medium ${archivo.className}`}>
-                                                Przy odbiorze osobistym dostępna jest wyłącznie płatność online.
-                                            </p>
-                                        </div>
-                                    ) : (
-                                        <>
-                                            <button
-                                                type="button"
-                                                onClick={() => setPaymentMethod('cash')}
-                                                className={`p-4 rounded-xl border-2 transition-all duration-200 flex items-center gap-4 text-left ${paymentMethod === 'cash' ? "border-[#BA9D76] bg-[#BA9D76]/5 text-[#BA9D76]" : "border-gray-100 text-gray-600 hover:border-gray-200"}`}
-                                            >
-                                                <div className={`w-12 h-12 rounded-full flex items-center justify-center ${paymentMethod === 'cash' ? "bg-[#BA9D76]/20" : "bg-gray-100"}`}>
-                                                    <Banknote className="h-6 w-6" />
-                                                </div>
-                                                <div className="flex-1">
-                                                    <p className={`font-bold text-base ${archivo.className}`}>Gotówka przy odbiorze</p>
-                                                    <p className="text-xs opacity-70 font-light mt-1">Zapłać kurierowi lub w restauracji</p>
-                                                </div>
-                                                {paymentMethod === 'cash' && <CheckCircle className="h-6 w-6" />}
-                                            </button>
-
-                                            <button
-                                                type="button"
-                                                onClick={() => setPaymentMethod('card_on_delivery')}
-                                                className={`p-4 rounded-xl border-2 transition-all duration-200 flex items-center gap-4 text-left ${paymentMethod === 'card_on_delivery' ? "border-[#BA9D76] bg-[#BA9D76]/5 text-[#BA9D76]" : "border-gray-100 text-gray-600 hover:border-gray-200"}`}
-                                            >
-                                                <div className={`w-12 h-12 rounded-full flex items-center justify-center ${paymentMethod === 'card_on_delivery' ? "bg-[#BA9D76]/20" : "bg-gray-100"}`}>
-                                                    <CreditCard className="h-6 w-6" />
-                                                </div>
-                                                <div className="flex-1">
-                                                    <p className={`font-bold text-base ${archivo.className}`}>Karta przy odbiorze</p>
-                                                    <p className="text-xs opacity-70 font-light mt-1">Płatność terminalem u kuriera/kierowcy</p>
-                                                </div>
-                                                {paymentMethod === 'card_on_delivery' && <CheckCircle className="h-6 w-6" />}
-                                            </button>
-                                        </>
-                                    )}
-                                </div>
-
-                                <div className="bg-gray-50 rounded-2xl p-4 mt-6 flex items-center justify-between border border-gray-100">
-                                    <div>
-                                        <p className="text-gray-500 text-xs font-light">Do zapłaty:</p>
-                                        <p className={`text-2xl font-bold text-gray-900 ${archivo.className}`}>{grandTotal.toFixed(0)} zł</p>
-                                    </div>
-                                    <Button
-                                        onClick={handleFinalConfirm}
-                                        disabled={!paymentMethod || isSubmitting}
-                                        className="h-12 px-8 bg-[#BA9D76] hover:bg-[#a88a63] text-white font-bold rounded-xl shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                                    >
-                                        Potwierdzam
-                                    </Button>
-                                </div>
-                            </div>
-                        </motion.div>
-                    </>
-                )}
-            </AnimatePresence>
         </div>
     )
 }
