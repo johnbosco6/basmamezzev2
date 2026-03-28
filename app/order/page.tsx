@@ -41,14 +41,64 @@ export default function OrderPage() {
 
     // Filter menu sections for online ordering
     const filteredMenuData = useMemo(() => {
-        return menuData.filter(section =>
-            !["sniadania", "alkohole", "specjalne-okazje"].includes(section.id)
-        )
+        // Items to completely exclude from order page
+        const excludedItemIds = new Set([
+            'dubai-dream', 'creme-brulee-basma', 'warm-apple-pie'
+        ])
+        // Only these drinks are available for online ordering
+        const allowedDrinkIds = new Set([
+            'coca-cola', 'coca-cola-zero', 'fanta', 'sprite'
+        ])
+        // Categories to exclude entirely
+        const excludedCategories = new Set([
+            'Kawa i Herbata', 'Grzańce', 'Koktajle Bezalkoholowe'
+        ])
+
+        return menuData
+            .filter(section => !["sniadania", "alkohole", "specjalne-okazje"].includes(section.id))
+            .map(section => ({
+                ...section,
+                categories: section.categories
+                    .filter(cat => !excludedCategories.has(cat.categoryName))
+                    .map(cat => ({
+                        ...cat,
+                        items: cat.items.filter(item => {
+                            if (item.notAvailableOnline) return false
+                            if (excludedItemIds.has(item.id)) return false
+                            // For napoje "Napoje Zimne", only allow specific sodas
+                            if (section.id === 'napoje' && cat.categoryName === 'Napoje Zimne') {
+                                return allowedDrinkIds.has(item.id)
+                            }
+                            return true
+                        })
+                    }))
+                    .filter(cat => cat.items.length > 0)
+            }))
+            .filter(section => section.categories.length > 0)
     }, [])
 
     const [activeSection, setActiveSection] = useState(filteredMenuData[0]?.id || "")
 
     useEffect(() => { setMounted(true) }, [])
+
+    // Scroll-spy: highlight active section as user scrolls
+    useEffect(() => {
+        const handleScrollSpy = () => {
+            const offset = 300 // account for sticky headers
+            for (const section of filteredMenuData) {
+                const el = document.getElementById(section.id)
+                if (el) {
+                    const rect = el.getBoundingClientRect()
+                    if (rect.top <= offset && rect.bottom > offset) {
+                        setActiveSection(section.id)
+                        break
+                    }
+                }
+            }
+        }
+        window.addEventListener('scroll', handleScrollSpy, { passive: true })
+        return () => window.removeEventListener('scroll', handleScrollSpy)
+    }, [filteredMenuData])
 
     const handleAddToCart = (item: { id: string; name: string; price: string; image?: string }) => {
         const numericPrice = parsePrice(item.price)
@@ -246,31 +296,34 @@ export default function OrderPage() {
                 </div>
             </section>
 
-            {/* Menu Navigation */}
-            <section className="py-8 bg-gray-50" data-menu-navigation>
-                <div className="container mx-auto px-4">
-                    <div className="flex flex-wrap justify-center gap-4">
-                        {filteredMenuData.map((section) => {
-                            const IconComponent = IconMap[section.id as keyof typeof IconMap] || Utensils
-                            return (
-                                <Button
-                                    key={section.id}
-                                    onClick={() => scrollToSection(section.id)}
-                                    variant={activeSection === section.id ? "default" : "outline"}
-                                    className={`
-                  flex items-center gap-2 px-6 py-3 rounded-full transition-all duration-300 hover:scale-105
-                  ${activeSection === section.id
-                                            ? "bg-[#BA9D76] text-white border-[#BA9D76] shadow-lg hover:bg-[#BA9D76]/90"
-                                            : "border-[#BA9D76] bg-white text-gray-700 hover:bg-[#BA9D76]/10 hover:text-[#BA9D76] hover:border-[#BA9D76]"}`}
-                                >
-                                    <IconComponent className="h-4 w-4" />
-                                    {section.sectionTitle}
-                                </Button>
-                            )
-                        })}
-                    </div>
+            {/* Sticky Category Navigation */}
+            <div className="sticky top-[88px] md:top-[88px] z-30 bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm" data-menu-navigation>
+                <div className="container mx-auto px-4 py-3">
+                    <ScrollArea className="w-full whitespace-nowrap">
+                        <div className="flex items-center gap-2 pb-1">
+                            {filteredMenuData.map((section) => {
+                                const IconComponent = IconMap[section.id as keyof typeof IconMap] || Utensils
+                                return (
+                                    <Button
+                                        key={section.id}
+                                        onClick={() => scrollToSection(section.id)}
+                                        variant={activeSection === section.id ? "default" : "outline"}
+                                        className={`
+                      flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-200 flex-shrink-0 text-sm
+                      ${activeSection === section.id
+                                                ? "bg-[#BA9D76] text-white border-[#BA9D76] shadow-md hover:bg-[#BA9D76]/90"
+                                                : "border-gray-200 bg-white text-gray-600 hover:bg-[#BA9D76]/10 hover:text-[#BA9D76] hover:border-[#BA9D76]"}`}
+                                    >
+                                        <IconComponent className="h-3.5 w-3.5" />
+                                        {section.sectionTitle}
+                                    </Button>
+                                )
+                            })}
+                        </div>
+                        <ScrollBar orientation="horizontal" className="bg-gray-100" />
+                    </ScrollArea>
                 </div>
-            </section>
+            </div>
 
             {/* Menu Sections */}
             <main className="py-12 bg-white">
