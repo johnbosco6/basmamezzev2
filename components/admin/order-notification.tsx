@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from "react"
 import { getActiveOrders } from "@/app/actions/admin-actions"
-import { Bell, BellOff, Volume2, VolumeX } from "lucide-react"
+import { Bell, BellOff, Volume2, VolumeX, AlertTriangle } from "lucide-react"
 import { Archivo } from "next/font/google"
 
 const archivo = Archivo({
@@ -11,88 +11,150 @@ const archivo = Archivo({
     display: "swap",
 })
 
-// YouTube IFrame API Types
-declare global {
-    interface Window {
-        onYouTubeIframeAPIReady: () => void;
-        YT: any;
-    }
-}
-
 export function OrderNotification() {
     const [soundEnabled, setSoundEnabled] = useState(false)
     const [knownOrderIds, setKnownOrderIds] = useState<Set<string>>(new Set())
     const [isInitialLoad, setIsInitialLoad] = useState(true)
     const [hasNewOrders, setHasNewOrders] = useState(false)
-    
-    // YouTube Player State
-    const playerRef = useRef<any>(null)
-    const [isPlayerReady, setIsPlayerReady] = useState(false)
+    const [notifPermission, setNotifPermission] = useState<NotificationPermission>("default")
 
-    // Load YouTube IFrame API
+    // Audio ref — local WAV file, much more reliable than YouTube
+    const audioRef = useRef<HTMLAudioElement | null>(null)
+
+    // Initialize audio + load preferences
     useEffect(() => {
-        // Only load if not already loaded
-        if (!window.YT) {
-            const tag = document.createElement('script')
-            tag.src = "https://www.youtube.com/iframe_api"
-            const firstScriptTag = document.getElementsByTagName('script')[0]
-            firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag)
+        // Create audio element
+        const audio = new Audio("/sounds/order-alarm.wav")
+        audio.loop = true
+        audio.volume = 1.0
+        audio.preload = "auto"
+        audioRef.current = audio
 
-            window.onYouTubeIframeAPIReady = () => {
-                initializePlayer()
-            }
-        } else {
-            initializePlayer()
-        }
-
-        function initializePlayer() {
-            playerRef.current = new window.YT.Player('youtube-audio-player', {
-                height: '0',
-                width: '0',
-                videoId: 'FZga2WWdFqo', // Provided by user
-                playerVars: {
-                    'autoplay': 0,
-                    'controls': 0,
-                    'loop': 1,
-                    'playlist': 'FZga2WWdFqo' // Required for looping
-                },
-                events: {
-                    'onReady': () => setIsPlayerReady(true),
-                    'onStateChange': (event: any) => {
-                        // If it ended and we still have new orders, loop it
-                        if (event.data === window.YT.PlayerState.ENDED && hasNewOrders && soundEnabled) {
-                            playerRef.current.playVideo()
-                        }
-                    }
-                }
-            })
-        }
-
-        // Load preference
+        // Load saved preference
         const savedPref = localStorage.getItem("basma-admin-sound")
         if (savedPref === "true") {
             setSoundEnabled(true)
         }
+
+        // Check current notification permission
+        if ("Notification" in window) {
+            setNotifPermission(Notification.permission)
+        }
+
+        return () => {
+            audio.pause()
+            audio.src = ""
+        }
     }, [])
 
-    const toggleSound = () => {
+    // Request notification permission when sound is enabled
+    const requestNotificationPermission = useCallback(async () => {
+        if (!("Notification" in window)) return
+        if (Notification.permission === "granted") {
+            setNotifPermission("granted")
+            return
+        }
+        try {
+            const permission = await Notification.requestPermission()
+            setNotifPermission(permission)
+        } catch {
+            console.warn("Notification permission request failed")
+        }
+    }, [])
+
+    const toggleSound = async () => {
         const newState = !soundEnabled
         setSoundEnabled(newState)
         localStorage.setItem("basma-admin-sound", String(newState))
-        
-        if (!newState && playerRef.current) {
-            playerRef.current.pauseVideo()
-        } else if (newState && hasNewOrders && playerRef.current) {
-            playerRef.current.playVideo()
+
+        if (newState) {
+            // Request notification permission
+            await requestNotificationPermission()
+
+            // If there are already new orders, start alerting
+            if (hasNewOrders) {
+                playAlarm()
+            }
+        } else {
+            stopAlarm()
         }
     }
 
-    const stopAlert = () => {
-        setHasNewOrders(false)
-        if (playerRef.current) {
-            playerRef.current.pauseVideo()
+    const playAlarm = useCallback(() => {
+        // Play audio
+        if (audioRef.current) {
+            audioRef.current.currentTime = 0
+            audioRef.current.play().catch((err) => {
+                console.warn("Audio play failed (requires user interaction):", err)
+            })
         }
-    }
+
+        // Vibrate aggressively — long pattern like a phone call
+        if ("vibrate" in navigator) {
+            // Pattern: vibrate 500ms, pause 200ms — repeat 10 times
+            const pattern: number[] = []
+            for (let i = 0; i < 10; i++) {
+                pattern.push(500, 200)
+            }
+            navigator.vibrate(pattern)
+        }
+
+        // Show browser notification (works even in background tab)
+        if ("Notification" in window && Notification.permission === "granted") {
+            try {
+                const notif = new Notification("🔔 Nowe Zamówienie!", {
+                    body: "Nowe zamówienie czeka na potwierdzenie w panelu Basma!",
+                    icon: "/icons/icon-192x192.png",
+                    badge: "/icons/icon-192x192.png",
+                    tag: "basma-new-order", // prevents duplicate notifications
+                    requireInteraction: true, // stays until dismissed — wakes screen on Android
+                    silent: false, // use system notification sound too
+                })
+                notif.onclick = () => {
+                    window.focus()
+                    notif.close()
+                }
+            } catch {
+                // Fallback: try service worker notification (works when app is in background)
+                if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
+                    navigator.serviceWorker.controller.postMessage({
+                        type: "SHOW_NOTIFICATION",
+                        title: "🔔 Nowe Zamówienie!",
+                        body: "Nowe zamówienie czeka na potwierdzenie w panelu Basma!",
+                    })
+                }
+            }
+        }
+    }, [])
+
+    const stopAlarm = useCallback(() => {
+        // Stop audio
+        if (audioRef.current) {
+            audioRef.current.pause()
+            audioRef.current.currentTime = 0
+        }
+
+        // Stop vibration
+        if ("vibrate" in navigator) {
+            navigator.vibrate(0)
+        }
+    }, [])
+
+    const stopAlert = useCallback(() => {
+        setHasNewOrders(false)
+        stopAlarm()
+    }, [stopAlarm])
+
+    // Test button — lets admin verify the alarm works
+    const testAlert = useCallback(() => {
+        playAlarm()
+        setHasNewOrders(true)
+        // Auto-stop after 5 seconds
+        setTimeout(() => {
+            stopAlarm()
+            setHasNewOrders(false)
+        }, 5000)
+    }, [playAlarm, stopAlarm])
 
     const checkNewOrders = useCallback(async () => {
         try {
@@ -105,39 +167,33 @@ export function OrderNotification() {
                 return
             }
 
-            // Check for really new IDs
+            // Check for genuinely new IDs
             let hasNew = false
             currentIds.forEach((id) => {
-                if (!knownOrderIds.has(id as string)) {
+                if (!knownOrderIds.has(id)) {
                     hasNew = true
                 }
             })
 
             if (hasNew) {
                 setHasNewOrders(true)
-                // Play sound if enabled
-                if (soundEnabled && playerRef.current && isPlayerReady) {
-                    playerRef.current.seekTo(0)
-                    playerRef.current.playVideo()
+                if (soundEnabled) {
+                    playAlarm()
                 }
                 setKnownOrderIds(currentIds)
             } else {
-                // If the set of items changed otherwise, update the list 
-                // but don't stop the alert if orders were removed
                 if (currentIds.size !== knownOrderIds.size) {
                     setKnownOrderIds(currentIds)
                 }
-                
-                // If there are no active orders at all, stop the alert automatically
+                // Auto-stop if no active orders remain
                 if (currentIds.size === 0 && hasNewOrders) {
                     stopAlert()
                 }
             }
-
         } catch (error) {
             console.error("Error polling for orders:", error)
         }
-    }, [knownOrderIds, isInitialLoad, soundEnabled, isPlayerReady, hasNewOrders])
+    }, [knownOrderIds, isInitialLoad, soundEnabled, hasNewOrders, playAlarm, stopAlert])
 
     // Poll every 15 seconds
     useEffect(() => {
@@ -146,28 +202,26 @@ export function OrderNotification() {
     }, [checkNewOrders])
 
     return (
-        <>
-            {/* Hidden Player */}
-            <div id="youtube-audio-player" className="hidden pointer-events-none opacity-0 h-0 w-0"></div>
+        <div className="fixed bottom-4 left-4 z-50 flex flex-col gap-2">
+            {/* Active Alert Banner */}
+            {hasNewOrders && (
+                <button
+                    onClick={stopAlert}
+                    className={`flex items-center gap-3 px-4 py-3 bg-red-600 text-white rounded-2xl shadow-2xl animate-bounce border-2 border-white/20 ${archivo.className}`}
+                >
+                    <Volume2 className="h-5 w-5 animate-pulse" />
+                    <span className="text-sm font-bold uppercase tracking-tight">Nowe Zamówienie!</span>
+                    <span className="text-[10px] bg-black/20 px-2 py-0.5 rounded-full">STOP</span>
+                </button>
+            )}
 
-            <div className="fixed bottom-4 left-4 z-50 flex flex-col gap-2">
-                {/* Active Alert Banner */}
-                {hasNewOrders && (
-                    <button
-                        onClick={stopAlert}
-                        className={`flex items-center gap-3 px-4 py-3 bg-red-600 text-white rounded-2xl shadow-2xl animate-bounce border-2 border-white/20 ${archivo.className}`}
-                    >
-                        <Volume2 className="h-5 w-5 animate-pulse" />
-                        <span className="text-sm font-bold uppercase tracking-tight">Nowe Zamówienie!</span>
-                        <span className="text-[10px] bg-black/20 px-2 py-0.5 rounded-full">STOP</span>
-                    </button>
-                )}
-
+            {/* Sound Toggle + Test */}
+            <div className="flex items-center gap-2">
                 <button
                     onClick={toggleSound}
                     className={`flex items-center gap-2 px-3 py-2 rounded-xl backdrop-blur-md shadow-lg transition-all border ${
-                        soundEnabled 
-                            ? "bg-[#BA9D76]/20 border-[#BA9D76]/50 text-[#BA9D76] hover:bg-[#BA9D76]/30" 
+                        soundEnabled
+                            ? "bg-[#BA9D76]/20 border-[#BA9D76]/50 text-[#BA9D76] hover:bg-[#BA9D76]/30"
                             : "bg-white/5 border-white/10 text-white/40 hover:text-white/80 hover:bg-white/10"
                     } ${archivo.className}`}
                     title={soundEnabled ? "Powiadomienia dźwiękowe włączone" : "Powiadomienia dźwiękowe wyłączone"}
@@ -177,7 +231,29 @@ export function OrderNotification() {
                         {soundEnabled ? "Dźwięk Aktywny" : "Dźwięk Wyłączony"}
                     </span>
                 </button>
+
+                {soundEnabled && (
+                    <button
+                        onClick={testAlert}
+                        className={`flex items-center gap-1.5 px-2.5 py-2 rounded-xl backdrop-blur-md shadow-lg transition-all border bg-amber-500/20 border-amber-500/40 text-amber-400 hover:bg-amber-500/30 ${archivo.className}`}
+                        title="Test alarmu — sprawdź czy dźwięk i wibracja działają"
+                    >
+                        <AlertTriangle className="h-3.5 w-3.5" />
+                        <span className="text-[10px] font-bold uppercase">Test</span>
+                    </button>
+                )}
             </div>
-        </>
+
+            {/* Permission warning */}
+            {soundEnabled && notifPermission !== "granted" && (
+                <button
+                    onClick={requestNotificationPermission}
+                    className={`flex items-center gap-2 px-3 py-1.5 rounded-lg bg-amber-900/30 border border-amber-500/20 text-amber-400 text-[10px] font-semibold ${archivo.className}`}
+                >
+                    <AlertTriangle className="h-3 w-3" />
+                    Kliknij, aby włączyć powiadomienia
+                </button>
+            )}
+        </div>
     )
 }
