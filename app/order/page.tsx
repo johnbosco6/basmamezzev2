@@ -54,27 +54,28 @@ export default function OrderPage() {
             'Kawa i Herbata', 'Grzańce', 'Koktajle Bezalkoholowe'
         ])
 
-        return menuData
-            .filter(section => !["sniadania", "alkohole", "specjalne-okazje"].includes(section.id))
+        return (menuData || [])
+            .filter(section => section?.id && !["sniadania", "alkohole", "specjalne-okazje"].includes(section.id))
             .map(section => ({
                 ...section,
-                categories: section.categories
-                    .filter(cat => !excludedCategories.has(cat.categoryName))
+                categories: (section.categories || [])
+                    .filter(cat => cat?.categoryName && !excludedCategories.has(cat.categoryName))
                     .map(cat => ({
                         ...cat,
-                        items: cat.items.filter(item => {
+                        items: (cat.items || []).filter(item => {
+                            if (!item) return false
                             if (item.notAvailableOnline) return false
-                            if (excludedItemIds.has(item.id)) return false
+                            if (item.id && excludedItemIds.has(item.id)) return false
                             // For napoje "Napoje Zimne", only allow specific sodas
                             if (section.id === 'napoje' && cat.categoryName === 'Napoje Zimne') {
-                                return allowedDrinkIds.has(item.id)
+                                return item.id && allowedDrinkIds.has(item.id)
                             }
                             return true
                         })
                     }))
-                    .filter(cat => cat.items.length > 0)
+                    .filter(cat => cat.items && cat.items.length > 0)
             }))
-            .filter(section => section.categories.length > 0)
+            .filter(section => section.categories && section.categories.length > 0)
     }, [])
 
     const [activeSection, setActiveSection] = useState(filteredMenuData[0]?.id || "")

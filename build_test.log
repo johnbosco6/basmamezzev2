@@ -1,0 +1,29 @@
+
+> my-v0-project@0.1.0 build
+> next build
+
+  ▲ Next.js 14.2.25
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully
+   Skipping validation of types
+   Skipping linting
+   Collecting page data ...
+Error: Missing API key. Pass it to the constructor `new Resend("re_123")`
+    at new ei (/Users/rutendomurewa/Desktop/basmamezzev2/.next/server/chunks/2591.js:6:28061)
+    at 76876 (/Users/rutendomurewa/Desktop/basmamezzev2/.next/server/app/api/orders/route.js:1:4566)
+    at t (/Users/rutendomurewa/Desktop/basmamezzev2/.next/server/webpack-runtime.js:1:143)
+    at 23863 (/Users/rutendomurewa/Desktop/basmamezzev2/.next/server/app/api/orders/route.js:1:804)
+    at t (/Users/rutendomurewa/Desktop/basmamezzev2/.next/server/webpack-runtime.js:1:143)
+    at r (/Users/rutendomurewa/Desktop/basmamezzev2/.next/server/app/api/orders/route.js:176:802)
+    at /Users/rutendomurewa/Desktop/basmamezzev2/.next/server/app/api/orders/route.js:176:850
+    at t.X (/Users/rutendomurewa/Desktop/basmamezzev2/.next/server/webpack-runtime.js:1:1285)
+    at /Users/rutendomurewa/Desktop/basmamezzev2/.next/server/app/api/orders/route.js:176:815
+    at Object.<anonymous> (/Users/rutendomurewa/Desktop/basmamezzev2/.next/server/app/api/orders/route.js:176:878)
+
+> Build error occurred
+Error: Failed to collect page data for /api/orders
+    at /Users/rutendomurewa/Desktop/basmamezzev2/node_modules/next/dist/build/utils.js:1269:15
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5) {
+  type: 'Error'
+}
