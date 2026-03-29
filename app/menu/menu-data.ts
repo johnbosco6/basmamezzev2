@@ -649,7 +649,7 @@ export const menuData: MenuCategory[] = [
           {
             id: "basmati-rice",
             name: "Ryż Basmati (z przyprawami bliskiego wschodu)",
-            description: "Z pomidorami i aromatycznymi przyprawami",
+            description: "",
             price: "10 zł",
             image: "/images/menu/ryz-basmati.jpg",
             allergens: [1],

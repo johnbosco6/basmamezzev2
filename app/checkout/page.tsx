@@ -853,26 +853,40 @@ export default function CheckoutPage() {
                                 {/* Submit */}
                                 <div className="px-6 pb-6 pt-4 space-y-5">
                                     {/* T&C Checkbox */}
-                                    <div className="flex items-start gap-3">
-                                        <div className="pt-0.5">
-                                            <input
-                                                type="checkbox"
-                                                id="terms"
-                                                checked={acceptedTerms}
-                                                onChange={(e) => {
-                                                    setAcceptedTerms(e.target.checked)
-                                                    if (e.target.checked && errors.terms) {
-                                                        setErrors(prev => { const n = { ...prev }; delete n.terms; return n; })
-                                                    }
-                                                }}
-                                                className="h-5 w-5 rounded border-gray-300 text-[#BA9D76] focus:ring-[#BA9D76] accent-[#BA9D76] cursor-pointer"
-                                            />
-                                        </div>
-                                        <div className="flex-1">
-                                            <label htmlFor="terms" className={`text-sm text-gray-600 font-light cursor-pointer leading-tight block ${archivo.className}`}>
-                                                Akceptuję <Link href="/regulamin" target="_blank" className="font-medium text-[#BA9D76] hover:underline">regulamin</Link> sklepu oraz zgadzam się na przetwarzanie moich danych osobowych (w tym email i telefon) w celu realizacji zamówienia oraz w celach marketingowych zgodnie z <Link href="/polityka-prywatnosci" target="_blank" className="font-medium text-[#BA9D76] hover:underline">polityką prywatności</Link>. <span className="text-red-500">*</span>
-                                            </label>
-                                            {errors.terms && <p className={`text-red-500 text-xs mt-1.5 font-medium ${archivo.className}`}>{errors.terms}</p>}
+                                    <div className={`p-4 rounded-2xl border-2 transition-all duration-300 ${acceptedTerms ? 'bg-[#BA9D76]/5 border-[#BA9D76]/20' : 'bg-white border-gray-100 shadow-sm'} ${errors.terms ? 'border-red-200 bg-red-50' : ''}`}>
+                                        <div className="flex items-start gap-4">
+                                            <div className="pt-0.5">
+                                                <input
+                                                    type="checkbox"
+                                                    id="terms"
+                                                    checked={acceptedTerms}
+                                                    onChange={(e) => {
+                                                        setAcceptedTerms(e.target.checked)
+                                                        if (e.target.checked && errors.terms) {
+                                                            setErrors(prev => { const n = { ...prev }; delete n.terms; return n; })
+                                                        }
+                                                    }}
+                                                    className="h-6 w-6 rounded border-gray-300 text-[#BA9D76] focus:ring-[#BA9D76] accent-[#BA9D76] cursor-pointer transition-transform duration-200 hover:scale-110"
+                                                />
+                                            </div>
+                                            <div className="flex-1">
+                                                <label htmlFor="terms" className={`text-sm text-gray-700 font-medium cursor-pointer leading-relaxed block ${archivo.className}`}>
+                                                    Akceptuję <Link href="/regulamin" target="_blank" className="font-bold text-[#BA9D76] hover:underline decoration-2">regulamin</Link> sklepu oraz zgadzam się na przetwarzanie danych osobowych. <span className="text-red-500 font-bold">*</span>
+                                                    <span className="block text-[11px] text-gray-500 font-light mt-1 leading-normal italic">
+                                                        Zgoda obejmuje email i telefon w celu realizacji zamówienia oraz celach marketingowych zgodnie z <Link href="/polityka-prywatnosci" target="_blank" className="font-medium text-[#BA9D76] hover:underline">polityką prywatności</Link>.
+                                                    </span>
+                                                </label>
+                                                {errors.terms && (
+                                                    <motion.p 
+                                                        initial={{ opacity: 0, y: -5 }}
+                                                        animate={{ opacity: 1, y: 0 }}
+                                                        className={`text-red-500 text-xs mt-2 font-bold flex items-center gap-1.5 ${archivo.className}`}
+                                                    >
+                                                        <AlertCircle className="h-3.5 w-3.5" />
+                                                        {errors.terms}
+                                                    </motion.p>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
 
