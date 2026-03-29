@@ -4,6 +4,7 @@ import { Download, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { archiveCompletedOrders } from '@/app/actions/admin-actions'
 
 export function CsvDownloadButton() {
     const [loading, setLoading] = useState(false)
@@ -23,7 +24,8 @@ export function CsvDownloadButton() {
             URL.revokeObjectURL(url)
 
             // Refresh history list after download
-            setTimeout(() => {
+            setTimeout(async () => {
+                await archiveCompletedOrders()
                 router.refresh()
             }, 500)
         } catch {

@@ -147,6 +147,29 @@ export const orderType = defineType({
             description: 'Automatically set when order is marked as delivered or picked up',
             readOnly: true,
         }),
+        defineField({
+            name: 'archived',
+            title: 'Archived (Downloaded)',
+            type: 'boolean',
+            description: 'Hide order from dashboard after CSV export',
+            initialValue: false,
+        }),
+        defineField({
+            name: 'actionLog',
+            title: 'Action Log',
+            type: 'array',
+            of: [
+                {
+                    type: 'object',
+                    fields: [
+                        defineField({ name: 'staffName', title: 'Waitress Name', type: 'string' }),
+                        defineField({ name: 'action', title: 'Action Taken', type: 'string' }),
+                        defineField({ name: 'timestamp', title: 'Timestamp', type: 'datetime' }),
+                    ],
+                },
+            ],
+            readOnly: true,
+        }),
     ],
     preview: {
         select: {

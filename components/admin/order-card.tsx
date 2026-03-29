@@ -203,6 +203,28 @@ export function OrderCard({ order }: OrderCardProps) {
                         <p className="text-sm text-white/80">{order.notes}</p>
                     </div>
                 )}
+
+                {/* Action Log / Audit Trail */}
+                {order.actionLog && order.actionLog.length > 0 && (
+                    <div className="space-y-3 pt-2 border-t border-white/5">
+                        <h4 className="text-[10px] font-bold text-white/40 uppercase tracking-[0.2em] flex items-center gap-2 pl-1">
+                            <Clock className="w-3 h-3" /> Historia Akcji
+                        </h4>
+                        <div className="space-y-2 max-h-[150px] overflow-y-auto pr-2 custom-scrollbar">
+                            {order.actionLog.map((log: any, lidx: number) => (
+                                <div key={lidx} className="flex gap-3 text-[11px] bg-white/5 p-2 rounded-lg border border-white/5 hover:bg-white/10 transition-colors">
+                                    <span className="text-[#BA9D76] font-bold whitespace-nowrap">
+                                        {format(new Date(log.timestamp), 'HH:mm')}
+                                    </span>
+                                    <div className="flex flex-col">
+                                        <span className="text-white/90 font-semibold">{log.staffName}</span>
+                                        <span className="text-white/50">{log.action}</span>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
             </CardContent>
 
             <CardFooter className="p-4 pt-4 border-t border-white/5 flex flex-col gap-4 bg-black/5">
