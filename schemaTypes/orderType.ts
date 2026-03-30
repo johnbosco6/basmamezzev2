@@ -68,6 +68,30 @@ export const orderType = defineType({
             initialValue: 'pending',
         }),
         defineField({
+            name: 'paymentMethod',
+            title: 'Payment Method',
+            type: 'string',
+            options: {
+                list: [
+                    { title: 'Przelewy24 (Online)', value: 'p24' },
+                    { title: 'Cash on Delivery', value: 'cash' },
+                    { title: 'Card on Delivery', value: 'card' },
+                ],
+                layout: 'radio',
+            },
+            initialValue: 'p24',
+        }),
+        defineField({
+            name: 'discountAmount',
+            title: 'Discount Amount (PLN)',
+            type: 'number',
+        }),
+        defineField({
+            name: 'promoCode',
+            title: 'Promo Code Used',
+            type: 'string',
+        }),
+        defineField({
             name: 'p24SessionId',
             title: 'P24 Session ID',
             type: 'string',
