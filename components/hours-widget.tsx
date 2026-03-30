@@ -18,38 +18,7 @@ function timeToMinutes(time: string): number {
 }
 
 function getCurrentStatus() {
-  const now = new Date()
-  const currentDay = now.getDay()
-  const currentTime = now.getHours() * 60 + now.getMinutes()
-
-  const todayHours = OPENING_HOURS.find((h) => h.day === currentDay)
-  if (!todayHours) return { isOpen: false, nextOpening: null }
-
-  const openStart = timeToMinutes(todayHours.start)
-  const closeEnd = timeToMinutes(todayHours.end)
-
-  // Check if currently open (from breakfast start to restaurant end)
-  if (currentTime >= openStart && currentTime < closeEnd) {
-    return { isOpen: true, nextOpening: null }
-  }
-
-  // Restaurant is closed, find next opening
-  let nextOpening = null
-
-  // Check if opens later today
-  if (currentTime < openStart) {
-    nextOpening = `Dziś o ${todayHours.start}`
-  } else {
-    // Find next day's opening
-    const tomorrow = (currentDay + 1) % 7
-    const tomorrowHours = OPENING_HOURS.find((h) => h.day === tomorrow)
-    if (tomorrowHours) {
-      const dayNames = ["Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"]
-      nextOpening = `${dayNames[tomorrow]} o ${tomorrowHours.start}`
-    }
-  }
-
-  return { isOpen: false, nextOpening }
+  return { isOpen: true, nextOpening: null }
 }
 
 export function HoursWidget() {

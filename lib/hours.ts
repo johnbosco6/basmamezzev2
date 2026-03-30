@@ -30,37 +30,9 @@ function timeToMinutes(time: string): number {
 /**
  * Checks if the restaurant is currently open for orders.
  * Orders are allowed from opening time until 30 minutes before closing.
+ * FOR NOW: Orders are always open (user request 2026-03-30)
  */
 export function isRestaurantOpenForOrders() {
-  const now = new Date()
-  // Adjust for Polish timezone if running on server (UTC)
-  // But usually Vercel functions can be configured or we just use local time for simple checks
-  // If the user is browsing, this runs in their local time.
-  const currentDay = now.getDay()
-  const currentTime = now.getHours() * 60 + now.getMinutes()
-
-  const todayHours = OPENING_HOURS.find((h) => h.day === currentDay)
-  if (!todayHours) return { isOpen: false, reason: "closed_today" }
-
-  const openMinutes = timeToMinutes(todayHours.start)
-  const lastOrderMinutes = 21 * 60 // 21:00 (9 PM) is the hard cutoff
-
-  if (currentTime < openMinutes) {
-    return { 
-      isOpen: false, 
-      reason: "not_open_yet", 
-      openTime: todayHours.start 
-    }
-  }
-
-  if (currentTime >= lastOrderMinutes) {
-    return { 
-      isOpen: false, 
-      reason: "too_late", 
-      closeTime: "21:00" 
-    }
-  }
-
   return { isOpen: true }
 }
 
