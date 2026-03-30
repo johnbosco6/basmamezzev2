@@ -56,10 +56,6 @@ const formatAddress = (address: any) => {
 export function OrderCard({ order }: OrderCardProps) {
     const router = useRouter()
     const [loading, setLoading] = useState(false)
-    const [emailsSent, setEmailsSent] = useState({
-        cooking: false,
-        onWay: false,
-    })
 
     const status = order.status || 'pending'
     const config = statusConfig[status] || statusConfig.pending
@@ -67,7 +63,7 @@ export function OrderCard({ order }: OrderCardProps) {
 
     // For pickup orders: only need "cooking" email before Attended
     // For delivery: need both "cooking" + "on the way"
-    const canAttend = isPickup ? emailsSent.cooking : (emailsSent.cooking && emailsSent.onWay)
+    const canAttend = isPickup ? order.cookingEmailSent : (order.cookingEmailSent && order.onWayEmailSent)
 
     const handleEmailNotification = async (stage: 'preparing' | 'out_for_delivery') => {
         setLoading(true)
@@ -75,8 +71,7 @@ export function OrderCard({ order }: OrderCardProps) {
             const result = await sendNotificationEmail(order._id, stage)
             if (result.success) {
                 toast.success(stage === 'preparing' ? '🍳 Email "Gotowanie" wysłany!' : '🚗 Email "W drodze" wysłany!')
-                if (stage === 'preparing') setEmailsSent(prev => ({ ...prev, cooking: true }))
-                else setEmailsSent(prev => ({ ...prev, onWay: true }))
+                router.refresh()
             } else {
                 toast.error(`Email nie mógł być wysłany: ${result.message}`)
             }
@@ -252,15 +247,15 @@ export function OrderCard({ order }: OrderCardProps) {
                                 <Button
                                     variant="secondary"
                                     size="sm"
-                                    disabled={loading || emailsSent.cooking}
-                                    className={`h-12 text-[11px] border font-black tracking-widest uppercase transition-all flex items-center justify-center gap-2 rounded-xl ${emailsSent.cooking
+                                    disabled={loading || order.cookingEmailSent}
+                                    className={`h-12 text-[11px] border font-black tracking-widest uppercase transition-all flex items-center justify-center gap-2 rounded-xl ${order.cookingEmailSent
                                         ? 'bg-green-600/50 border-green-500/50 text-white cursor-default'
                                         : 'bg-white/5 hover:bg-orange-500/20 border-white/10 hover:border-orange-500/30 text-white'
                                         }`}
                                     onClick={() => handleEmailNotification('preparing')}
                                 >
-                                    {emailsSent.cooking ? <Check className="w-4 h-4" /> : loading ? <Loader2 className="w-4 h-4 animate-spin" /> : '🍳'}
-                                    {emailsSent.cooking ? 'KUCHNIA ✓' : 'KLIENT: KUCHNIA'}
+                                    {order.cookingEmailSent ? <Check className="w-4 h-4" /> : loading ? <Loader2 className="w-4 h-4 animate-spin" /> : '🍳'}
+                                    {order.cookingEmailSent ? 'KUCHNIA ✓' : 'KLIENT: KUCHNIA'}
                                 </Button>
 
                                 {/* On the way email — only for delivery */}
@@ -268,21 +263,21 @@ export function OrderCard({ order }: OrderCardProps) {
                                     <Button
                                         variant="secondary"
                                         size="sm"
-                                        disabled={loading || emailsSent.onWay || !emailsSent.cooking}
-                                        className={`h-10 text-xs border font-bold tracking-tight uppercase transition-all flex items-center justify-center gap-2 ${emailsSent.onWay
+                                        disabled={loading || order.onWayEmailSent || !order.cookingEmailSent}
+                                        className={`h-12 text-[11px] border font-black tracking-widest uppercase transition-all flex items-center justify-center gap-2 rounded-xl ${order.onWayEmailSent
                                             ? 'bg-green-600/50 border-green-500/50 text-white cursor-default'
-                                            : !emailsSent.cooking
+                                            : !order.cookingEmailSent
                                                 ? 'bg-white/5 border-white/5 text-white/30 cursor-not-allowed opacity-50'
                                                 : 'bg-white/5 hover:bg-blue-500/20 border-white/10 hover:border-blue-500/30 text-white'
                                             }`}
                                         onClick={() => handleEmailNotification('out_for_delivery')}
                                     >
-                                        {emailsSent.onWay ? <Check className="w-3 h-3" /> : loading ? <Loader2 className="w-3 h-3 animate-spin" /> : '🚗'}
-                                        {emailsSent.onWay ? 'W drodze ✓' : 'Wyślij: W drodze'}
+                                        {order.onWayEmailSent ? <Check className="w-4 h-4" /> : loading ? <Loader2 className="w-4 h-4 animate-spin" /> : '🚗'}
+                                        {order.onWayEmailSent ? 'W DRODZE ✓' : 'KLIENT: W DRODZE'}
                                     </Button>
                                 )}
                             </div>
-                            {!isPickup && !emailsSent.cooking && (
+                            {!isPickup && !order.cookingEmailSent && (
                                 <p className="text-[10px] text-white/30 text-center">Wyślij "Gotowanie" najpierw, aby odblokować "W drodze"</p>
                             )}
                         </div>

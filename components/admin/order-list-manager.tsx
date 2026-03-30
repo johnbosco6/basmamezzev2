@@ -28,8 +28,8 @@ export function OrderListManager({ initialOrders }: OrderListManagerProps) {
     }, [])
 
     useEffect(() => {
-        // Initial setup and polling interval (every 15 seconds)
-        const interval = setInterval(refreshOrders, 15000)
+        // Initial setup and polling interval (every 5 seconds)
+        const interval = setInterval(refreshOrders, 5000)
         return () => clearInterval(interval)
     }, [refreshOrders])
 

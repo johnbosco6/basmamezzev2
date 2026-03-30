@@ -171,6 +171,18 @@ export const orderType = defineType({
             ],
             readOnly: true,
         }),
+        defineField({
+            name: 'cookingEmailSent',
+            title: 'Cooking Email Sent',
+            type: 'boolean',
+            initialValue: false,
+        }),
+        defineField({
+            name: 'onWayEmailSent',
+            title: 'On the Way Email Sent',
+            type: 'boolean',
+            initialValue: false,
+        }),
     ],
     preview: {
         select: {

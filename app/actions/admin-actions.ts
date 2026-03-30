@@ -102,8 +102,11 @@ export async function sendNotificationEmail(orderId: string, stage: 'preparing' 
             _key: `notif-${Date.now()}`
         }
         
+        const fieldToSet = stage === 'preparing' ? 'cookingEmailSent' : 'onWayEmailSent'
+        
         await client.patch(orderId)
             .setIfMissing({ actionLog: [] })
+            .set({ [fieldToSet]: true })
             .insert('after', 'actionLog[-1]', [actionEntry])
             .commit()
 
@@ -144,6 +147,8 @@ export async function getOrders() {
             totalAmount,
             paymentMethod,
             notes,
+            cookingEmailSent,
+            onWayEmailSent,
             orderDate,
             completedAt,
             actionLog[]{
@@ -234,6 +239,8 @@ export async function getHistoryOrders(dateStr?: string) {
             totalAmount,
             paymentMethod,
             notes,
+            cookingEmailSent,
+            onWayEmailSent,
             orderDate,
             completedAt,
             archived,
