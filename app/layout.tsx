@@ -3,6 +3,7 @@ import "./globals.css"
 import type { Metadata } from "next"
 import { Archivo } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
+import { SpeedInsights } from "@vercel/speed-insights/next"
 import { Suspense } from "react"
 
 import { ThemeProvider } from "@/components/theme-provider"
@@ -52,6 +53,7 @@ export default function RootLayout({
                 <CookieConsent />
                 <CookieSettingsButton />
                 <Analytics />
+                <SpeedInsights />
               </Suspense>
             </ThemeProvider>
           </CartProvider>
