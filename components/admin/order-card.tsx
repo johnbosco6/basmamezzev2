@@ -165,7 +165,14 @@ export function OrderCard({ order }: OrderCardProps) {
                         )}
                         <div className="flex items-start gap-3 text-white/70">
                             <MapPin className="w-3.5 h-3.5 text-[#BA9D76] mt-1 shrink-0" />
-                            <span className="text-sm leading-tight">{formatAddress(order.customerAddress)}</span>
+                            <div className="flex flex-col gap-1">
+                                <span className="text-sm leading-tight">{formatAddress(order.customerAddress)}</span>
+                                {order.orderType === 'delivery' && order.deliveryFee > 0 && (
+                                    <span className="text-[11px] font-bold text-[#BA9D76] px-2 py-0.5 bg-[#BA9D76]/10 rounded-md border border-[#BA9D76]/20 w-fit">
+                                        Koszt dostawy: {order.deliveryFee.toFixed(2)} zł
+                                    </span>
+                                )}
+                            </div>
                         </div>
                     </div>
                 </div>
