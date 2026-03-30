@@ -59,32 +59,32 @@ export function OrderListManager({ initialOrders }: OrderListManagerProps) {
             {/* Stats Cards */}
             <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                 <div className="backdrop-blur-lg bg-white/5 border border-white/10 p-5 md:p-6 rounded-2xl shadow-2xl relative overflow-hidden group">
-                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
-                        <TrendingUp size={40} className="md:w-12 md:h-12" />
+                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform text-[#BA9D76]">
+                        <TrendingUp size={40} className="md:w-12 md:h-12 text-[#BA9D76]" />
                     </div>
-                    <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-1">Dziś Sprzedano</p>
-                    <h3 className="text-2xl md:text-3xl font-bold text-[#BA9D76]">{stats.revenue.toFixed(2)} zł</h3>
+                    <p className="text-[11px] font-bold text-white/40 uppercase tracking-widest mb-1.5">Dziś Sprzedano</p>
+                    <h3 className="text-2xl md:text-3xl font-bold text-[#BA9D76] leading-none">{stats.revenue.toFixed(2)} zł</h3>
                 </div>
                 <div className="backdrop-blur-lg bg-white/5 border border-white/10 p-5 md:p-6 rounded-2xl shadow-2xl relative overflow-hidden group">
                     <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
                         <ShoppingBag size={40} className="md:w-12 md:h-12" />
                     </div>
-                    <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-1">Zakończone</p>
-                    <h3 className="text-2xl md:text-3xl font-bold">{completedOrders.length}</h3>
+                    <p className="text-[11px] font-bold text-white/40 uppercase tracking-widest mb-1.5">Zakończone</p>
+                    <h3 className="text-2xl md:text-3xl font-bold leading-none">{completedOrders.length}</h3>
                 </div>
                 <div className="backdrop-blur-lg bg-white/5 border border-white/10 p-5 md:p-6 rounded-2xl shadow-2xl relative overflow-hidden group">
                     <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
                         <UtensilsCrossed size={40} className="md:w-12 md:h-12" />
                     </div>
-                    <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-1">Wydane Potrawy</p>
-                    <h3 className="text-2xl md:text-3xl font-bold">{stats.dishes}</h3>
+                    <p className="text-[11px] font-bold text-white/40 uppercase tracking-widest mb-1.5">Wydane Potrawy</p>
+                    <h3 className="text-2xl md:text-3xl font-bold leading-none">{stats.dishes}</h3>
                 </div>
                 <div className="backdrop-blur-lg bg-white/5 border border-white/10 p-5 md:p-6 rounded-2xl shadow-2xl relative overflow-hidden group border-l-4 border-l-[#BA9D76]">
                     <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
                         <Users size={40} className="md:w-12 md:h-12" />
                     </div>
-                    <p className="text-[10px] font-bold text-[#BA9D76] uppercase tracking-widest mb-1">Aktywni Klienci</p>
-                    <h3 className="text-2xl md:text-3xl font-bold">{activeOrders.length}</h3>
+                    <p className="text-[11px] font-bold text-[#BA9D76] uppercase tracking-widest mb-1.5">Aktywni Klienci</p>
+                    <h3 className="text-2xl md:text-3xl font-bold leading-none">{activeOrders.length}</h3>
                 </div>
             </section>
 
@@ -94,12 +94,12 @@ export function OrderListManager({ initialOrders }: OrderListManagerProps) {
                     <h2 className="text-xl md:text-2xl font-bold flex items-center gap-3 shrink-0">
                         <span className="w-1.5 md:w-2 h-6 md:h-8 bg-[#BA9D76] rounded-full" />
                         Aktywne Zamówienia
-                        <span className={`flex items-center gap-1.5 ml-2 text-[8px] uppercase tracking-[0.2em] font-bold px-2 py-0.5 rounded-full border transition-all ${
+                        <span className={`flex items-center gap-1.5 ml-2 text-[10px] uppercase tracking-[0.2em] font-black px-2.5 py-1 rounded-full border transition-all ${
                             isPolling 
-                                ? "bg-[#BA9D76]/20 border-[#BA9D76]/40 text-[#BA9D76] animate-pulse" 
+                                ? "bg-[#BA9D76]/20 border-[#BA9D76]/40 text-[#BA9D76] animate-pulse shadow-[0_0_10px_rgba(186,157,118,0.2)]" 
                                 : "bg-white/5 border-white/10 text-white/20"
                         }`}>
-                            <span className={`w-1 h-1 rounded-full ${isPolling ? "bg-[#BA9D76]" : "bg-white/20"}`} />
+                            <span className={`w-1.5 h-1.5 rounded-full ${isPolling ? "bg-[#BA9D76]" : "bg-white/20"}`} />
                             Live Sync
                         </span>
                     </h2>
@@ -117,7 +117,7 @@ export function OrderListManager({ initialOrders }: OrderListManagerProps) {
                         <p className="text-white/40 text-base md:text-lg">Aktualnie brak nowych zamówień na liście.</p>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-6 md:gap-8">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-5 md:gap-8">
                         {activeOrders.map((order: any) => (
                             <OrderCard key={order._id} order={order} />
                         ))}

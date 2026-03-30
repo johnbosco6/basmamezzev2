@@ -127,8 +127,8 @@ export function OrderCard({ order }: OrderCardProps) {
                             {order.orderDate ? format(new Date(order.orderDate), 'PPp', { locale: pl }) : 'Przed chwilą'}
                         </p>
                     </div>
-                    <div className="text-left sm:text-right w-full sm:w-auto">
-                        <p className="font-bold text-2xl text-[#BA9D76]">{order.totalAmount?.toFixed(2)} zł</p>
+                    <div className="text-left sm:text-right w-full sm:w-auto mt-2 sm:mt-0">
+                        <p className="font-bold text-2xl sm:text-3xl text-[#BA9D76] leading-none">{order.totalAmount?.toFixed(2)} zł</p>
                     </div>
                 </div>
             </CardHeader>
@@ -146,13 +146,13 @@ export function OrderCard({ order }: OrderCardProps) {
                             <a href={`tel:${order.customerPhone}`} className="hover:text-[#BA9D76] transition-colors break-all text-sm">{order.customerPhone}</a>
                         </div>
                         {/* Payment Method Badge */}
-                        <div className="flex items-center gap-3 py-1.5 px-3 bg-white/5 rounded-lg border border-white/5 w-fit">
+                        <div className="flex items-center gap-3 py-2 px-4 bg-white/5 rounded-xl border border-white/10 w-fit">
                             {(() => {
                                 const p = paymentConfig[order.paymentMethod] || paymentConfig.p24
                                 return (
                                     <>
-                                        <p.icon className={`w-3.5 h-3.5 ${p.color}`} />
-                                        <span className={`text-[11px] font-bold uppercase tracking-wider ${p.color}`}>{p.label}</span>
+                                        <p.icon className={`w-4 h-4 ${p.color}`} />
+                                        <span className={`text-[12px] font-black uppercase tracking-wider ${p.color}`}>{p.label}</span>
                                     </>
                                 )
                             })()}
@@ -172,26 +172,31 @@ export function OrderCard({ order }: OrderCardProps) {
 
                 {/* Items */}
                 <div className="space-y-4">
-                    <h4 className="text-[10px] font-bold text-white/40 uppercase tracking-[0.2em] pl-1">Produkty</h4>
-                    <div className="space-y-2.5 max-h-[300px] overflow-y-auto pr-2">
+                    <h4 className="text-[11px] font-black text-white/30 uppercase tracking-[0.2em] pl-1">Produkty</h4>
+                    <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
                         {order.items?.map((item: any, idx: number) => (
-                            <div key={idx} className="flex justify-between items-start text-sm py-3 border-b border-white/5 last:border-0 group">
-                                <div className="flex gap-3">
-                                    <span className="font-bold text-center bg-[#BA9D76]/80 text-white min-w-[24px] h-[24px] flex items-center justify-center rounded-lg shadow-sm text-xs shrink-0">
+                            <div key={idx} className="flex justify-between items-start text-sm py-3.5 border-b border-white/5 last:border-0 group gap-4">
+                                <div className="flex gap-4 min-w-0">
+                                    <span className="font-bold text-center bg-[#BA9D76] text-white min-w-[28px] h-[28px] flex items-center justify-center rounded-xl shadow-lg text-xs shrink-0">
                                         {item.quantity}
                                     </span>
                                     <div className="flex flex-col min-w-0">
-                                        <span className="font-medium group-hover:text-[#BA9D76] transition-colors truncate">
+                                        <span className="font-bold text-white group-hover:text-[#BA9D76] transition-colors leading-tight">
                                             {item.name || 'Nieznany produkt'}
                                         </span>
+                                        {item.description && (
+                                            <span className="text-[#BA9D76]/80 text-[12px] font-light mt-1 leading-relaxed italic">
+                                                {item.description}
+                                            </span>
+                                        )}
                                         {item.additions && (
-                                            <span className="text-white/40 text-[11px] italic mt-0.5 line-clamp-2">
+                                            <span className="text-white/40 text-[11px] italic mt-1 leading-snug">
                                                 + {item.additions}
                                             </span>
                                         )}
                                     </div>
                                 </div>
-                                <span className="font-semibold text-white/90 ml-2 shrink-0">{(item.price * item.quantity).toFixed(2)} zł</span>
+                                <span className="font-bold text-white/90 shrink-0 tabular-nums">{(item.price * item.quantity).toFixed(2)} zł</span>
                             </div>
                         ))}
                     </div>
@@ -206,19 +211,19 @@ export function OrderCard({ order }: OrderCardProps) {
 
                 {/* Action Log / Audit Trail */}
                 {order.actionLog && order.actionLog.length > 0 && (
-                    <div className="space-y-3 pt-2 border-t border-white/5">
-                        <h4 className="text-[10px] font-bold text-white/40 uppercase tracking-[0.2em] flex items-center gap-2 pl-1">
-                            <Clock className="w-3 h-3" /> Historia Akcji
+                    <div className="space-y-4 pt-4 border-t border-white/5">
+                        <h4 className="text-[11px] font-black text-white/30 uppercase tracking-[0.2em] flex items-center gap-2 pl-1">
+                            <Clock className="w-3.5 h-3.5" /> Historia Akcji
                         </h4>
-                        <div className="space-y-2 max-h-[150px] overflow-y-auto pr-2 custom-scrollbar">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-[200px] overflow-y-auto pr-2 custom-scrollbar">
                             {order.actionLog.map((log: any, lidx: number) => (
-                                <div key={lidx} className="flex gap-3 text-[11px] bg-white/5 p-2 rounded-lg border border-white/5 hover:bg-white/10 transition-colors">
-                                    <span className="text-[#BA9D76] font-bold whitespace-nowrap">
+                                <div key={lidx} className="flex gap-3 text-[12px] bg-white/5 p-3 rounded-xl border border-white/5 hover:bg-white/10 transition-colors">
+                                    <span className="text-[#BA9D76] font-black whitespace-nowrap">
                                         {format(new Date(log.timestamp), 'HH:mm')}
                                     </span>
-                                    <div className="flex flex-col">
-                                        <span className="text-white/90 font-semibold">{log.staffName}</span>
-                                        <span className="text-white/50">{log.action}</span>
+                                    <div className="flex flex-col min-w-0">
+                                        <span className="text-white/90 font-bold truncate">{log.staffName}</span>
+                                        <span className="text-white/40 leading-tight">{log.action}</span>
                                     </div>
                                 </div>
                             ))}
@@ -241,14 +246,14 @@ export function OrderCard({ order }: OrderCardProps) {
                                     variant="secondary"
                                     size="sm"
                                     disabled={loading || emailsSent.cooking}
-                                    className={`h-10 text-xs border font-bold tracking-tight uppercase transition-all flex items-center justify-center gap-2 ${emailsSent.cooking
+                                    className={`h-12 text-[11px] border font-black tracking-widest uppercase transition-all flex items-center justify-center gap-2 rounded-xl ${emailsSent.cooking
                                         ? 'bg-green-600/50 border-green-500/50 text-white cursor-default'
                                         : 'bg-white/5 hover:bg-orange-500/20 border-white/10 hover:border-orange-500/30 text-white'
                                         }`}
                                     onClick={() => handleEmailNotification('preparing')}
                                 >
-                                    {emailsSent.cooking ? <Check className="w-3 h-3" /> : loading ? <Loader2 className="w-3 h-3 animate-spin" /> : '🍳'}
-                                    {emailsSent.cooking ? 'Gotowanie ✓' : 'Wyślij: Gotowanie'}
+                                    {emailsSent.cooking ? <Check className="w-4 h-4" /> : loading ? <Loader2 className="w-4 h-4 animate-spin" /> : '🍳'}
+                                    {emailsSent.cooking ? 'KUCHNIA ✓' : 'KLIENT: KUCHNIA'}
                                 </Button>
 
                                 {/* On the way email — only for delivery */}

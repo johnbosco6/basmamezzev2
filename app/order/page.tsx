@@ -101,10 +101,10 @@ export default function OrderPage() {
         return () => window.removeEventListener('scroll', handleScrollSpy)
     }, [filteredMenuData])
 
-    const handleAddToCart = (item: { id: string; name: string; price: string; image?: string }) => {
+    const handleAddToCart = (item: { id: string; name: string; description?: string; price: string; image?: string }) => {
         const numericPrice = parsePrice(item.price)
         if (numericPrice === 0) return // skip items with no price (e.g. package notes)
-        addItem({ id: item.id, name: item.name, price: numericPrice, image: item.image })
+        addItem({ id: item.id, name: item.name, description: item.description, price: numericPrice, image: item.image })
         setJustAdded(item.id)
         setTimeout(() => setJustAdded(null), 1200)
     }

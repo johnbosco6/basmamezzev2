@@ -48,12 +48,12 @@ export function AdminSidebar() {
     return (
         <>
             {/* Mobile Hamburger Toggle */}
-            <div className="lg:hidden fixed top-5 left-4 z-[60]">
+            <div className="lg:hidden fixed top-5 left-4 z-[70]">
                 <Button
                     variant="ghost"
                     size="icon"
                     onClick={() => setIsMobileOpen(!isMobileOpen)}
-                    className="bg-[#BA9D76] text-white rounded-xl shadow-lg hover:bg-[#BA9D76]/90"
+                    className="bg-[#BA9D76] text-white rounded-xl shadow-2xl hover:bg-[#BA9D76]/90 h-10 w-10 flex items-center justify-center border border-white/20"
                 >
                     {isMobileOpen ? <X size={20} /> : <Menu size={20} />}
                 </Button>
@@ -62,13 +62,13 @@ export function AdminSidebar() {
             {/* Mobile Overlay */}
             {isMobileOpen && (
                 <div
-                    className="lg:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[50]"
+                    className="lg:hidden fixed inset-0 bg-black/80 backdrop-blur-md z-[60] transition-all duration-300"
                     onClick={() => setIsMobileOpen(false)}
                 />
             )}
 
             <aside className={`
-                fixed lg:sticky top-0 h-screen transition-all duration-300 backdrop-blur-xl bg-black/90 lg:bg-black/40 border-r border-white/10 flex flex-col z-[50]
+                fixed lg:sticky top-0 h-screen transition-all duration-300 backdrop-blur-2xl bg-black/95 lg:bg-black/40 border-r border-white/10 flex flex-col z-[65]
                 ${isCollapsed ? 'lg:w-20' : 'lg:w-72'}
                 ${isMobileOpen ? 'translate-x-0 w-72' : '-translate-x-full lg:translate-x-0 w-72'}
                 ${archivo.className}

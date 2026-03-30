@@ -12,11 +12,12 @@ const archivo = Archivo({
 })
 
 export function OrderNotification() {
-    const [soundEnabled, setSoundEnabled] = useState(false)
+    const [soundEnabled] = useState(true) // Always enabled by default
     const [knownOrderIds, setKnownOrderIds] = useState<Set<string>>(new Set())
     const [isInitialLoad, setIsInitialLoad] = useState(true)
     const [hasNewOrders, setHasNewOrders] = useState(false)
     const [notifPermission, setNotifPermission] = useState<NotificationPermission>("default")
+    const [audioUnlocked, setAudioUnlocked] = useState(false)
 
     // Audio ref — local WAV file, much more reliable than YouTube
     const audioRef = useRef<HTMLAudioElement | null>(null)
@@ -30,24 +31,42 @@ export function OrderNotification() {
         audio.preload = "auto"
         audioRef.current = audio
 
-        // Load saved preference
-        const savedPref = localStorage.getItem("basma-admin-sound")
-        if (savedPref === "true") {
-            setSoundEnabled(true)
-        }
-
         // Check current notification permission
         if ("Notification" in window) {
             setNotifPermission(Notification.permission)
         }
 
+        // Auto-subscribe to push on mount if possible
+        const initPush = async () => {
+            if (Notification.permission === "granted") {
+                await subscribeToPush()
+            }
+        }
+        initPush()
+
+        // One-time listener to unlock audio (browser requirement)
+        const unlockAudio = () => {
+            if (audioRef.current && !audioUnlocked) {
+                audioRef.current.play().then(() => {
+                    audioRef.current?.pause()
+                    setAudioUnlocked(true)
+                }).catch(() => {})
+                window.removeEventListener('click', unlockAudio)
+                window.removeEventListener('touchstart', unlockAudio)
+            }
+        }
+        window.addEventListener('click', unlockAudio)
+        window.addEventListener('touchstart', unlockAudio)
+
         return () => {
             audio.pause()
             audio.src = ""
+            window.removeEventListener('click', unlockAudio)
+            window.removeEventListener('touchstart', unlockAudio)
         }
     }, [])
 
-    // Request notification permission when sound is enabled
+    // Request notification permission
     const requestNotificationPermission = useCallback(async () => {
         if (!("Notification" in window)) return
         if (Notification.permission === "granted") {
@@ -57,6 +76,9 @@ export function OrderNotification() {
         try {
             const permission = await Notification.requestPermission()
             setNotifPermission(permission)
+            if (permission === "granted") {
+                await subscribeToPush()
+            }
         } catch {
             console.warn("Notification permission request failed")
         }
@@ -78,7 +100,6 @@ export function OrderNotification() {
 
     const subscribeToPush = useCallback(async () => {
         if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
-            console.warn("Push notifications not supported")
             return
         }
 
@@ -97,7 +118,6 @@ export function OrderNotification() {
                     userVisibleOnly: true,
                     applicationServerKey: urlBase64ToUint8Array(publicKey)
                 })
-                console.log("New Push Subscription created", subscription)
             }
 
             // Send to server
@@ -114,27 +134,6 @@ export function OrderNotification() {
             setIsSubscribing(false)
         }
     }, [])
-
-    const toggleSound = async () => {
-        const newState = !soundEnabled
-        setSoundEnabled(newState)
-        localStorage.setItem("basma-admin-sound", String(newState))
-
-        if (newState) {
-            // Request standard notification permission
-            await requestNotificationPermission()
-            
-            // Also attempt Web Push subscription (wakelock)
-            await subscribeToPush()
-
-            // If there are already new orders, start alerting
-            if (hasNewOrders) {
-                playAlarm()
-            }
-        } else {
-            stopAlarm()
-        }
-    }
 
     const playAlarm = useCallback(() => {
         // Play audio
@@ -155,23 +154,22 @@ export function OrderNotification() {
             navigator.vibrate(pattern)
         }
 
-        // Show browser notification (works even in background tab)
+        // Show browser notification
         if ("Notification" in window && Notification.permission === "granted") {
             try {
                 const notif = new Notification("🔔 Nowe Zamówienie!", {
                     body: "Nowe zamówienie czeka na potwierdzenie w panelu Basma!",
                     icon: "/icons/icon-192x192.png",
                     badge: "/icons/icon-192x192.png",
-                    tag: "basma-new-order", // prevents duplicate notifications
-                    requireInteraction: true, // stays until dismissed — wakes screen on Android
-                    silent: false, // use system notification sound too
+                    tag: "basma-new-order",
+                    requireInteraction: true,
+                    silent: false,
                 })
                 notif.onclick = () => {
                     window.focus()
                     notif.close()
                 }
             } catch {
-                // Fallback: try service worker notification (works when app is in background)
                 if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
                     navigator.serviceWorker.controller.postMessage({
                         type: "SHOW_NOTIFICATION",
@@ -184,13 +182,10 @@ export function OrderNotification() {
     }, [])
 
     const stopAlarm = useCallback(() => {
-        // Stop audio
         if (audioRef.current) {
             audioRef.current.pause()
             audioRef.current.currentTime = 0
         }
-
-        // Stop vibration
         if ("vibrate" in navigator) {
             navigator.vibrate(0)
         }
@@ -201,16 +196,19 @@ export function OrderNotification() {
         stopAlarm()
     }, [stopAlarm])
 
-    // Test button — lets admin verify the alarm works
-    const testAlert = useCallback(() => {
+    // Test button
+    const testAlert = useCallback(async () => {
+        // First try to request permission if not granted
+        if (notifPermission !== "granted") {
+            await requestNotificationPermission()
+        }
         playAlarm()
         setHasNewOrders(true)
-        // Auto-stop after 5 seconds
         setTimeout(() => {
             stopAlarm()
             setHasNewOrders(false)
         }, 5000)
-    }, [playAlarm, stopAlarm])
+    }, [playAlarm, stopAlarm, notifPermission, requestNotificationPermission])
 
     const checkNewOrders = useCallback(async () => {
         try {
@@ -223,7 +221,6 @@ export function OrderNotification() {
                 return
             }
 
-            // Check for genuinely new IDs
             let hasNew = false
             currentIds.forEach((id) => {
                 if (!knownOrderIds.has(id)) {
@@ -233,15 +230,12 @@ export function OrderNotification() {
 
             if (hasNew) {
                 setHasNewOrders(true)
-                if (soundEnabled) {
-                    playAlarm()
-                }
+                playAlarm()
                 setKnownOrderIds(currentIds)
             } else {
                 if (currentIds.size !== knownOrderIds.size) {
                     setKnownOrderIds(currentIds)
                 }
-                // Auto-stop if no active orders remain
                 if (currentIds.size === 0 && hasNewOrders) {
                     stopAlert()
                 }
@@ -249,7 +243,7 @@ export function OrderNotification() {
         } catch (error) {
             console.error("Error polling for orders:", error)
         }
-    }, [knownOrderIds, isInitialLoad, soundEnabled, hasNewOrders, playAlarm, stopAlert])
+    }, [knownOrderIds, isInitialLoad, hasNewOrders, playAlarm, stopAlert])
 
     // Poll every 15 seconds
     useEffect(() => {
@@ -263,51 +257,40 @@ export function OrderNotification() {
             {hasNewOrders && (
                 <button
                     onClick={stopAlert}
-                    className={`flex items-center gap-3 px-4 py-3 bg-red-600 text-white rounded-2xl shadow-2xl animate-bounce border-2 border-white/20 ${archivo.className}`}
+                    className={`flex items-center gap-3 px-6 py-4 bg-red-600 text-white rounded-2xl shadow-[0_20px_50px_rgba(220,38,38,0.5)] animate-bounce border-2 border-white/20 sm:px-4 sm:py-3 ${archivo.className}`}
                 >
-                    <Volume2 className="h-5 w-5 animate-pulse" />
-                    <span className="text-sm font-bold uppercase tracking-tight">Nowe Zamówienie!</span>
-                    <span className="text-[10px] bg-black/20 px-2 py-0.5 rounded-full">STOP</span>
+                    <Volume2 className="h-6 w-6 animate-pulse" />
+                    <span className="text-base sm:text-sm font-black uppercase tracking-tighter">STOP ALARM!</span>
+                    <span className="text-[12px] bg-black/30 px-3 py-1 rounded-full font-bold">ZAKOŃCZ</span>
                 </button>
             )}
 
-            {/* Sound Toggle + Test */}
+            {/* Test Alert Button (Small & Discrete) */}
             <div className="flex items-center gap-2">
                 <button
-                    onClick={toggleSound}
-                    className={`flex items-center gap-2 px-3 py-2 rounded-xl backdrop-blur-md shadow-lg transition-all border ${
-                        soundEnabled
-                            ? "bg-[#BA9D76]/20 border-[#BA9D76]/50 text-[#BA9D76] hover:bg-[#BA9D76]/30"
-                            : "bg-white/5 border-white/10 text-white/40 hover:text-white/80 hover:bg-white/10"
-                    } ${archivo.className}`}
-                    title={soundEnabled ? "Powiadomienia dźwiękowe włączone" : "Powiadomienia dźwiękowe wyłączone"}
+                    onClick={testAlert}
+                    className={`flex items-center gap-2 px-4 py-2.5 sm:px-3 sm:py-2 rounded-xl backdrop-blur-md shadow-lg transition-all border bg-white/5 border-white/10 text-white/50 hover:text-white hover:bg-[#BA9D76]/20 hover:border-[#BA9D76]/40 ${archivo.className}`}
+                    title="Testuj powiadomienia (dźwięk + wibracja)"
                 >
-                    {soundEnabled ? <Bell className="h-4 w-4" /> : <BellOff className="h-4 w-4" />}
-                    <span className="text-xs font-semibold">
-                        {soundEnabled ? "Dźwięk Aktywny" : "Dźwięk Wyłączony"}
-                    </span>
+                    <Bell className="h-4 w-4" />
+                    <span className="text-[11px] font-black uppercase tracking-widest sm:text-[10px]">Testuj Alert</span>
                 </button>
 
-                {soundEnabled && (
-                    <button
-                        onClick={testAlert}
-                        className={`flex items-center gap-1.5 px-2.5 py-2 rounded-xl backdrop-blur-md shadow-lg transition-all border bg-amber-500/20 border-amber-500/40 text-amber-400 hover:bg-amber-500/30 ${archivo.className}`}
-                        title="Test alarmu — sprawdź czy dźwięk i wibracja działają"
-                    >
-                        <AlertTriangle className="h-3.5 w-3.5" />
-                        <span className="text-[10px] font-bold uppercase">Test</span>
-                    </button>
-                )}
+                {/* Status Indicator */}
+                <div className="flex items-center gap-2 px-4 py-2.5 sm:px-3 sm:py-2 rounded-xl backdrop-blur-md bg-[#BA9D76]/10 border border-[#BA9D76]/20 text-[#BA9D76]">
+                    <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.6)]" />
+                    <span className="text-[11px] font-black uppercase tracking-widest sm:text-[10px]">LIVE</span>
+                </div>
             </div>
 
             {/* Permission warning */}
-            {soundEnabled && notifPermission !== "granted" && (
+            {notifPermission !== "granted" && (
                 <button
                     onClick={requestNotificationPermission}
-                    className={`flex items-center gap-2 px-3 py-1.5 rounded-lg bg-amber-900/30 border border-amber-500/20 text-amber-400 text-[10px] font-semibold ${archivo.className}`}
+                    className={`flex items-center gap-2 px-3 py-1.5 rounded-lg bg-amber-900/30 border border-amber-500/20 text-amber-400 text-[10px] font-semibold animate-pulse ${archivo.className}`}
                 >
                     <AlertTriangle className="h-3 w-3" />
-                    Kliknij, aby włączyć powiadomienia
+                    KLIKNIJ ABY WŁĄCZYĆ POWIADOMIENIA PUSH
                 </button>
             )}
         </div>
