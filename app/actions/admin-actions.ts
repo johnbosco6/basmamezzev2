@@ -135,6 +135,7 @@ export async function getOrders() {
             items[]{
                 itemId,
                 name,
+                description,
                 quantity,
                 price
             },
@@ -224,6 +225,7 @@ export async function getHistoryOrders(dateStr?: string) {
             items[]{
                 itemId,
                 name,
+                description,
                 quantity,
                 price
             },

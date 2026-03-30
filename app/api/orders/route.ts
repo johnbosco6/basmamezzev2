@@ -64,10 +64,11 @@ export async function POST(req: NextRequest) {
                 distanceKm: deliveryAddress.distanceKm ? String(deliveryAddress.distanceKm) : '',
             } : undefined,
             status: 'pending',
-            items: (items || []).map((item: { id: string; name: string; price: number; quantity: number }) => ({
+            items: (items || []).map((item: { id: string; name: string; description?: string; price: number; quantity: number }) => ({
                 _key: `item-${item.id}-${Date.now()}`, // Ensure a truly unique key
                 itemId: item.id,
                 name: item.name,
+                description: item.description || '',
                 quantity: item.quantity,
                 price: item.price,
             })),
