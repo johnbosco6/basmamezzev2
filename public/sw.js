@@ -68,29 +68,39 @@ self.addEventListener('message', (event) => {
 
 // Push notification received (for future server-side push)
 self.addEventListener('push', (event) => {
-    let data = { title: '🔔 Nowe Zamówienie!', body: 'Nowe zamówienie czeka na potwierdzenie!' };
+    let data = { 
+        title: '🔔 Nowe Zamówienie!', 
+        body: 'Nowe zamówienie czeka na potwierdzenie w panelu Basma!',
+        icon: '/icons/icon-192x192.png'
+    };
 
     if (event.data) {
         try {
             data = event.data.json();
         } catch {
-            data.body = event.data.text();
+            data = { title: '🔔 Nowe Zamówienie!', body: event.data.text(), icon: '/icons/icon-192x192.png' };
         }
     }
 
+    const options = {
+        body: data.body,
+        icon: data.icon || '/icons/icon-192x192.png',
+        badge: '/icons/icon-192x192.png',
+        tag: 'basma-new-order',
+        requireInteraction: true, // IMPORTANT: Stays until user acts — wakes phone screen
+        vibrate: [500, 200, 500, 200, 500, 200, 500],
+        timestamp: Date.now(),
+        data: {
+            url: data.url || ADMIN_URL
+        },
+        actions: [
+            { action: 'open', title: 'OTWÓRZ PANEL' },
+            { action: 'dismiss', title: 'Zamknij' }
+        ]
+    };
+
     event.waitUntil(
-        self.registration.showNotification(data.title, {
-            body: data.body,
-            icon: '/icons/icon-192x192.png',
-            badge: '/icons/icon-192x192.png',
-            tag: 'basma-new-order',
-            requireInteraction: true,
-            vibrate: [500, 200, 500, 200, 500, 200, 500],
-            actions: [
-                { action: 'open', title: 'Otwórz Panel' },
-                { action: 'dismiss', title: 'Zamknij' }
-            ]
-        })
+        self.registration.showNotification(data.title, options)
     );
 });
 

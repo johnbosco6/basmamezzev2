@@ -326,3 +326,44 @@ export async function sendOrderStatusUpdate(
 
     return { resend: false }
 }
+/**
+ * Send a dedicated NEW ORDER ALERT email to admin (basmalublin@gmail.com).
+ * This ensures staff get a direct email for every incoming order.
+ */
+export async function sendAdminOrderAlert(order: OrderDetails) {
+    if (process.env.RESEND_API_KEY) {
+        try {
+            const itemsList = order.items.map(i => `${i.quantity}x ${i.name}`).join(', ')
+            const addressInfo = order.orderType === 'delivery' 
+                ? `Adres: ${formatAddress(order.customerAddress)}` 
+                : 'Odbiór osobisty'
+
+            await resend.emails.send({
+                from: 'Basma Admin <zamowienia@basmamezze.pl>',
+                to: 'basmalublin@gmail.com',
+                subject: `🚨 NOWE ZAMÓWIENIE #${order.orderNumber} — ${order.totalAmount.toFixed(2)} zł`,
+                html: `
+                    <div style="font-family: sans-serif; padding: 20px; border: 2px solid #BA9D76; border-radius: 10px;">
+                        <h1 style="color: #BA9D76; margin-top: 0;">🚨 Nowe Zamówienie!</h1>
+                        <p style="font-size: 18px;"><strong>Numer:</strong> #${order.orderNumber}</p>
+                        <p><strong>Klient:</strong> ${order.customerName} (${order.customerPhone})</p>
+                        <p><strong>Typ:</strong> ${order.orderType === 'delivery' ? 'Dostawa' : 'Odbiór'}</p>
+                        <p><strong>${addressInfo}</strong></p>
+                        <hr style="border: 1px solid #eee;" />
+                        <p><strong>Produkty:</strong><br/>${itemsList}</p>
+                        <p style="font-size: 20px; font-weight: bold; color: #BA9D76;">Suma: ${order.totalAmount.toFixed(2)} zł</p>
+                        <a href="${process.env.NEXT_PUBLIC_BASE_URL || 'https://www.basmamezze.pl'}/admin" 
+                           style="display: inline-block; background: #BA9D76; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 10px;">
+                           OTWÓRZ PANEL ADMINA
+                        </a>
+                    </div>
+                `,
+            })
+            console.log(`[Notifications] ✅ Admin alert email sent for #${order.orderNumber}`)
+            return { resend: true }
+        } catch (err) {
+            console.error('[Notifications] ❌ Admin alert email failed:', err)
+        }
+    }
+    return { resend: false }
+}

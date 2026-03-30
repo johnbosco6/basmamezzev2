@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { writeClient } from '@/lib/sanity'
-import { sendOrderConfirmation } from '@/lib/notifications'
+import { sendOrderConfirmation, sendAdminOrderAlert } from '@/lib/notifications'
 import { isRestaurantOpenForOrders } from '@/lib/hours'
+import { sendPushToAll } from '@/lib/web-push'
 
 export const dynamic = 'force-dynamic'
 
@@ -83,6 +84,33 @@ export async function POST(req: NextRequest) {
         console.log('Creating document in Sanity...')
         const result = await writeClient.create(doc)
         console.log('Sanity create result ID:', result._id)
+
+        // Fire off admin alerts (Non-blocking)
+        sendAdminOrderAlert({
+            orderNumber,
+            customerName: name,
+            customerEmail: email || '',
+            customerPhone: phone,
+            orderType,
+            items: (items || []).map((item: any) => ({
+                name: item.name,
+                quantity: item.quantity,
+                price: item.price,
+            })),
+            subtotal: subtotal || 0,
+            deliveryFee: deliveryFee || 0,
+            discountAmount: discountAmount || 0,
+            promoCode: promoCode || null,
+            totalAmount: totalPrice || 0,
+            customerAddress: deliveryAddress,
+        }).catch(err => console.error('[Order API] Admin Email Alert failed:', err))
+
+        // Trigger Web Push Notification to all subscribed devices
+        sendPushToAll(
+            `🚨 Nowe Zamówienie #${orderNumber}!`,
+            `${name} zamówił właśnie ${items.length} potraw za ${(totalPrice || 0).toFixed(2)} zł.`,
+            '/admin'
+        ).catch(err => console.error('[Order API] Web Push Alert failed:', err))
 
         // Fire off email notification (non-blocking)
         // We defer this for P24 orders to the webhook, or we can send a "Received" email here.
