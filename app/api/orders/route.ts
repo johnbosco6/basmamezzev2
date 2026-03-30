@@ -3,6 +3,7 @@ import { writeClient } from '@/lib/sanity'
 import { sendOrderConfirmation, sendAdminOrderAlert } from '@/lib/notifications'
 import { isRestaurantOpenForOrders } from '@/lib/hours'
 import { sendPushToAll } from '@/lib/web-push'
+import { menuData } from '@/app/menu/menu-data'
 
 export const dynamic = 'force-dynamic'
 
@@ -64,14 +65,29 @@ export async function POST(req: NextRequest) {
                 distanceKm: deliveryAddress.distanceKm ? String(deliveryAddress.distanceKm) : '',
             } : undefined,
             status: 'pending',
-            items: (items || []).map((item: { id: string; name: string; description?: string; price: number; quantity: number }) => ({
-                _key: `item-${item.id}-${Date.now()}`, // Ensure a truly unique key
-                itemId: item.id,
-                name: item.name,
-                description: item.description || '',
-                quantity: item.quantity,
-                price: item.price,
-            })),
+            items: (items || []).map((item: { id: string; name: string; description?: string; price: number; quantity: number }) => {
+                let actualDescription = item.description || '';
+                // Fallback to searching menuData if description is missing (e.g. old cart in localStorage)
+                if (!actualDescription) {
+                    for (const section of menuData) {
+                        for (const cat of section.categories || []) {
+                            for (const mItem of cat.items || []) {
+                                if (mItem.id === item.id && mItem.description) {
+                                    actualDescription = mItem.description;
+                                }
+                            }
+                        }
+                    }
+                }
+                return {
+                    _key: `item-${item.id}-${Date.now()}`,
+                    itemId: item.id,
+                    name: item.name,
+                    description: actualDescription,
+                    quantity: item.quantity,
+                    price: item.price,
+                };
+            }),
             subtotal: subtotal || 0,
             deliveryFee: deliveryFee || 0,
             discountAmount: discountAmount || 0,
@@ -93,7 +109,7 @@ export async function POST(req: NextRequest) {
             customerEmail: email || '',
             customerPhone: phone,
             orderType,
-            items: (items || []).map((item: any) => ({
+            items: doc.items.map((item: any) => ({
                 name: item.name,
                 description: item.description,
                 quantity: item.quantity,
@@ -124,8 +140,9 @@ export async function POST(req: NextRequest) {
                 customerEmail: email || '',
                 customerPhone: phone,
                 orderType,
-                items: (items || []).map((item: any) => ({
+                items: doc.items.map((item: any) => ({
                     name: item.name,
+                    description: item.description,
                     quantity: item.quantity,
                     price: item.price,
                 })),
