@@ -7,7 +7,7 @@ import { Calendar, LayoutDashboard, LogOut, History, ChevronLeft, ChevronRight, 
 import { Archivo } from 'next/font/google'
 import { Button } from '@/components/ui/button'
 import { logoutAdmin } from '@/app/actions/auth-actions'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
 const archivo = Archivo({
     subsets: ["latin"],
@@ -18,8 +18,22 @@ const archivo = Archivo({
 export function AdminSidebar() {
     const [isCollapsed, setIsCollapsed] = useState(false)
     const [isMobileOpen, setIsMobileOpen] = useState(false)
-    const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0])
+    const router = useRouter()
+    const searchParams = useSearchParams()
     const pathname = usePathname()
+    const [selectedDate, setSelectedDate] = useState(searchParams.get('date') || new Date().toISOString().split('T')[0])
+
+    useEffect(() => {
+        const dateFromUrl = searchParams.get('date')
+        if (dateFromUrl && dateFromUrl !== selectedDate) {
+            setSelectedDate(dateFromUrl)
+        }
+    }, [searchParams])
+
+    const handleDateSelect = (iso: string) => {
+        setSelectedDate(iso)
+        router.push(`/admin/history?date=${iso}`)
+    }
 
     // Close mobile sidebar on navigation
     useEffect(() => {
@@ -107,7 +121,7 @@ export function AdminSidebar() {
                                             variant="secondary"
                                             size="sm"
                                             className={`justify-start gap-3 rounded-xl h-10 transition-all ${active ? 'bg-[#BA9D76] text-white shadow-lg' : 'bg-white/5 text-white/60 border border-white/5 hover:bg-white/10'}`}
-                                            onClick={() => setSelectedDate(iso)}
+                                            onClick={() => handleDateSelect(iso)}
                                         >
                                             <Calendar className="w-4 h-4" />
                                             {d.label}
@@ -121,7 +135,7 @@ export function AdminSidebar() {
                                     type="date"
                                     className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-[#BA9D76]/50"
                                     value={selectedDate}
-                                    onChange={(e) => setSelectedDate(e.target.value)}
+                                    onChange={(e) => handleDateSelect(e.target.value)}
                                 />
                             </div>
                         </div>

@@ -43,9 +43,9 @@ export async function updateOrderStatus(orderId: string, newStatus: string) {
         }
         patch.insert('after', 'actionLog[-1]', [actionEntry])
 
-        // Record timestamp when the order enters a terminal state
+        // Record timestamp and archive when the order enters a terminal state
         if (newStatus === 'delivered' || newStatus === 'picked_up') {
-            patch.set({ completedAt: new Date().toISOString() })
+            patch.set({ completedAt: new Date().toISOString(), archived: true })
         }
 
         await patch.commit()
@@ -116,7 +116,14 @@ export async function sendNotificationEmail(orderId: string, stage: 'preparing' 
 
 export async function getOrders() {
     try {
-        const query = `*[_type == "order" && (!defined(archived) || archived == false)] | order(orderDate desc) {
+        const todayStart = new Date()
+        todayStart.setHours(0, 0, 0, 0)
+        const todayStr = todayStart.toISOString()
+
+        const query = `*[_type == "order" && (
+            (status != "delivered" && status != "picked_up" && status != "cancelled") || 
+            (orderDate >= "${todayStr}" || completedAt >= "${todayStr}")
+        )] | order(orderDate desc) {
             _id,
             orderNumber,
             customerName,
@@ -189,5 +196,54 @@ export async function archiveCompletedOrders() {
     } catch (error) {
         console.error('Failed to archive orders:', error)
         return { success: false, message: 'Nie udało się zarchiwizować zamówień' }
+    }
+}
+
+export async function getHistoryOrders(dateStr?: string) {
+    try {
+        let dateFilter = ''
+        if (dateStr) {
+            // dateStr format: YYYY-MM-DD
+            const startOfDay = new Date(dateStr)
+            startOfDay.setHours(0, 0, 0, 0)
+            const endOfDay = new Date(dateStr)
+            endOfDay.setHours(23, 59, 59, 999)
+            
+            dateFilter = `&& (orderDate >= "${startOfDay.toISOString()}" && orderDate <= "${endOfDay.toISOString()}")`
+        }
+
+        const query = `*[_type == "order" && (status == "delivered" || status == "picked_up" || status == "cancelled") ${dateFilter}] | order(orderDate desc)[0...500] {
+            _id,
+            orderNumber,
+            customerName,
+            customerPhone,
+            customerEmail,
+            customerAddress,
+            status,
+            orderType,
+            items[]{
+                itemId,
+                name,
+                quantity,
+                price
+            },
+            subtotal,
+            deliveryFee,
+            totalAmount,
+            paymentMethod,
+            notes,
+            orderDate,
+            completedAt,
+            archived,
+            actionLog[]{
+                staffName,
+                action,
+                timestamp
+            }
+        }`
+        return await client.fetch(query, {}, { cache: "no-store" })
+    } catch (error) {
+        console.error('Failed to fetch history orders:', error)
+        return []
     }
 }

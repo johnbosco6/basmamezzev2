@@ -3,8 +3,6 @@
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import { getOrders } from '@/app/actions/admin-actions'
 import { OrderCard } from './order-card'
-import { OrderAnalyticsChart } from './order-analytics-chart'
-import { CsvDownloadButton } from './csv-download-button'
 import { TrendingUp, ShoppingBag, UtensilsCrossed, Users, RefreshCcw } from 'lucide-react'
 
 interface OrderListManagerProps {
@@ -126,56 +124,6 @@ export function OrderListManager({ initialOrders }: OrderListManagerProps) {
                     </div>
                 )}
             </section>
-
-            {/* History + Analytics */}
-            {completedOrders.length > 0 && (
-                <section className="pt-8 md:pt-10 border-t border-white/5 space-y-8">
-                    <div className="flex items-center justify-between gap-4 md:gap-6 w-full">
-                        <h2 className="text-lg md:text-xl font-bold text-white/60 shrink-0">Historia Zamówień</h2>
-                        <div className="h-px bg-white/5 flex-1 hidden sm:block" />
-                        <CsvDownloadButton />
-                    </div>
-
-                    <OrderAnalyticsChart orders={completedOrders} />
-
-                    <div className="space-y-3">
-                        {completedOrders.map((order: any) => (
-                            <div
-                                key={order._id}
-                                className="backdrop-blur-md bg-white/5 border border-white/10 p-4 md:p-5 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 group hover:bg-white/10 transition-all shadow-lg"
-                            >
-                                <div className="flex items-center gap-4 flex-1 min-w-0">
-                                    <div className="h-10 w-10 rounded-full bg-green-500/20 flex items-center justify-center text-green-500 border border-green-500/20 text-[10px] font-bold shrink-0">
-                                        OK
-                                    </div>
-                                    <div className="min-w-0">
-                                        <h4 className="font-bold text-[#BA9D76]">#{order.orderNumber?.slice(-4)}</h4>
-                                        <p className="text-white/70 text-sm truncate">{order.customerName}</p>
-                                        <p className="text-white/40 text-[10px] mt-0.5">
-                                            {order.orderType === 'delivery' ? '🚗 Dostawa' : '📦 Odbiór'} · {' '}
-                                            {order.paymentMethod === 'p24' ? '💳 Online' : order.paymentMethod === 'cash' ? '💵 Gotówka' : '📟 Karta (kier.)'} · {' '}
-                                            Zakończono:{' '}
-                                            {new Date(order.completedAt || order.orderDate).toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' })}
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <div className="flex-1 min-w-0 hidden md:block">
-                                    <p className="text-[10px] text-white/40 uppercase font-bold tracking-widest mb-1">Zamówienie</p>
-                                    <p className="text-xs text-white/70 line-clamp-1 italic">
-                                        {order.items?.map((i: any) => `${i.quantity}x ${i.name || 'Produkt'}`).join(', ')}
-                                    </p>
-                                </div>
-
-                                <div className="text-right shrink-0">
-                                    <p className="text-[10px] text-white/40 uppercase font-bold tracking-widest mb-0.5">Kwota</p>
-                                    <p className="font-bold text-[#BA9D76]">{order.totalAmount?.toFixed(2)} zł</p>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </section>
-            )}
         </main>
     )
 }

@@ -1,10 +1,11 @@
-import { getOrders } from '@/app/actions/admin-actions'
+import { getHistoryOrders } from '@/app/actions/admin-actions'
 import { AdminSidebar } from '@/components/admin/sidebar'
 import { Archivo } from 'next/font/google'
 import { format } from 'date-fns'
 import { pl } from 'date-fns/locale'
 import { History, Search } from 'lucide-react'
 import { ExportButton } from '@/components/admin/export-button'
+import { OrderAnalyticsChart } from '@/components/admin/order-analytics-chart'
 
 const archivo = Archivo({
     subsets: ["latin"],
@@ -14,9 +15,13 @@ const archivo = Archivo({
 
 export const dynamic = 'force-dynamic'
 
-export default async function OrderHistoryPage() {
-    const orders = await getOrders() || []
-    const completedOrders = orders.filter((o: any) => o.status === 'delivered')
+export default async function OrderHistoryPage({
+    searchParams,
+}: {
+    searchParams: { date?: string }
+}) {
+    const dateStr = searchParams.date || new Date().toISOString().split('T')[0]
+    const completedOrders = await getHistoryOrders(dateStr) || []
 
     return (
         <div className={`flex min-h-screen bg-[#121212] text-white ${archivo.className}`}>
@@ -25,12 +30,19 @@ export default async function OrderHistoryPage() {
             <div className="flex-1 flex flex-col min-w-0">
                 <header className="sticky top-0 z-40 backdrop-blur-md bg-black/40 border-b border-white/10 p-4 md:px-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:h-20">
                     <div className="flex flex-col ml-12 lg:ml-0">
-                        <h1 className="text-lg md:text-xl font-bold tracking-tight text-[#BA9D76]">Historia Zamówień</h1>
-                        <p className="text-white/40 text-[9px] md:text-[10px] uppercase tracking-widest font-bold">Archiwum zakończonych transakcji</p>
+                        <h1 className="text-lg md:text-xl font-bold tracking-tight text-[#BA9D76]">Historia Zamówień ({dateStr})</h1>
+                        <p className="text-white/40 text-[9px] md:text-[10px] uppercase tracking-widest font-bold">Archiwum zakończonych transakcji z dzisiaj lub z wybranej daty</p>
                     </div>
                 </header>
 
                 <main className="p-4 md:p-10 space-y-6 md:space-y-8 overflow-y-auto">
+                    {/* Analytics Chart */}
+                    {completedOrders.length > 0 && (
+                        <div className="mb-8">
+                            <OrderAnalyticsChart orders={completedOrders} />
+                        </div>
+                    )}
+
                     {/* Search / Filter Bar */}
                     <div className="flex flex-col md:flex-row gap-4">
                         <div className="flex-1 relative group">
@@ -56,6 +68,7 @@ export default async function OrderHistoryPage() {
                                         <th className="px-6 py-5">Numer</th>
                                         <th className="px-6 py-5">Klient</th>
                                         <th className="px-6 py-5">Zamówienie</th>
+                                        <th className="px-6 py-5">Obsługa</th>
                                         <th className="px-6 py-5 text-right">Kwota</th>
                                     </tr>
                                 </thead>
@@ -85,6 +98,13 @@ export default async function OrderHistoryPage() {
                                                     <p className="text-sm text-white/70 line-clamp-1 italic">
                                                         {order.items?.map((i: any) => `${i.quantity}x ${i.name || 'Produkt'}`).join(', ')}
                                                     </p>
+                                                </td>
+                                                <td className="px-6 py-5">
+                                                    <span className="text-xs text-white/60">
+                                                        {order.actionLog?.length > 0 
+                                                            ? order.actionLog[order.actionLog.length - 1].staffName 
+                                                            : 'Brak'}
+                                                    </span>
                                                 </td>
                                                 <td className="px-6 py-5 text-right whitespace-nowrap">
                                                     <span className="font-bold text-lg text-white">{order.totalAmount?.toFixed(2)} zł</span>
