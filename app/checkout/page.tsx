@@ -826,7 +826,7 @@ export default function CheckoutPage() {
                                 <div className="border-t border-gray-100 px-6 py-4 space-y-2 bg-gray-50">
                                     <div className="flex justify-between text-sm text-gray-600">
                                         <span className={`font-light ${archivo.className}`}>Suma produktów</span>
-                                        <span className={`font-semibold ${archivo.className}`}>{totalPrice.toFixed(0)} zł</span>
+                                        <span className={`font-semibold ${archivo.className}`}>{totalPrice.toFixed(2)} zł</span>
                                     </div>
                                     <div className="flex justify-between text-sm">
                                         <span className={`font-light text-gray-600 ${archivo.className}`}>
@@ -846,7 +846,7 @@ export default function CheckoutPage() {
                                     )}
                                     <div className="border-t border-gray-200 pt-2 flex justify-between">
                                         <span className={`font-bold text-gray-900 ${archivo.className}`}>Razem</span>
-                                        <span className={`font-bold text-xl text-[#BA9D76] ${archivo.className}`}>{grandTotal.toFixed(0)} zł</span>
+                                        <span className={`font-bold text-xl text-[#BA9D76] ${archivo.className}`}>{grandTotal.toFixed(2)} zł</span>
                                     </div>
                                 </div>
 
