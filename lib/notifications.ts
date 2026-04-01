@@ -22,6 +22,7 @@ interface OrderDetails {
     discountAmount?: number
     promoCode?: string
     totalAmount: number
+    paymentMethod: 'p24' | 'cash' | 'card_on_delivery'
     customerAddress?: {
         street?: string
         houseNumber?: string
@@ -337,25 +338,65 @@ export async function sendAdminOrderAlert(order: OrderDetails) {
             const addressInfo = order.orderType === 'delivery' 
                 ? `Adres: ${formatAddress(order.customerAddress)}` 
                 : 'Odbiór osobisty'
+            
+            const paymentLabels: { [key: string]: string } = {
+                p24: 'Online (Przelewy24) 💳',
+                cash: 'Gotówka przy odbiorze 💵',
+                card_on_delivery: 'Karta przy odbiorze 📟',
+            }
 
             await resend.emails.send({
                 from: 'Basma Admin <zamowienia@basmamezze.pl>',
                 to: 'basmalublin@gmail.com',
                 subject: `🚨 NOWE ZAMÓWIENIE #${order.orderNumber} — ${order.totalAmount.toFixed(2)} zł`,
                 html: `
-                    <div style="font-family: sans-serif; padding: 20px; border: 2px solid #BA9D76; border-radius: 10px;">
-                        <h1 style="color: #BA9D76; margin-top: 0;">🚨 Nowe Zamówienie!</h1>
-                        <p style="font-size: 18px;"><strong>Numer:</strong> #${order.orderNumber}</p>
+                    <div style="font-family: sans-serif; padding: 20px; border: 2px solid #BA9D76; border-radius: 12px; background-color: #fff;">
+                        <h1 style="color: #BA9D76; margin-top: 0; font-size: 24px;">🚨 Nowe Zamówienie!</h1>
+                        <div style="background: #fdfaf6; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 5px solid #BA9D76;">
+                            <p style="font-size: 18px; margin: 0;"><strong>Numer:</strong> #${order.orderNumber}</p>
+                            <p style="margin: 5px 0 0;"><strong>Metoda płatności:</strong> <span style="color: #BA9D76; font-weight: bold;">${paymentLabels[order.paymentMethod] || order.paymentMethod}</span></p>
+                        </div>
+
                         <p><strong>Klient:</strong> ${order.customerName} (${order.customerPhone})</p>
-                        <p><strong>Typ:</strong> ${order.orderType === 'delivery' ? 'Dostawa' : 'Odbiór'}</p>
+                        <p><strong>Typ:</strong> ${order.orderType === 'delivery' ? 'Dostawa 🚚' : 'Odbiór 📦'}</p>
                         <p><strong>${addressInfo}</strong></p>
-                        <hr style="border: 1px solid #eee;" />
-                        <p><strong>Produkty:</strong><br/>${itemsList}</p>
-                        <p style="font-size: 20px; font-weight: bold; color: #BA9D76;">Suma: ${order.totalAmount.toFixed(2)} zł</p>
-                        <a href="${process.env.NEXT_PUBLIC_BASE_URL || 'https://www.basmamezze.pl'}/admin" 
-                           style="display: inline-block; background: #BA9D76; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 10px;">
-                           OTWÓRZ PANEL ADMINA
-                        </a>
+                        
+                        <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;" />
+                        
+                        <p style="font-weight: bold; text-transform: uppercase; font-size: 12px; color: #999; margin-bottom: 10px;">Produkty:</p>
+                        <p style="font-size: 15px; line-height: 1.6;">${itemsList}</p>
+                        
+                        <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;" />
+                        
+                        <table width="100%" cellpadding="0" cellspacing="0" style="font-size: 14px; color: #555;">
+                            <tr>
+                                <td style="padding-bottom: 5px;">Suma częściowa:</td>
+                                <td style="text-align: right; padding-bottom: 5px;">${order.subtotal.toFixed(2)} zł</td>
+                            </tr>
+                            ${order.deliveryFee > 0 ? `
+                            <tr>
+                                <td style="padding-bottom: 5px;">Dostawa:</td>
+                                <td style="text-align: right; padding-bottom: 5px;">${order.deliveryFee.toFixed(2)} zł</td>
+                            </tr>
+                            ` : ''}
+                            ${order.discountAmount && order.discountAmount > 0 ? `
+                            <tr>
+                                <td style="padding-bottom: 5px; color: #4ade80;">Zniżka:</td>
+                                <td style="text-align: right; padding-bottom: 5px; color: #4ade80;">-${order.discountAmount.toFixed(2)} zł</td>
+                            </tr>
+                            ` : ''}
+                            <tr>
+                                <td style="padding-top: 10px; font-size: 20px; font-weight: bold; color: #333;">RAZEM:</td>
+                                <td style="padding-top: 10px; font-size: 20px; font-weight: bold; color: #BA9D76; text-align: right;">${order.totalAmount.toFixed(2)} zł</td>
+                            </tr>
+                        </table>
+
+                        <div style="margin-top: 30px; text-align: center;">
+                            <a href="${process.env.NEXT_PUBLIC_BASE_URL || 'https://www.basmamezze.pl'}/admin" 
+                               style="display: inline-block; background: #BA9D76; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 16px; box-shadow: 0 4px 10px rgba(186,157,118,0.3);">
+                               OTWÓRZ PANEL ADMINA
+                            </a>
+                        </div>
                     </div>
                 `,
             })

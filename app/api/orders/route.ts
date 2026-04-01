@@ -120,6 +120,7 @@ export async function POST(req: NextRequest) {
             discountAmount: discountAmount || 0,
             promoCode: promoCode || null,
             totalAmount: totalPrice || 0,
+            paymentMethod: paymentMethod || 'p24',
             customerAddress: deliveryAddress,
         }).catch(err => console.error('[Order API] Admin Email Alert failed:', err))
 
@@ -151,6 +152,7 @@ export async function POST(req: NextRequest) {
                 discountAmount: discountAmount || 0,
                 promoCode: promoCode || null,
                 totalAmount: totalPrice || 0,
+                paymentMethod: paymentMethod || 'p24',
                 customerAddress: deliveryAddress,
             }).catch(err => console.error('[Order API] Notification error:', err))
         }
