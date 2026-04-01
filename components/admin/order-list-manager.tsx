@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo, useCallback } from 'react'
 import { getOrders } from '@/app/actions/admin-actions'
 import { OrderCard } from './order-card'
 import { TrendingUp, ShoppingBag, UtensilsCrossed, Users, RefreshCcw } from 'lucide-react'
+import { client } from '@/lib/sanity'
 
 interface OrderListManagerProps {
     initialOrders: any[]
@@ -28,9 +29,16 @@ export function OrderListManager({ initialOrders }: OrderListManagerProps) {
     }, [])
 
     useEffect(() => {
-        // Initial setup and polling interval (every 5 seconds)
-        const interval = setInterval(refreshOrders, 5000)
-        return () => clearInterval(interval)
+        // Subscribe to real-time updates for all orders
+        const query = '*[_type == "order"]'
+        const subscription = client.listen(query).subscribe(() => {
+            refreshOrders()
+        })
+
+        // Also initial refresh to be safe
+        refreshOrders()
+
+        return () => subscription.unsubscribe()
     }, [refreshOrders])
 
     // Memoized derived data

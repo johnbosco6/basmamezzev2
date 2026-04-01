@@ -110,6 +110,7 @@ export async function sendNotificationEmail(orderId: string, stage: 'preparing' 
             .insert('after', 'actionLog[-1]', [actionEntry])
             .commit()
 
+        revalidatePath('/admin')
         return { success: true, message: `Email sent for stage: ${stage}` }
     } catch (error) {
         console.error('[Admin] sendNotificationEmail error:', error)

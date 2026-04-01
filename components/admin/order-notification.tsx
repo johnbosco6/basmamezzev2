@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useCallback } from "react"
 import { getActiveOrders } from "@/app/actions/admin-actions"
 import { Bell, BellOff, Volume2, VolumeX, AlertTriangle } from "lucide-react"
 import { Archivo } from "next/font/google"
+import { client } from "@/lib/sanity"
 
 const archivo = Archivo({
     subsets: ["latin"],
@@ -245,10 +246,17 @@ export function OrderNotification() {
         }
     }, [knownOrderIds, isInitialLoad, hasNewOrders, playAlarm, stopAlert])
 
-    // Poll every 15 seconds
     useEffect(() => {
-        const interval = setInterval(checkNewOrders, 15000)
-        return () => clearInterval(interval)
+        // Subscribe to real-time updates for active orders
+        const query = '*[_type == "order"]'
+        const subscription = client.listen(query).subscribe(() => {
+            checkNewOrders()
+        })
+
+        // Initial check
+        checkNewOrders()
+
+        return () => subscription.unsubscribe()
     }, [checkNewOrders])
 
     return (
