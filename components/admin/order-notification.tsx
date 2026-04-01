@@ -214,16 +214,23 @@ export function OrderNotification() {
     const checkNewOrders = useCallback(async () => {
         try {
             const activeOrders = await getActiveOrders()
-            const currentIds = new Set<string>(activeOrders.map((o: any) => String(o._id)))
+            // Only alarm for 'pending' orders
+            const pendingOrders = activeOrders.filter((o: any) => o.status === 'pending')
+            const currentPendingIds = new Set<string>(pendingOrders.map((o: any) => String(o._id)))
 
             if (isInitialLoad) {
-                setKnownOrderIds(currentIds)
+                setKnownOrderIds(currentPendingIds)
                 setIsInitialLoad(false)
+                // If there are pending orders on load, we should technically play the alarm,
+                // but we wait for user interaction to unlock audio.
+                if (currentPendingIds.size > 0) {
+                    setHasNewOrders(true)
+                }
                 return
             }
 
             let hasNew = false
-            currentIds.forEach((id) => {
+            currentPendingIds.forEach((id) => {
                 if (!knownOrderIds.has(id)) {
                     hasNew = true
                 }
@@ -232,13 +239,17 @@ export function OrderNotification() {
             if (hasNew) {
                 setHasNewOrders(true)
                 playAlarm()
-                setKnownOrderIds(currentIds)
+                setKnownOrderIds(currentPendingIds)
             } else {
-                if (currentIds.size !== knownOrderIds.size) {
-                    setKnownOrderIds(currentIds)
-                }
-                if (currentIds.size === 0 && hasNewOrders) {
+                // UPDATE: If the number of pending orders is 0, STOP the alarm immediately.
+                // This ensures all devices sync when one staff member accepts the order.
+                if (currentPendingIds.size === 0 && hasNewOrders) {
+                    console.log('[Notification] No pending orders left, stopping alarm.')
                     stopAlert()
+                }
+                // Update known IDs to reflect accepted orders
+                if (currentPendingIds.size !== knownOrderIds.size) {
+                    setKnownOrderIds(currentPendingIds)
                 }
             }
         } catch (error) {
