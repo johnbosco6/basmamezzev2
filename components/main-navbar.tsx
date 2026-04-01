@@ -23,6 +23,11 @@ export function MainNavbar() {
     // Scroll tracking for hide/show behavior
     const [isVisible, setIsVisible] = useState(true)
     const [lastScrollY, setLastScrollY] = useState(0)
+    const [mounted, setMounted] = useState(false)
+
+    useEffect(() => {
+        setMounted(true)
+    }, [])
 
     useEffect(() => {
         const controlNavbar = () => {
@@ -123,7 +128,7 @@ export function MainNavbar() {
                     >
                         <ShoppingBag className="h-5 w-5 text-white transition-colors group-hover:text-[#BA9D76]" />
                         <AnimatePresence>
-                            {totalItems > 0 && (
+                            {mounted && totalItems > 0 && (
                                 <motion.span
                                     initial={{ scale: 0, opacity: 0 }}
                                     animate={{ scale: 1, opacity: 1 }}

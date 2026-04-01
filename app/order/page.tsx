@@ -30,6 +30,7 @@ const IconMap = {
     salatki: Utensils,
     desery: Utensils,
     dodatki: Utensils,
+    zupy: Utensils,
     napoje: Wine,
     alkohole: Wine,
 }
@@ -140,12 +141,10 @@ export default function OrderPage() {
 
     // Handle browser back button for modal
     useEffect(() => {
-        const handlePopState = (event: PopStateEvent) => {
+        const handlePopState = () => {
             if (selectedImage) {
-                event.preventDefault()
                 setSelectedImage(null)
-                // Push the current state back to prevent navigation
-                window.history.pushState(null, "", window.location.href)
+                // We don't call preventDefault() as it doesn't exist on PopStateEvent
             }
         }
 
@@ -339,7 +338,7 @@ export default function OrderPage() {
                             </div>
 
                             {/* Render regular categories only for ordering */}
-                            {section.categories.map((category, categoryIndex) => {
+                            {(section.categories || []).map((category, categoryIndex) => {
                                 return (
                                     <div key={categoryIndex} className="mb-16">
                                         <h3 className={`text-2xl font-semibold mb-8 text-center text-gray-800 ${archivo.className}`}>
@@ -347,9 +346,12 @@ export default function OrderPage() {
                                         </h3>
 
                                         <div className="grid gap-6 md:gap-8">
-                                            {category.items.filter(item => !item.notAvailableOnline).map((item, itemIndex) => {
+                                            {(category.items || []).filter(item => item && !item.notAvailableOnline).map((item, itemIndex) => {
                                                 const isSafe = isDishSafe(item.allergens)
-                                                const canOrder = item.price && parsePrice(item.price) > 0 && !(["specjalne-okazje", "sniadania", "alkohole"].includes(section.id))
+                                                const canOrder = item.price && 
+                                                    typeof item.price === "string" && 
+                                                    parsePrice(item.price) > 0 && 
+                                                    !(["specjalne-okazje", "sniadania", "alkohole"].includes(section.id))
 
                                                 return (
                                                     <div

@@ -75,8 +75,10 @@ function getCurrentStatus() {
 export function HeaderHoursWidget() {
   const [status, setStatus] = useState(getCurrentStatus())
   const [currentTime, setCurrentTime] = useState(new Date())
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    setMounted(true)
     const interval = setInterval(() => {
       setCurrentTime(new Date())
       setStatus(getCurrentStatus())
@@ -104,19 +106,25 @@ export function HeaderHoursWidget() {
       >
         <Clock className="h-3 w-3 text-[#BA9D76]" />
         <div className="flex flex-col leading-tight">
-          <div className="flex items-center gap-1.5">
-            <span className={`text-[10px] font-mono text-white ${archivo.className}`}>{formatTime(currentTime)}</span>
-            <div className={`flex items-center gap-1 ${archivo.className}`}>
-              <div className={`w-1.5 h-1.5 rounded-full ${status.isOpen ? "bg-green-400" : "bg-red-400"}`} />
-              <span className={`text-[9px] font-bold ${status.isOpen ? "text-green-400" : "text-red-400"}`}>
-                {status.isOpen ? "OTWARTE" : "ZAMKNIĘTE"}
-              </span>
-            </div>
-          </div>
-          {!status.isOpen && status.nextOpening && (
-            <span className={`text-[9px] text-white/70 font-light ${archivo.className}`}>
-              Otwieramy: {status.nextOpening}
-            </span>
+          {mounted ? (
+            <>
+              <div className="flex items-center gap-1.5">
+                <span className={`text-[10px] font-mono text-white ${archivo.className}`}>{formatTime(currentTime)}</span>
+                <div className={`flex items-center gap-1 ${archivo.className}`}>
+                  <div className={`w-1.5 h-1.5 rounded-full ${status.isOpen ? "bg-green-400" : "bg-red-400"}`} />
+                  <span className={`text-[9px] font-bold ${status.isOpen ? "text-green-400" : "text-red-400"}`}>
+                    {status.isOpen ? "OTWARTE" : "ZAMKNIĘTE"}
+                  </span>
+                </div>
+              </div>
+              {!status.isOpen && status.nextOpening && (
+                <span className={`text-[9px] text-white/70 font-light ${archivo.className}`}>
+                  Otwieramy: {status.nextOpening}
+                </span>
+              )}
+            </>
+          ) : (
+            <div className="h-[14px] w-24 bg-white/5 animate-pulse rounded" />
           )}
         </div>
       </div>
