@@ -51,8 +51,8 @@ export function OrderAnalyticsChart({ orders }: OrderAnalyticsChartProps) {
     return (
         <div className={`backdrop-blur-lg bg-white/5 border border-white/10 rounded-2xl p-6 ${archivo.className}`}>
             <div className="mb-6">
-                <h3 className="text-sm font-bold text-white/60 uppercase tracking-widest">Analityka — Przychód wg Godziny</h3>
-                <p className="text-xs text-white/30 mt-1">Na podstawie ukończonych zamówień</p>
+                <h3 className="text-sm font-bold text-white/60 uppercase tracking-widest">Analityka — Przychód wg Godziny (Ten Miesiąc)</h3>
+                <p className="text-xs text-white/30 mt-1">Łączny przychód ze wszystkich zamówień w bieżącym miesiącu</p>
             </div>
             <ResponsiveContainer width="100%" height={200}>
                 <BarChart data={displayData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
@@ -80,7 +80,7 @@ export function OrderAnalyticsChart({ orders }: OrderAnalyticsChartProps) {
             </ResponsiveContainer>
             <div className="mt-4 flex gap-6">
                 <div>
-                    <p className="text-[10px] text-white/40 uppercase tracking-widest">Łączny Przychód</p>
+                    <p className="text-[10px] text-white/40 uppercase tracking-widest">Suma Miesięczna</p>
                     <p className="text-[#BA9D76] font-bold text-lg">
                         {orders.reduce((s, o) => s + (o.totalAmount || 0), 0).toFixed(2)} zł
                     </p>

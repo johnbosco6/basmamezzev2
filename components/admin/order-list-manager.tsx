@@ -1,8 +1,10 @@
 'use client'
 
 import { useState, useEffect, useMemo, useCallback } from 'react'
-import { getOrders } from '@/app/actions/admin-actions'
+import { getOrders, getMonthlyOrders } from '@/app/actions/admin-actions'
 import { OrderCard } from './order-card'
+import { OrderAnalyticsChart } from './order-analytics-chart'
+import { CsvDownloadButton } from './csv-download-button'
 import { TrendingUp, ShoppingBag, UtensilsCrossed, Users, RefreshCcw } from 'lucide-react'
 import { client } from '@/lib/sanity'
 
@@ -12,14 +14,22 @@ interface OrderListManagerProps {
 
 export function OrderListManager({ initialOrders }: OrderListManagerProps) {
     const [orders, setOrders] = useState(initialOrders)
+    const [monthlyOrders, setMonthlyOrders] = useState<any[]>([])
     const [isPolling, setIsPolling] = useState(false)
 
     const refreshOrders = useCallback(async () => {
         setIsPolling(true)
         try {
-            const latest = await getOrders()
+            const [latest, monthly] = await Promise.all([
+                getOrders(),
+                getMonthlyOrders()
+            ])
+            
             if (latest && latest.length > 0) {
                 setOrders(latest)
+            }
+            if (monthly) {
+                setMonthlyOrders(monthly)
             }
         } catch (error) {
             console.error('Failed to poll orders:', error)
@@ -54,13 +64,18 @@ export function OrderListManager({ initialOrders }: OrderListManagerProps) {
                 new Date(b.completedAt || b.orderDate).getTime() - new Date(a.completedAt || a.orderDate).getTime()
             ), [orders])
 
-    // Stats
+    // Stats (using monthlyOrders for persistence)
     const stats = useMemo(() => {
-        const revenue = completedOrders.reduce((sum: number, o: any) => sum + (o.totalAmount || 0), 0)
-        const dishes = completedOrders.reduce((sum: number, o: any) => 
+        const completedMonthly = monthlyOrders.filter((o: any) => o.status === 'delivered' || o.status === 'picked_up')
+        const revenue = completedMonthly.reduce((sum: number, o: any) => sum + (o.totalAmount || 0), 0)
+        const dishes = completedMonthly.reduce((sum: number, o: any) => 
             sum + (o.items?.reduce((s: number, i: any) => s + (i.quantity || 0), 0) || 0), 0)
-        return { revenue, dishes }
-    }, [completedOrders])
+        return { 
+            revenue, 
+            dishes,
+            count: completedMonthly.length 
+        }
+    }, [monthlyOrders])
 
     return (
         <main className="p-4 md:p-10 space-y-8 md:space-y-12 overflow-y-auto">
@@ -70,21 +85,21 @@ export function OrderListManager({ initialOrders }: OrderListManagerProps) {
                     <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform text-[#BA9D76]">
                         <TrendingUp size={40} className="md:w-12 md:h-12 text-[#BA9D76]" />
                     </div>
-                    <p className="text-[11px] font-bold text-white/40 uppercase tracking-widest mb-1.5">Dziś Sprzedano</p>
+                    <p className="text-[11px] font-bold text-white/40 uppercase tracking-widest mb-1.5">Przychód (Mc)</p>
                     <h3 className="text-2xl md:text-3xl font-bold text-[#BA9D76] leading-none">{stats.revenue.toFixed(2)} zł</h3>
                 </div>
                 <div className="backdrop-blur-lg bg-white/5 border border-white/10 p-5 md:p-6 rounded-2xl shadow-2xl relative overflow-hidden group">
                     <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
                         <ShoppingBag size={40} className="md:w-12 md:h-12" />
                     </div>
-                    <p className="text-[11px] font-bold text-white/40 uppercase tracking-widest mb-1.5">Zakończone</p>
-                    <h3 className="text-2xl md:text-3xl font-bold leading-none">{completedOrders.length}</h3>
+                    <p className="text-[11px] font-bold text-white/40 uppercase tracking-widest mb-1.5">Zakończone (Mc)</p>
+                    <h3 className="text-2xl md:text-3xl font-bold leading-none">{stats.count}</h3>
                 </div>
                 <div className="backdrop-blur-lg bg-white/5 border border-white/10 p-5 md:p-6 rounded-2xl shadow-2xl relative overflow-hidden group">
                     <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
                         <UtensilsCrossed size={40} className="md:w-12 md:h-12" />
                     </div>
-                    <p className="text-[11px] font-bold text-white/40 uppercase tracking-widest mb-1.5">Wydane Potrawy</p>
+                    <p className="text-[11px] font-bold text-white/40 uppercase tracking-widest mb-1.5">Wydane Potrawy (Mc)</p>
                     <h3 className="text-2xl md:text-3xl font-bold leading-none">{stats.dishes}</h3>
                 </div>
                 <div className="backdrop-blur-lg bg-white/5 border border-white/10 p-5 md:p-6 rounded-2xl shadow-2xl relative overflow-hidden group border-l-4 border-l-[#BA9D76]">
@@ -132,6 +147,58 @@ export function OrderListManager({ initialOrders }: OrderListManagerProps) {
                     </div>
                 )}
             </section>
+
+            {/* History + Analytics */}
+            {(completedOrders.length > 0 || monthlyOrders.length > 0) && (
+                <section className="pt-8 md:pt-10 border-t border-white/5 space-y-8">
+                    <div className="flex items-center justify-between gap-4 md:gap-6 w-full">
+                        <h2 className="text-lg md:text-xl font-bold text-white/60 shrink-0">Historia Zamówień</h2>
+                        <div className="h-px bg-white/5 flex-1 hidden sm:block" />
+                        <CsvDownloadButton />
+                    </div>
+
+                    <OrderAnalyticsChart orders={monthlyOrders} />
+
+                    {completedOrders.length > 0 && (
+                        <div className="space-y-3">
+                            {completedOrders.map((order: any) => (
+                                <div
+                                    key={order._id}
+                                    className="backdrop-blur-md bg-white/5 border border-white/10 p-4 md:p-5 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 group hover:bg-white/10 transition-all shadow-lg"
+                                >
+                                    <div className="flex items-center gap-4 flex-1 min-w-0">
+                                        <div className="h-10 w-10 rounded-full bg-green-500/20 flex items-center justify-center text-green-500 border border-green-500/20 text-[10px] font-bold shrink-0">
+                                            OK
+                                        </div>
+                                        <div className="min-w-0">
+                                            <h4 className="font-bold text-[#BA9D76]">#{order.orderNumber?.slice(-4)}</h4>
+                                            <p className="text-white/70 text-sm truncate">{order.customerName}</p>
+                                            <p className="text-white/40 text-[10px] mt-0.5">
+                                                {order.orderType === 'delivery' ? '🚗 Dostawa' : '📦 Odbiór'} · {' '}
+                                                {order.paymentMethod === 'p24' ? '💳 Online' : order.paymentMethod === 'cash' ? '💵 Gotówka' : '📟 Karta (kier.)'} · {' '}
+                                                Zakończono:{' '}
+                                                {new Date(order.completedAt || order.orderDate).toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' })}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex-1 min-w-0 hidden md:block">
+                                        <p className="text-[10px] text-white/40 uppercase font-bold tracking-widest mb-1">Zamówienie</p>
+                                        <p className="text-xs text-white/70 line-clamp-1 italic">
+                                            {order.items?.map((i: any) => `${i.quantity}x ${i.name || 'Produkt'}`).join(', ')}
+                                        </p>
+                                    </div>
+
+                                    <div className="text-right shrink-0">
+                                        <p className="text-[10px] text-white/40 uppercase font-bold tracking-widest mb-0.5">Kwota</p>
+                                        <p className="font-bold text-[#BA9D76]">{order.totalAmount?.toFixed(2)} zł</p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </section>
+            )}
         </main>
     )
 }

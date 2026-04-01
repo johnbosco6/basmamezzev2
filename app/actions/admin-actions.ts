@@ -257,3 +257,30 @@ export async function getHistoryOrders(dateStr?: string) {
         return []
     }
 }
+
+/**
+ * Fetches all orders for the current calendar month,
+ * including archived ones, for analytics purposes.
+ */
+export async function getMonthlyOrders() {
+    try {
+        const now = new Date()
+        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString()
+        
+        const query = `*[_type == "order" && orderDate >= $startOfMonth] | order(orderDate desc) {
+            _id,
+            totalAmount,
+            orderDate,
+            completedAt,
+            status,
+            items[]{
+                quantity
+            }
+        }`
+        
+        return await client.fetch(query, { startOfMonth }, { cache: "no-store" })
+    } catch (error) {
+        console.error('Failed to fetch monthly orders:', error)
+        return []
+    }
+}
