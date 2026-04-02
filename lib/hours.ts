@@ -5,8 +5,8 @@ export interface OpeningHours {
 }
 
 export const OPENING_HOURS: OpeningHours[] = [
-  // Sunday (0)
-  { day: 0, start: "10:00", end: "21:45" },
+  // Sunday (0) — weekend
+  { day: 0, start: "10:00", end: "22:45" },
   // Monday (1)
   { day: 1, start: "12:00", end: "21:45" },
   // Tuesday (2)
@@ -17,8 +17,8 @@ export const OPENING_HOURS: OpeningHours[] = [
   { day: 4, start: "12:00", end: "21:45" },
   // Friday (5)
   { day: 5, start: "12:00", end: "21:45" },
-  // Saturday (6)
-  { day: 6, start: "10:00", end: "21:45" },
+  // Saturday (6) — weekend
+  { day: 6, start: "10:00", end: "22:45" },
 ]
 
 function timeToMinutes(time: string): number {
@@ -29,7 +29,7 @@ function timeToMinutes(time: string): number {
 
 /**
  * Checks if the restaurant is currently open for orders.
- * Orders are allowed from opening time until 21:45 everyday.
+ * Orders are allowed from opening time until 21:45 on weekdays, 22:45 on weekends (Sat/Sun).
  */
 export function isRestaurantOpenForOrders() {
     const now = new Date()
