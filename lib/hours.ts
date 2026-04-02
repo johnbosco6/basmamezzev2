@@ -32,39 +32,8 @@ function timeToMinutes(time: string): number {
  * Orders are allowed from opening time until 21:45 on weekdays, 22:45 on weekends (Sat/Sun).
  */
 export function isRestaurantOpenForOrders() {
-    const now = new Date()
-    /*
-     * We need to convert UTC to Poland time (Europe/Warsaw)
-     * because the server might be running in a different timezone.
-     */
-    const warsawFormatter = new Intl.DateTimeFormat('en-US', {
-        timeZone: 'Europe/Warsaw',
-        hour12: false,
-        hour: 'numeric',
-        minute: 'numeric',
-        second: 'numeric',
-        weekday: 'short'
-    });
-
-    const options = { timeZone: 'Europe/Warsaw', hour12: false };
-    const warsawHours = parseInt(new Intl.DateTimeFormat('en-US', { ...options, hour: 'numeric' }).format(now));
-    const warsawMinutes = parseInt(new Intl.DateTimeFormat('en-US', { ...options, minute: 'numeric' }).format(now));
-    
-    // To get the Warsaw day of week, we format the date to a localized string and parse the weekday. 0=Sunday
-    const warsawWeekdayStr = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Warsaw', weekday: 'short' }).format(now);
-    const dayMap: Record<string, number> = { 'Sun': 0, 'Mon': 1, 'Tue': 2, 'Wed': 3, 'Thu': 4, 'Fri': 5, 'Sat': 6 };
-    const currentDay = dayMap[warsawWeekdayStr as string] || 0;
-
-    const currentMinutes = warsawHours * 60 + warsawMinutes;
-
-    const todayHours = OPENING_HOURS.find((h) => h.day === currentDay);
-    if (!todayHours) return { isOpen: false };
-
-    const startMinutes = timeToMinutes(todayHours.start);
-    const endMinutes = timeToMinutes(todayHours.end);
-
-    const isOpen = currentMinutes >= startMinutes && currentMinutes < endMinutes;
-    return { isOpen };
+    // ⚠️ TEMPORARY: Forced open for live testing — REVERT AFTER TEST
+    return { isOpen: true };
 }
 
 export function formatNextOpening() {
