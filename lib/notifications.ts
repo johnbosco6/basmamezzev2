@@ -6,6 +6,7 @@ const resend = new Resend(process.env.RESEND_API_KEY || 're_dummy_key_for_build'
 // ─── Types ───────────────────────────────────────────────
 interface OrderItem {
     name: string
+    description?: string
     quantity: number
     price: number
 }
@@ -22,7 +23,7 @@ interface OrderDetails {
     discountAmount?: number
     promoCode?: string
     totalAmount: number
-    paymentMethod: 'p24' | 'cash' | 'card_on_delivery'
+    paymentMethod?: string
     customerAddress?: {
         street?: string
         houseNumber?: string
@@ -60,10 +61,18 @@ function formatAddress(address: any): string {
 
 // ─── HTML Email Builder ──────────────────────────────────
 function buildOrderConfirmationHTML(order: OrderDetails): string {
+    const paymentLabels: { [key: string]: string } = {
+        p24: '💳 Płatność Online (Przelewy24)',
+        cash: '💵 Gotówka przy odbiorze',
+        card_on_delivery: '💳 Karta przy odbiorze',
+    }
+    const paymentLabel = paymentLabels[order.paymentMethod || ''] || order.paymentMethod || 'Nieznana'
+
     const itemRows = order.items.map(item => `
         <tr>
             <td style="padding: 12px 0; border-bottom: 1px solid #eee; font-family: Arial, sans-serif; font-size: 14px; color: #333;">
                 ${escapeHTML(item.name)}
+                ${item.description ? `<br/><span style="font-size: 12px; color: #999; font-style: italic;">${escapeHTML(item.description)}</span>` : ''}
             </td>
             <td style="padding: 12px 0; border-bottom: 1px solid #eee; font-family: Arial, sans-serif; font-size: 14px; color: #666; text-align: center;">
                 ${item.quantity}
@@ -77,6 +86,8 @@ function buildOrderConfirmationHTML(order: OrderDetails): string {
     const addressBlock = order.orderType === 'delivery'
         ? `<p style="margin: 8px 0; font-size: 14px; color: #555;">📍 <strong>Adres dostawy:</strong> ${formatAddress(order.customerAddress)}</p>`
         : `<p style="margin: 8px 0; font-size: 14px; color: #555;">📦 <strong>Odbiór osobisty</strong> w restauracji</p>`
+
+    const paymentBlock = `<p style="margin: 8px 0; font-size: 14px; color: #555;">💳 <strong>Metoda płatności:</strong> ${paymentLabel}</p>`
 
     return `
     <!DOCTYPE html>
@@ -174,10 +185,11 @@ function buildOrderConfirmationHTML(order: OrderDetails): string {
                             </td>
                         </tr>
 
-                        <!-- Address / Pickup Info -->
+                        <!-- Address / Pickup Info + Payment Method -->
                         <tr>
                             <td style="padding: 10px 30px 20px;">
                                 ${addressBlock}
+                                ${paymentBlock}
                             </td>
                         </tr>
 
@@ -334,7 +346,11 @@ export async function sendOrderStatusUpdate(
 export async function sendAdminOrderAlert(order: OrderDetails) {
     if (process.env.RESEND_API_KEY) {
         try {
-            const itemsList = order.items.map(i => `${i.quantity}x ${i.name}`).join(', ')
+            const itemsList = order.items.map(i => {
+                let line = `${i.quantity}x ${i.name}`
+                if (i.description) line += ` <span style="color: #999; font-style: italic;">(${escapeHTML(i.description)})</span>`
+                return line
+            }).join('<br/>')
             const addressInfo = order.orderType === 'delivery' 
                 ? `Adres: ${formatAddress(order.customerAddress)}` 
                 : 'Odbiór osobisty'
@@ -344,6 +360,7 @@ export async function sendAdminOrderAlert(order: OrderDetails) {
                 cash: 'Gotówka przy odbiorze 💵',
                 card_on_delivery: 'Karta przy odbiorze 📟',
             }
+            const paymentLabel = paymentLabels[order.paymentMethod || ''] || order.paymentMethod || 'Nieznana'
 
             await resend.emails.send({
                 from: 'Basma Admin <zamowienia@basmamezze.pl>',
@@ -354,7 +371,7 @@ export async function sendAdminOrderAlert(order: OrderDetails) {
                         <h1 style="color: #BA9D76; margin-top: 0; font-size: 24px;">🚨 Nowe Zamówienie!</h1>
                         <div style="background: #fdfaf6; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 5px solid #BA9D76;">
                             <p style="font-size: 18px; margin: 0;"><strong>Numer:</strong> #${order.orderNumber}</p>
-                            <p style="margin: 5px 0 0;"><strong>Metoda płatności:</strong> <span style="color: #BA9D76; font-weight: bold;">${paymentLabels[order.paymentMethod] || order.paymentMethod}</span></p>
+                            <p style="margin: 5px 0 0;"><strong>Metoda płatności:</strong> <span style="color: #BA9D76; font-weight: bold;">${paymentLabel}</span></p>
                         </div>
 
                         <p><strong>Klient:</strong> ${order.customerName} (${order.customerPhone})</p>

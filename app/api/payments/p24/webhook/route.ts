@@ -63,6 +63,7 @@ export async function POST(req: NextRequest) {
                 subtotal: order.subtotal || 0,
                 deliveryFee: order.deliveryFee || 0,
                 totalAmount: order.totalAmount || 0,
+                paymentMethod: 'p24',
                 customerAddress: order.customerAddress,
             })
             console.log(`P24 Webhook: Notification sent for order #${order.orderNumber}`)

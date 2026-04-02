@@ -152,7 +152,7 @@ export async function POST(req: NextRequest) {
                 discountAmount: discountAmount || 0,
                 promoCode: promoCode || null,
                 totalAmount: totalPrice || 0,
-                paymentMethod: paymentMethod || 'p24',
+                paymentMethod: paymentMethod || 'cash',
                 customerAddress: deliveryAddress,
             }).catch(err => console.error('[Order API] Notification error:', err))
         }
