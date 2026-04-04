@@ -16,6 +16,7 @@ export function OrderListManager({ initialOrders }: OrderListManagerProps) {
     const [orders, setOrders] = useState(initialOrders)
     const [monthlyOrders, setMonthlyOrders] = useState<any[]>([])
     const [isPolling, setIsPolling] = useState(false)
+    const [timeRange, setTimeRange] = useState<'day' | 'month'>('month')
 
     const refreshOrders = useCallback(async () => {
         setIsPolling(true)
@@ -66,40 +67,90 @@ export function OrderListManager({ initialOrders }: OrderListManagerProps) {
 
     // Stats (using monthlyOrders for persistence)
     const stats = useMemo(() => {
-        const completedMonthly = monthlyOrders.filter((o: any) => o.status === 'delivered' || o.status === 'picked_up')
-        const revenue = completedMonthly.reduce((sum: number, o: any) => sum + (o.totalAmount || 0), 0)
-        const dishes = completedMonthly.reduce((sum: number, o: any) => 
+        const today = new Date()
+        today.setHours(0, 0, 0, 0)
+
+        const filteredOrders = timeRange === 'day' 
+            ? monthlyOrders.filter((o: any) => {
+                const orderDate = new Date(o.completedAt || o.orderDate)
+                return orderDate >= today
+            })
+            : monthlyOrders
+
+        const completed = filteredOrders.filter((o: any) => o.status === 'delivered' || o.status === 'picked_up')
+        const revenue = completed.reduce((sum: number, o: any) => sum + (o.totalAmount || 0), 0)
+        const dishes = completed.reduce((sum: number, o: any) => 
             sum + (o.items?.reduce((s: number, i: any) => s + (i.quantity || 0), 0) || 0), 0)
+        
         return { 
             revenue, 
             dishes,
-            count: completedMonthly.length 
+            count: completed.length 
         }
-    }, [monthlyOrders])
+    }, [monthlyOrders, timeRange])
 
     return (
         <main className="p-4 md:p-10 space-y-8 md:space-y-12 overflow-y-auto">
+            {/* Header + Time Toggle */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-2">
+                <div>
+                    <h1 className="text-3xl font-black tracking-tighter text-white lg:text-4xl">
+                        Basma <span className="text-[#BA9D76]">Admin</span>
+                    </h1>
+                    <p className="text-white/40 text-sm mt-1">Zarządzaj swoją restauracją w czasie rzeczywistym.</p>
+                </div>
+
+                <div className="flex bg-white/5 p-1 rounded-xl border border-white/10 self-start md:self-center">
+                    <button
+                        onClick={() => setTimeRange('day')}
+                        className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${
+                            timeRange === 'day' 
+                                ? "bg-[#BA9D76] text-white shadow-lg" 
+                                : "text-white/40 hover:text-white/60"
+                        }`}
+                    >
+                        Dziś (Dz)
+                    </button>
+                    <button
+                        onClick={() => setTimeRange('month')}
+                        className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${
+                            timeRange === 'month' 
+                                ? "bg-[#BA9D76] text-white shadow-lg" 
+                                : "text-white/40 hover:text-white/60"
+                        }`}
+                    >
+                        Miesiąc (Mc)
+                    </button>
+                </div>
+            </div>
+
             {/* Stats Cards */}
             <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                 <div className="backdrop-blur-lg bg-white/5 border border-white/10 p-5 md:p-6 rounded-2xl shadow-2xl relative overflow-hidden group">
                     <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform text-[#BA9D76]">
                         <TrendingUp size={40} className="md:w-12 md:h-12 text-[#BA9D76]" />
                     </div>
-                    <p className="text-[11px] font-bold text-white/40 uppercase tracking-widest mb-1.5">Przychód (Mc)</p>
+                    <p className="text-[11px] font-bold text-white/40 uppercase tracking-widest mb-1.5">
+                        Przychód {timeRange === 'day' ? '(Dz)' : '(Mc)'}
+                    </p>
                     <h3 className="text-2xl md:text-3xl font-bold text-[#BA9D76] leading-none">{stats.revenue.toFixed(2)} zł</h3>
                 </div>
                 <div className="backdrop-blur-lg bg-white/5 border border-white/10 p-5 md:p-6 rounded-2xl shadow-2xl relative overflow-hidden group">
                     <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
                         <ShoppingBag size={40} className="md:w-12 md:h-12" />
                     </div>
-                    <p className="text-[11px] font-bold text-white/40 uppercase tracking-widest mb-1.5">Zakończone (Mc)</p>
+                    <p className="text-[11px] font-bold text-white/40 uppercase tracking-widest mb-1.5">
+                        Zakończone {timeRange === 'day' ? '(Dz)' : '(Mc)'}
+                    </p>
                     <h3 className="text-2xl md:text-3xl font-bold leading-none">{stats.count}</h3>
                 </div>
                 <div className="backdrop-blur-lg bg-white/5 border border-white/10 p-5 md:p-6 rounded-2xl shadow-2xl relative overflow-hidden group">
                     <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
                         <UtensilsCrossed size={40} className="md:w-12 md:h-12" />
                     </div>
-                    <p className="text-[11px] font-bold text-white/40 uppercase tracking-widest mb-1.5">Wydane Potrawy (Mc)</p>
+                    <p className="text-[11px] font-bold text-white/40 uppercase tracking-widest mb-1.5">
+                        Wydane Potrawy {timeRange === 'day' ? '(Dz)' : '(Mc)'}
+                    </p>
                     <h3 className="text-2xl md:text-3xl font-bold leading-none">{stats.dishes}</h3>
                 </div>
                 <div className="backdrop-blur-lg bg-white/5 border border-white/10 p-5 md:p-6 rounded-2xl shadow-2xl relative overflow-hidden group border-l-4 border-l-[#BA9D76]">
