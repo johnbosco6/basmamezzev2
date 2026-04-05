@@ -55,6 +55,16 @@ export function isRestaurantOpenForOrders() {
     const dayMap: Record<string, number> = { 'Sun': 0, 'Mon': 1, 'Tue': 2, 'Wed': 3, 'Thu': 4, 'Fri': 5, 'Sat': 6 };
     const currentDay = dayMap[warsawWeekdayStr as string] || 0;
 
+    // Holiday Override (April 5-6, 2026 - Easter)
+    const yyyy = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Warsaw', year: 'numeric' }).format(now);
+    const mm = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Warsaw', month: '2-digit' }).format(now);
+    const dd = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Warsaw', day: '2-digit' }).format(now);
+    const dateStr = `${yyyy}-${mm}-${dd}`;
+    
+    if (dateStr === "2026-04-05" || dateStr === "2026-04-06") {
+        return { isOpen: false };
+    }
+
     const currentMinutes = warsawHours * 60 + warsawMinutes;
 
     const todayHours = OPENING_HOURS.find((h) => h.day === currentDay);
@@ -82,6 +92,16 @@ export function formatNextOpening() {
 
     const currentTime = warsawHours * 60 + warsawMinutes;
     
+    // Holiday Override (April 5-6, 2026 - Easter)
+    const yyyy = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Warsaw', year: 'numeric' }).format(now);
+    const mm = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Warsaw', month: '2-digit' }).format(now);
+    const dd = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Warsaw', day: '2-digit' }).format(now);
+    const dateStr = `${yyyy}-${mm}-${dd}`;
+    
+    if (dateStr === "2026-04-05" || dateStr === "2026-04-06") {
+        return `we wtorek o 12:00`;
+    }
+
     // Check if opens later today
     const todayHours = OPENING_HOURS.find((h) => h.day === currentDay)
     if (todayHours && currentTime < timeToMinutes(todayHours.start)) {
