@@ -28,44 +28,63 @@ function timeToMinutes(time: string): number {
 }
 
 /**
+ * Returns a bulletproof state object for the exact current time in Europe/Warsaw.
+ */
+export function getWarsawTimeState(date?: Date) {
+    const now = date || new Date();
+    const formatter = new Intl.DateTimeFormat('en-US', {
+        timeZone: 'Europe/Warsaw',
+        weekday: 'short',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: false,
+    });
+
+    const parts = formatter.formatToParts(now);
+    
+    let wDay = '';
+    let wHour = 0;
+    let wMinute = 0;
+    let wYear = '';
+    let wMonth = '';
+    let wDayOfMonth = '';
+
+    for (const part of parts) {
+        if (part.type === 'weekday') wDay = part.value;
+        if (part.type === 'hour') wHour = parseInt(part.value, 10);
+        if (part.type === 'minute') wMinute = parseInt(part.value, 10);
+        if (part.type === 'year') wYear = part.value;
+        if (part.type === 'month') wMonth = part.value;
+        if (part.type === 'day') wDayOfMonth = part.value;
+    }
+
+    // Correct edge case where some browsers/node versions report midnight as '24' instead of '0' when hour12 is false
+    if (wHour === 24) wHour = 0;
+
+    const dayMap: Record<string, number> = { 'Sun': 0, 'Mon': 1, 'Tue': 2, 'Wed': 3, 'Thu': 4, 'Fri': 5, 'Sat': 6 };
+    const currentDay = dayMap[wDay] ?? 0;
+
+    return {
+        currentDay,
+        minutesSinceMidnight: wHour * 60 + wMinute,
+        dateString: `${wYear}-${wMonth}-${wDayOfMonth}`,
+    };
+}
+
+/**
  * Checks if the restaurant is currently open for orders.
  * Orders are allowed from opening time until 21:45 on weekdays, 22:45 on weekends (Sat/Sun).
  */
 export function isRestaurantOpenForOrders() {
-    const now = new Date()
-    /*
-     * We need to convert UTC to Poland time (Europe/Warsaw)
-     * because the server might be running in a different timezone.
-     */
-    const warsawFormatter = new Intl.DateTimeFormat('en-US', {
-        timeZone: 'Europe/Warsaw',
-        hour12: false,
-        hour: 'numeric',
-        minute: 'numeric',
-        second: 'numeric',
-        weekday: 'short'
-    });
-
-    const options = { timeZone: 'Europe/Warsaw', hour12: false };
-    const warsawHours = parseInt(new Intl.DateTimeFormat('en-US', { ...options, hour: 'numeric' }).format(now));
-    const warsawMinutes = parseInt(new Intl.DateTimeFormat('en-US', { ...options, minute: 'numeric' }).format(now));
+    const { currentDay, minutesSinceMidnight, dateString } = getWarsawTimeState();
     
-    // To get the Warsaw day of week, we format the date to a localized string and parse the weekday. 0=Sunday
-    const warsawWeekdayStr = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Warsaw', weekday: 'short' }).format(now);
-    const dayMap: Record<string, number> = { 'Sun': 0, 'Mon': 1, 'Tue': 2, 'Wed': 3, 'Thu': 4, 'Fri': 5, 'Sat': 6 };
-    const currentDay = dayMap[warsawWeekdayStr as string] || 0;
-
     // Holiday Override (April 5-6, 2026 - Easter)
-    const yyyy = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Warsaw', year: 'numeric' }).format(now);
-    const mm = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Warsaw', month: '2-digit' }).format(now);
-    const dd = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Warsaw', day: '2-digit' }).format(now);
-    const dateStr = `${yyyy}-${mm}-${dd}`;
-    
-    if (dateStr === "2026-04-05" || dateStr === "2026-04-06") {
+    if (dateString === "2026-04-05" || dateString === "2026-04-06") {
         return { isOpen: false };
     }
-
-    const currentMinutes = warsawHours * 60 + warsawMinutes;
 
     const todayHours = OPENING_HOURS.find((h) => h.day === currentDay);
     if (!todayHours) return { isOpen: false };
@@ -73,44 +92,27 @@ export function isRestaurantOpenForOrders() {
     const startMinutes = timeToMinutes(todayHours.start);
     const endMinutes = timeToMinutes(todayHours.end);
 
-    const isOpen = currentMinutes >= startMinutes && currentMinutes < endMinutes;
+    const isOpen = minutesSinceMidnight >= startMinutes && minutesSinceMidnight < endMinutes;
     return { isOpen };
 }
 
 export function formatNextOpening() {
-    const now = new Date();
-    
-    // Warsaw timezone configuration
-    const options = { timeZone: 'Europe/Warsaw', hour12: false };
-    const warsawHours = parseInt(new Intl.DateTimeFormat('en-US', { ...options, hour: 'numeric' }).format(now));
-    const warsawMinutes = parseInt(new Intl.DateTimeFormat('en-US', { ...options, minute: 'numeric' }).format(now));
-    
-    // Warsaw weekday
-    const warsawWeekdayStr = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Warsaw', weekday: 'short' }).format(now);
-    const dayMap: Record<string, number> = { 'Sun': 0, 'Mon': 1, 'Tue': 2, 'Wed': 3, 'Thu': 4, 'Fri': 5, 'Sat': 6 };
-    const currentDay = dayMap[warsawWeekdayStr as string] || 0;
-
-    const currentTime = warsawHours * 60 + warsawMinutes;
+    const { currentDay, minutesSinceMidnight, dateString } = getWarsawTimeState();
     
     // Holiday Override (April 5-6, 2026 - Easter)
-    const yyyy = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Warsaw', year: 'numeric' }).format(now);
-    const mm = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Warsaw', month: '2-digit' }).format(now);
-    const dd = new Intl.DateTimeFormat('en-US', { timeZone: 'Europe/Warsaw', day: '2-digit' }).format(now);
-    const dateStr = `${yyyy}-${mm}-${dd}`;
-    
-    if (dateStr === "2026-04-05" || dateStr === "2026-04-06") {
+    if (dateString === "2026-04-05" || dateString === "2026-04-06") {
         return `we wtorek o 12:00`;
     }
 
     // Check if opens later today
-    const todayHours = OPENING_HOURS.find((h) => h.day === currentDay)
-    if (todayHours && currentTime < timeToMinutes(todayHours.start)) {
-        return `Dziś o ${todayHours.start}`
+    const todayHours = OPENING_HOURS.find((h) => h.day === currentDay);
+    if (todayHours && minutesSinceMidnight < timeToMinutes(todayHours.start)) {
+        return `Dziś o ${todayHours.start}`;
     }
 
     // Find next day
-    const tomorrow = (currentDay + 1) % 7
-    const tomorrowHours = OPENING_HOURS.find((h) => h.day === tomorrow)
-    const dayNames = ["niedzielę", "poniedziałek", "wtorek", "środę", "czwartek", "piątek", "sobotę"]
-    return `w ${dayNames[tomorrow]} o ${tomorrowHours?.start || "12:00"}`
+    const tomorrow = (currentDay + 1) % 7;
+    const tomorrowHours = OPENING_HOURS.find((h) => h.day === tomorrow);
+    const dayNames = ["niedzielę", "poniedziałek", "wtorek", "środę", "czwartek", "piątek", "sobotę"];
+    return `w ${dayNames[tomorrow]} o ${tomorrowHours?.start || "12:00"}`;
 }
