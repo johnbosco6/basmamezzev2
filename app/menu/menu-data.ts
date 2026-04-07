@@ -128,7 +128,7 @@ export const menuData: MenuCategory[] = [
             name: "Syryjski",
             description: "Falafel, sałata, ogórek, pomidor, natka pietruszki, sos basma",
             price: "37 zł",
-            image: "/images/menu/wrap-syrian.jpeg",
+            image: "/images/menu/wrap-syryjski.jpeg",
             allergens: [1, 11],
           },
           {
@@ -144,7 +144,7 @@ export const menuData: MenuCategory[] = [
             name: "Libański",
             description: "Kurczak taouk, sałata, papryka, pepperoni, płatki chilli, natka pietruszki, sos basma",
             price: "39 zł",
-            image: "/images/menu/wrap-lebanese.jpeg",
+            image: "/images/menu/wrap-libanski.jpeg",
             allergens: [1, 7],
           },
           {
@@ -168,7 +168,7 @@ export const menuData: MenuCategory[] = [
             name: "Perski",
             description: "Kofta jagnięca, ubijana feta, sałata, pikle, natka pietruszki",
             price: "47 zł",
-            image: "/images/menu/wrap-persian.jpeg",
+            image: "/images/menu/wrap-perski.jpeg",
             allergens: [1, 7],
           },
         ],
@@ -352,7 +352,7 @@ export const menuData: MenuCategory[] = [
             name: "Arabski",
             description: "2x falafel, hummus, labneh, tabbouleh, muhammara, mix pikli, pita",
             price: "46 zł",
-            image: "/images/menu/mezze-platter-arabic-premium.jpeg",
+            image: "/images/menu/arabski.jpeg",
             allergens: [1, 7, 10, 11, 12],
           },
           {
@@ -360,7 +360,7 @@ export const menuData: MenuCategory[] = [
             name: "Libański",
             description: "2x Kibbeh, Hummus z białej fasoli, tabbouleh, grillowana papryka na labneh, mix pikli, pita",
             price: "46 zł",
-            image: "/images/menu/mezze-platter-jerusalem.jpeg", // Placeholder image or appropriate one
+            image: "/images/menu/talerz-libanski.jpeg", // Placeholder image or appropriate one
             allergens: [1, 3, 7, 8, 10, 11, 12],
           },
           {
@@ -384,7 +384,7 @@ export const menuData: MenuCategory[] = [
             name: "Wegański",
             description: "3x falafel, hummus, tabbouleh, muhammara, mix pikli, pita",
             price: "45 zł",
-            image: "/images/menu/mezze-platter-basma-premium.jpeg",
+            image: "/images/menu/weganski.jpeg",
             allergens: [1, 8, 10, 11, 12],
           },
         ],
