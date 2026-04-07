@@ -1,8 +1,7 @@
-
-import { getWarsawTimeState, isRestaurantOpenForOrders, formatNextOpening } from './lib/hours.ts';
+import { getWarsawTimeState, isRestaurantOpenForOrders, formatNextOpening } from '../lib/hours';
 
 // Helper to test a specific date
-function testDate(description, isoDateString) {
+function testDate(description: string, isoDateString: string) {
   const date = new Date(isoDateString);
   console.log(`\n--- ${description} ---`);
   console.log(`UTC Input:  ${date.toISOString()}`);
