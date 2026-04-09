@@ -70,7 +70,7 @@ export function MainNavbar() {
 
     const navLinkClass = (href: string) => {
         const isActive = pathname === href
-        return `flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-300 ${isActive
+        return `flex flex-col items-center gap-1 p-1 md:p-2 rounded-xl transition-all duration-300 ${isActive
                 ? "bg-white/20 shadow-lg text-[#BA9D76]"
                 : "hover:bg-white/20 hover:shadow-lg text-white/80 hover:text-[#BA9D76]"
             } group`
@@ -83,13 +83,13 @@ export function MainNavbar() {
             animate={{ y: isVisible ? 0 : -250 }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
         >
-            <div className="container mx-auto px-4 py-3 flex flex-col items-center gap-3">
+            <div className="container mx-auto px-1 md:px-4 py-3 flex flex-col items-center gap-3">
                 {/* Row 1: Primary Navigation with Logo in Center */}
                 <div className="w-full flex items-center justify-between">
                     {/* Left Spacer to balance the Cart on the right */}
-                    <div className="flex-1 hidden md:flex"></div>
+                    <div className="flex-1 flex"></div>
                     
-                    <nav className="flex items-center justify-center gap-2 md:gap-4 backdrop-blur-md bg-white/10 border border-white/20 rounded-full px-2 md:px-6 py-1.5 md:py-2 shadow-lg">
+                    <nav className="flex items-center justify-center gap-1 md:gap-4 backdrop-blur-md bg-white/10 border border-white/20 rounded-full px-1 md:px-6 py-1.5 md:py-2 shadow-lg">
                         <Link
                             href={isHomePage ? "#home" : "/"}
                             className={navLinkClass("/")}
