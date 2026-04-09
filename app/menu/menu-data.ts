@@ -324,7 +324,6 @@ export const menuData: MenuCategory[] = [
             name: "Menu degustacyjne",
             description: "Zestaw wszystkich mezze z 4x kibbeh i 4x falafel",
             price: "199 zł",
-            image: "/images/menu/MEZZE PLATTER 4 JERUSALEM.JPG",
             allergens: [1, 4, 7, 8, 10, 11],
           },
         ],
