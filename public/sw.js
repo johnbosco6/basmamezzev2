@@ -1,6 +1,6 @@
 // Basma Admin Service Worker — handles caching + push notifications
 
-const CACHE_NAME = 'admin-cache-v2';
+const CACHE_NAME = 'admin-cache-v3';
 const ADMIN_URL = '/admin';
 
 // Install: cache admin pages
@@ -51,11 +51,12 @@ self.addEventListener('fetch', (event) => {
 // Message from the client — show notification when requested
 self.addEventListener('message', (event) => {
     if (event.data && event.data.type === 'SHOW_NOTIFICATION') {
+        const uniqueTag = `basma-order-${Date.now()}`;
         self.registration.showNotification(event.data.title || '🔔 Nowe Zamówienie!', {
             body: event.data.body || 'Nowe zamówienie czeka na potwierdzenie!',
             icon: '/icons/icon-192x192.png',
             badge: '/icons/icon-192x192.png',
-            tag: 'basma-new-order',
+            tag: uniqueTag,
             requireInteraction: true,
             vibrate: [500, 200, 500, 200, 500, 200, 500],
             actions: [
@@ -66,7 +67,7 @@ self.addEventListener('message', (event) => {
     }
 });
 
-// Push notification received (for future server-side push)
+// Push notification received (server-side push via web-push)
 self.addEventListener('push', (event) => {
     let data = { 
         title: '🔔 Nowe Zamówienie!', 
@@ -82,11 +83,12 @@ self.addEventListener('push', (event) => {
         }
     }
 
+    const uniqueTag = `basma-order-${Date.now()}`;
     const options = {
         body: data.body,
         icon: data.icon || '/icons/icon-192x192.png',
         badge: '/icons/icon-192x192.png',
-        tag: 'basma-new-order',
+        tag: uniqueTag,
         requireInteraction: true, // IMPORTANT: Stays until user acts — wakes phone screen
         vibrate: [500, 200, 500, 200, 500, 200, 500],
         timestamp: Date.now(),
@@ -100,7 +102,16 @@ self.addEventListener('push', (event) => {
     };
 
     event.waitUntil(
-        self.registration.showNotification(data.title, options)
+        self.registration.showNotification(data.title, options).then(() => {
+            // Post message to all open admin pages to trigger in-app alarm sound
+            return self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clients) => {
+                clients.forEach((client) => {
+                    if (client.url.includes('/admin')) {
+                        client.postMessage({ type: 'PLAY_ALARM' });
+                    }
+                });
+            });
+        })
     );
 });
 

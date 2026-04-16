@@ -41,11 +41,52 @@ export async function POST(req: NextRequest) {
         await writeClient.patch(order._id)
             .set({
                 paymentStatus: "paid",
-                status: "confirmed" // Automatically confirm order when paid
+                status: "pending" // Set to 'pending' so staff see it and handle it through their normal flow
             })
             .commit()
 
-        // 4. Trigger notifications here now that payment is confirmed
+        // 4. Send admin email alert now that payment is confirmed
+        try {
+            const { sendAdminOrderAlert } = await import('@/lib/notifications')
+            await sendAdminOrderAlert({
+                orderNumber: order.orderNumber,
+                customerName: order.customerName,
+                customerEmail: order.customerEmail || '',
+                customerPhone: order.customerPhone,
+                orderType: order.orderType,
+                items: (order.items || []).map((item: any) => ({
+                    name: item.name,
+                    description: item.description,
+                    quantity: item.quantity,
+                    price: item.price,
+                })),
+                subtotal: order.subtotal || 0,
+                deliveryFee: order.deliveryFee || 0,
+                discountAmount: order.discountAmount || 0,
+                promoCode: order.promoCode || null,
+                totalAmount: order.totalAmount || 0,
+                paymentMethod: 'p24',
+                customerAddress: order.customerAddress,
+            })
+            console.log(`P24 Webhook: Admin alert sent for order #${order.orderNumber}`)
+        } catch (err) {
+            console.error(`P24 Webhook: Admin alert error for order #${order.orderNumber}`, err)
+        }
+
+        // 5. Send Web Push Notification to all subscribed devices
+        try {
+            const { sendPushToAll } = await import('@/lib/web-push')
+            await sendPushToAll(
+                `🚨 Nowe Zamówienie #${order.orderNumber}! (Opłacone)`,
+                `${order.customerName} zamówił ${(order.items || []).length} potraw za ${(order.totalAmount || 0).toFixed(2)} zł.`,
+                '/admin'
+            )
+            console.log(`P24 Webhook: Push notification sent for order #${order.orderNumber}`)
+        } catch (err) {
+            console.error(`P24 Webhook: Push notification error for order #${order.orderNumber}`, err)
+        }
+
+        // 6. Send customer confirmation email now that payment is confirmed
         try {
             const { sendOrderConfirmation } = await import('@/lib/notifications')
             await sendOrderConfirmation({
@@ -66,7 +107,7 @@ export async function POST(req: NextRequest) {
                 paymentMethod: 'p24',
                 customerAddress: order.customerAddress,
             })
-            console.log(`P24 Webhook: Notification sent for order #${order.orderNumber}`)
+            console.log(`P24 Webhook: Customer confirmation sent for order #${order.orderNumber}`)
         } catch (err) {
             console.error(`P24 Webhook: Notification error for order #${order.orderNumber}`, err)
         }

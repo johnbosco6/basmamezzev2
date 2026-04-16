@@ -64,7 +64,8 @@ export async function POST(req: NextRequest) {
                 city: deliveryAddress.city || '',
                 distanceKm: deliveryAddress.distanceKm ? String(deliveryAddress.distanceKm) : '',
             } : undefined,
-            status: 'pending',
+            status: paymentMethod === 'p24' ? 'awaiting_payment' : 'pending',
+            paymentStatus: paymentMethod === 'p24' ? 'awaiting_payment' : 'pending',
             items: (items || []).map((item: { id: string; name: string; description?: string; price: number; quantity: number }) => {
                 let actualDescription = item.description || '';
                 // Fallback to searching menuData if description is missing (e.g. old cart in localStorage)
@@ -102,34 +103,39 @@ export async function POST(req: NextRequest) {
         const result = await writeClient.create(doc)
         console.log('Sanity create result ID:', result._id)
 
-        // Fire off admin alerts (Non-blocking)
-        sendAdminOrderAlert({
-            orderNumber,
-            customerName: name,
-            customerEmail: email || '',
-            customerPhone: phone,
-            orderType,
-            items: doc.items.map((item: any) => ({
-                name: item.name,
-                description: item.description,
-                quantity: item.quantity,
-                price: item.price,
-            })),
-            subtotal: subtotal || 0,
-            deliveryFee: deliveryFee || 0,
-            discountAmount: discountAmount || 0,
-            promoCode: promoCode || null,
-            totalAmount: totalPrice || 0,
-            paymentMethod: paymentMethod || 'p24',
-            customerAddress: deliveryAddress,
-        }).catch(err => console.error('[Order API] Admin Email Alert failed:', err))
+        // Fire off admin alerts ONLY for non-P24 orders (cash/card on delivery)
+        // For P24 orders, admin alerts are sent from the webhook after payment confirmation
+        if (paymentMethod !== 'p24') {
+            sendAdminOrderAlert({
+                orderNumber,
+                customerName: name,
+                customerEmail: email || '',
+                customerPhone: phone,
+                orderType,
+                items: doc.items.map((item: any) => ({
+                    name: item.name,
+                    description: item.description,
+                    quantity: item.quantity,
+                    price: item.price,
+                })),
+                subtotal: subtotal || 0,
+                deliveryFee: deliveryFee || 0,
+                discountAmount: discountAmount || 0,
+                promoCode: promoCode || null,
+                totalAmount: totalPrice || 0,
+                paymentMethod: paymentMethod || 'cash',
+                customerAddress: deliveryAddress,
+            }).catch(err => console.error('[Order API] Admin Email Alert failed:', err))
 
-        // Trigger Web Push Notification to all subscribed devices
-        sendPushToAll(
-            `🚨 Nowe Zamówienie #${orderNumber}!`,
-            `${name} zamówił właśnie ${items.length} potraw za ${(totalPrice || 0).toFixed(2)} zł.`,
-            '/admin'
-        ).catch(err => console.error('[Order API] Web Push Alert failed:', err))
+            // Trigger Web Push Notification to all subscribed devices
+            sendPushToAll(
+                `🚨 Nowe Zamówienie #${orderNumber}!`,
+                `${name} zamówił właśnie ${items.length} potraw za ${(totalPrice || 0).toFixed(2)} zł.`,
+                '/admin'
+            ).catch(err => console.error('[Order API] Web Push Alert failed:', err))
+        } else {
+            console.log(`[Order API] P24 order #${orderNumber} — admin alerts deferred to payment webhook`)
+        }
 
         // Fire off email notification (non-blocking)
         // We defer this for P24 orders to the webhook, or we can send a "Received" email here.

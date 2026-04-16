@@ -127,7 +127,7 @@ export async function getOrders() {
         const query = `*[_type == "order" && (
             (status != "delivered" && status != "picked_up" && status != "cancelled") || 
             (orderDate >= "${todayStr}" || completedAt >= "${todayStr}")
-        )] | order(orderDate desc) {
+        ) && !(paymentMethod == "p24" && paymentStatus != "paid")] | order(orderDate desc) {
             _id,
             orderNumber,
             customerName,
@@ -136,6 +136,7 @@ export async function getOrders() {
             customerAddress,
             status,
             orderType,
+            paymentStatus,
             items[]{
                 itemId,
                 name,
@@ -167,7 +168,7 @@ export async function getOrders() {
 
 export async function getActiveOrders() {
     try {
-        const query = `*[_type == "order" && status != "delivered" && status != "picked_up" && status != "cancelled"] | order(orderDate desc) {
+        const query = `*[_type == "order" && status != "delivered" && status != "picked_up" && status != "cancelled" && !(paymentMethod == "p24" && paymentStatus != "paid")] | order(orderDate desc) {
             _id,
             status,
             orderDate
@@ -219,7 +220,7 @@ export async function getHistoryOrders(dateStr?: string) {
             dateFilter = `&& (orderDate >= "${startOfDay.toISOString()}" && orderDate <= "${endOfDay.toISOString()}")`
         }
 
-        const query = `*[_type == "order" && (status == "delivered" || status == "picked_up" || status == "cancelled") ${dateFilter}] | order(orderDate desc)[0...500] {
+        const query = `*[_type == "order" && (status == "delivered" || status == "picked_up" || status == "cancelled") && !(paymentMethod == "p24" && paymentStatus != "paid") ${dateFilter}] | order(orderDate desc)[0...500] {
             _id,
             orderNumber,
             customerName,
@@ -228,6 +229,7 @@ export async function getHistoryOrders(dateStr?: string) {
             customerAddress,
             status,
             orderType,
+            paymentStatus,
             items[]{
                 itemId,
                 name,
@@ -267,12 +269,13 @@ export async function getMonthlyOrders() {
         const now = new Date()
         const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString()
         
-        const query = `*[_type == "order" && orderDate >= $startOfMonth] | order(orderDate desc) {
+        const query = `*[_type == "order" && orderDate >= $startOfMonth && !(paymentMethod == "p24" && paymentStatus != "paid")] | order(orderDate desc) {
             _id,
             totalAmount,
             orderDate,
             completedAt,
             status,
+            paymentStatus,
             items[]{
                 quantity
             }

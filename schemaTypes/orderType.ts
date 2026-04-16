@@ -59,6 +59,7 @@ export const orderType = defineType({
             type: 'string',
             options: {
                 list: [
+                    { title: 'Awaiting Payment', value: 'awaiting_payment' },
                     { title: 'Pending', value: 'pending' },
                     { title: 'Paid', value: 'paid' },
                     { title: 'Failed', value: 'failed' },

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from "react"
 import { getActiveOrders } from "@/app/actions/admin-actions"
-import { Bell, BellOff, Volume2, VolumeX, AlertTriangle } from "lucide-react"
+import { Bell, Volume2, AlertTriangle } from "lucide-react"
 import { Archivo } from "next/font/google"
 import { client } from "@/lib/sanity"
 
@@ -13,24 +13,35 @@ const archivo = Archivo({
 })
 
 export function OrderNotification() {
-    const [soundEnabled] = useState(true) // Always enabled by default
-    const [knownOrderIds, setKnownOrderIds] = useState<Set<string>>(new Set())
-    const [isInitialLoad, setIsInitialLoad] = useState(true)
     const [hasNewOrders, setHasNewOrders] = useState(false)
     const [notifPermission, setNotifPermission] = useState<NotificationPermission>("default")
     const [audioUnlocked, setAudioUnlocked] = useState(false)
+    const [isSubscribing, setIsSubscribing] = useState(false)
 
-    // Audio ref — local WAV file, much more reliable than YouTube
+    // ─── Use refs for mutable state to avoid re-creating callbacks ────────
+    const knownOrderIdsRef = useRef<Set<string>>(new Set())
+    const isInitialLoadRef = useRef(true)
+    const hasNewOrdersRef = useRef(false)
+    const audioUnlockedRef = useRef(false)
     const audioRef = useRef<HTMLAudioElement | null>(null)
+    const audioContextRef = useRef<AudioContext | null>(null)
 
-    // Initialize audio + load preferences
+    // Keep refs in sync with state
+    useEffect(() => { hasNewOrdersRef.current = hasNewOrders }, [hasNewOrders])
+    useEffect(() => { audioUnlockedRef.current = audioUnlocked }, [audioUnlocked])
+
+    // ─── Initialize audio element ────────────────────────────────────────
     useEffect(() => {
-        // Create audio element
         const audio = new Audio("/sounds/order-alarm.wav")
         audio.loop = true
         audio.volume = 1.0
         audio.preload = "auto"
         audioRef.current = audio
+
+        // Create AudioContext for resuming suspended audio in background tabs
+        try {
+            audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)()
+        } catch { }
 
         // Check current notification permission
         if ("Notification" in window) {
@@ -38,56 +49,80 @@ export function OrderNotification() {
         }
 
         // Auto-subscribe to push on mount if possible
-        const initPush = async () => {
-            if (Notification.permission === "granted") {
-                await subscribeToPush()
-            }
+        if ("Notification" in window && Notification.permission === "granted") {
+            subscribeToPushInternal()
         }
-        initPush()
-
-        // One-time listener to unlock audio (browser requirement)
-        const unlockAudio = () => {
-            if (audioRef.current && !audioUnlocked) {
-                audioRef.current.play().then(() => {
-                    audioRef.current?.pause()
-                    setAudioUnlocked(true)
-                }).catch(() => {})
-                window.removeEventListener('click', unlockAudio)
-                window.removeEventListener('touchstart', unlockAudio)
-            }
-        }
-        window.addEventListener('click', unlockAudio)
-        window.addEventListener('touchstart', unlockAudio)
 
         return () => {
             audio.pause()
             audio.src = ""
+        }
+    }, [])
+
+    // ─── Robust audio unlock: retry on every click/touch until success ───
+    useEffect(() => {
+        const unlockAudio = async () => {
+            // Check ref (not state) to avoid stale closure
+            if (audioUnlockedRef.current) return
+
+            const audio = audioRef.current
+            if (!audio) return
+
+            try {
+                // Resume AudioContext if suspended (fixes background tab issues)
+                if (audioContextRef.current?.state === 'suspended') {
+                    await audioContextRef.current.resume()
+                }
+
+                await audio.play()
+                audio.pause()
+                audio.currentTime = 0
+                audioUnlockedRef.current = true
+                setAudioUnlocked(true)
+                console.log('[Notification] Audio unlocked successfully')
+
+                // Only remove listeners AFTER successful unlock
+                window.removeEventListener('click', unlockAudio)
+                window.removeEventListener('touchstart', unlockAudio)
+                window.removeEventListener('keydown', unlockAudio)
+            } catch {
+                // Play failed — keep listeners so we retry on next interaction
+                console.log('[Notification] Audio unlock attempt failed, will retry on next interaction')
+            }
+        }
+
+        window.addEventListener('click', unlockAudio)
+        window.addEventListener('touchstart', unlockAudio)
+        window.addEventListener('keydown', unlockAudio)
+
+        return () => {
             window.removeEventListener('click', unlockAudio)
             window.removeEventListener('touchstart', unlockAudio)
+            window.removeEventListener('keydown', unlockAudio)
         }
-    }, [])
+    }, []) // Empty deps is fine — we use refs internally
 
-    // Request notification permission
-    const requestNotificationPermission = useCallback(async () => {
-        if (!("Notification" in window)) return
-        if (Notification.permission === "granted") {
-            setNotifPermission("granted")
-            return
-        }
-        try {
-            const permission = await Notification.requestPermission()
-            setNotifPermission(permission)
-            if (permission === "granted") {
-                await subscribeToPush()
+    // ─── Listen for service worker messages to trigger alarm ─────────────
+    useEffect(() => {
+        const handleSWMessage = (event: MessageEvent) => {
+            if (event.data?.type === 'PLAY_ALARM') {
+                console.log('[Notification] Service worker requested alarm playback')
+                playAlarm()
             }
-        } catch {
-            console.warn("Notification permission request failed")
+        }
+
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.addEventListener('message', handleSWMessage)
+        }
+
+        return () => {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.removeEventListener('message', handleSWMessage)
+            }
         }
     }, [])
 
-    const [isSubscribing, setIsSubscribing] = useState(false)
-
-    // Helper: Convert VAPID key for browser
+    // ─── Helper: VAPID key conversion ────────────────────────────────────
     const urlBase64ToUint8Array = (base64String: string) => {
         const padding = "=".repeat((4 - (base64String.length % 4)) % 4)
         const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/")
@@ -99,18 +134,15 @@ export function OrderNotification() {
         return outputArray
     }
 
-    const subscribeToPush = useCallback(async () => {
-        if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
-            return
-        }
+    // ─── Push subscription (internal, no state dependency) ───────────────
+    const subscribeToPushInternal = async () => {
+        if (!("serviceWorker" in navigator) || !("PushManager" in window)) return
 
         setIsSubscribing(true)
         try {
             const registration = await navigator.serviceWorker.ready
-            
-            // Check for existing subscription
             let subscription = await registration.pushManager.getSubscription()
-            
+
             if (!subscription) {
                 const publicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
                 if (!publicKey) throw new Error("VAPID public key missing")
@@ -121,33 +153,59 @@ export function OrderNotification() {
                 })
             }
 
-            // Send to server
             await fetch("/api/push/subscribe", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(subscription)
             })
-            
+
             setNotifPermission("granted")
         } catch (error) {
             console.error("Push subscription failed:", error)
         } finally {
             setIsSubscribing(false)
         }
+    }
+
+    // ─── Request notification permission ─────────────────────────────────
+    const requestNotificationPermission = useCallback(async () => {
+        if (!("Notification" in window)) return
+        if (Notification.permission === "granted") {
+            setNotifPermission("granted")
+            return
+        }
+        try {
+            const permission = await Notification.requestPermission()
+            setNotifPermission(permission)
+            if (permission === "granted") {
+                await subscribeToPushInternal()
+            }
+        } catch {
+            console.warn("Notification permission request failed")
+        }
     }, [])
 
+    // ─── Play alarm (stable — no state dependencies) ─────────────────────
     const playAlarm = useCallback(() => {
-        // Play audio
-        if (audioRef.current) {
-            audioRef.current.currentTime = 0
-            audioRef.current.play().catch((err) => {
-                console.warn("Audio play failed (requires user interaction):", err)
+        const audio = audioRef.current
+        if (audio) {
+            // Resume AudioContext if suspended (background tab fix)
+            if (audioContextRef.current?.state === 'suspended') {
+                audioContextRef.current.resume().catch(() => { })
+            }
+
+            audio.currentTime = 0
+            audio.play().catch((err) => {
+                console.warn("[Notification] Audio play failed:", err)
+                // Retry after a short delay (sometimes works on second attempt)
+                setTimeout(() => {
+                    audio.play().catch(() => { })
+                }, 200)
             })
         }
 
         // Vibrate aggressively — long pattern like a phone call
         if ("vibrate" in navigator) {
-            // Pattern: vibrate 500ms, pause 200ms — repeat 10 times
             const pattern: number[] = []
             for (let i = 0; i < 10; i++) {
                 pattern.push(500, 200)
@@ -155,14 +213,15 @@ export function OrderNotification() {
             navigator.vibrate(pattern)
         }
 
-        // Show browser notification
+        // Show browser notification with UNIQUE tag per alarm burst
         if ("Notification" in window && Notification.permission === "granted") {
+            const uniqueTag = `basma-order-${Date.now()}`
             try {
                 const notif = new Notification("🔔 Nowe Zamówienie!", {
                     body: "Nowe zamówienie czeka na potwierdzenie w panelu Basma!",
                     icon: "/icons/icon-192x192.png",
                     badge: "/icons/icon-192x192.png",
-                    tag: "basma-new-order",
+                    tag: uniqueTag,
                     requireInteraction: true,
                     silent: false,
                 })
@@ -171,6 +230,7 @@ export function OrderNotification() {
                     notif.close()
                 }
             } catch {
+                // Fallback to service worker notification
                 if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
                     navigator.serviceWorker.controller.postMessage({
                         type: "SHOW_NOTIFICATION",
@@ -182,6 +242,7 @@ export function OrderNotification() {
         }
     }, [])
 
+    // ─── Stop alarm (stable — no state dependencies) ─────────────────────
     const stopAlarm = useCallback(() => {
         if (audioRef.current) {
             audioRef.current.pause()
@@ -194,80 +255,97 @@ export function OrderNotification() {
 
     const stopAlert = useCallback(() => {
         setHasNewOrders(false)
+        hasNewOrdersRef.current = false
         stopAlarm()
     }, [stopAlarm])
 
-    // Test button
+    // ─── Test button ─────────────────────────────────────────────────────
     const testAlert = useCallback(async () => {
-        // First try to request permission if not granted
         if (notifPermission !== "granted") {
             await requestNotificationPermission()
         }
         playAlarm()
         setHasNewOrders(true)
+        hasNewOrdersRef.current = true
         setTimeout(() => {
             stopAlarm()
             setHasNewOrders(false)
+            hasNewOrdersRef.current = false
         }, 5000)
     }, [playAlarm, stopAlarm, notifPermission, requestNotificationPermission])
 
+    // ─── Check for new orders (stable — uses refs, not state) ────────────
     const checkNewOrders = useCallback(async () => {
         try {
             const activeOrders = await getActiveOrders()
-            // Only alarm for 'pending' orders
             const pendingOrders = activeOrders.filter((o: any) => o.status === 'pending')
             const currentPendingIds = new Set<string>(pendingOrders.map((o: any) => String(o._id)))
 
-            if (isInitialLoad) {
-                setKnownOrderIds(currentPendingIds)
-                setIsInitialLoad(false)
-                // If there are pending orders on load, we should technically play the alarm,
-                // but we wait for user interaction to unlock audio.
+            if (isInitialLoadRef.current) {
+                knownOrderIdsRef.current = currentPendingIds
+                isInitialLoadRef.current = false
                 if (currentPendingIds.size > 0) {
                     setHasNewOrders(true)
+                    hasNewOrdersRef.current = true
                 }
                 return
             }
 
             let hasNew = false
             currentPendingIds.forEach((id) => {
-                if (!knownOrderIds.has(id)) {
+                if (!knownOrderIdsRef.current.has(id)) {
                     hasNew = true
                 }
             })
 
             if (hasNew) {
                 setHasNewOrders(true)
+                hasNewOrdersRef.current = true
                 playAlarm()
-                setKnownOrderIds(currentPendingIds)
+                knownOrderIdsRef.current = currentPendingIds
             } else {
-                // UPDATE: If the number of pending orders is 0, STOP the alarm immediately.
-                // This ensures all devices sync when one staff member accepts the order.
-                if (currentPendingIds.size === 0 && hasNewOrders) {
+                // If no pending orders left, stop the alarm (syncs across devices)
+                if (currentPendingIds.size === 0 && hasNewOrdersRef.current) {
                     console.log('[Notification] No pending orders left, stopping alarm.')
                     stopAlert()
                 }
                 // Update known IDs to reflect accepted orders
-                if (currentPendingIds.size !== knownOrderIds.size) {
-                    setKnownOrderIds(currentPendingIds)
+                if (currentPendingIds.size !== knownOrderIdsRef.current.size) {
+                    knownOrderIdsRef.current = currentPendingIds
                 }
             }
         } catch (error) {
-            console.error("Error polling for orders:", error)
+            console.error("[Notification] Error checking orders:", error)
         }
-    }, [knownOrderIds, isInitialLoad, hasNewOrders, playAlarm, stopAlert])
+    }, [playAlarm, stopAlert]) // Only depends on stable callbacks
 
+    // ─── Sanity real-time listener + polling fallback (STABLE) ────────────
     useEffect(() => {
-        // Subscribe to real-time updates for active orders
+        // 1. Subscribe to Sanity real-time updates (never re-created)
         const query = '*[_type == "order"]'
-        const subscription = client.listen(query).subscribe(() => {
-            checkNewOrders()
+        const subscription = client.listen(query).subscribe({
+            next: () => {
+                console.log('[Notification] Sanity real-time event received')
+                checkNewOrders()
+            },
+            error: (err) => {
+                console.error('[Notification] Sanity listener error:', err)
+                // Listener will auto-reconnect, but polling is our safety net
+            }
         })
 
-        // Initial check
+        // 2. Initial check
         checkNewOrders()
 
-        return () => subscription.unsubscribe()
+        // 3. Polling fallback every 15 seconds — catches missed WebSocket events
+        const pollInterval = setInterval(() => {
+            checkNewOrders()
+        }, 15000)
+
+        return () => {
+            subscription.unsubscribe()
+            clearInterval(pollInterval)
+        }
     }, [checkNewOrders])
 
     return (

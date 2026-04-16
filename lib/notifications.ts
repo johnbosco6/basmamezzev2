@@ -286,7 +286,7 @@ export async function sendOrderConfirmation(order: OrderDetails) {
                 from: 'Basma Mezze & Grill <zamowienia@basmamezze.pl>',
                 replyTo: 'basmalublin@gmail.com',
                 to: order.customerEmail,
-                bcc: 'basmalublin@gmail.com',
+                bcc: ['basmalublin@gmail.com', 'basmamezzestaff@gmail.com'],
                 subject: `Potwierdzenie zamówienia #${order.orderNumber} — Basma Mezze`,
                 html: buildOrderConfirmationHTML(order),
             })
@@ -364,7 +364,7 @@ export async function sendAdminOrderAlert(order: OrderDetails) {
 
             await resend.emails.send({
                 from: 'Basma Admin <zamowienia@basmamezze.pl>',
-                to: 'basmalublin@gmail.com',
+                to: ['basmalublin@gmail.com', 'basmamezzestaff@gmail.com'],
                 subject: `🚨 NOWE ZAMÓWIENIE #${order.orderNumber} — ${order.totalAmount.toFixed(2)} zł`,
                 html: `
                     <div style="font-family: sans-serif; padding: 20px; border: 2px solid #BA9D76; border-radius: 12px; background-color: #fff;">
