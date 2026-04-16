@@ -32,12 +32,6 @@ export function OrderNotification() {
 
     // ─── Initialize audio element ────────────────────────────────────────
     useEffect(() => {
-        const audio = new Audio("/sounds/order-alarm.wav")
-        audio.loop = true
-        audio.volume = 1.0
-        audio.preload = "auto"
-        audioRef.current = audio
-
         // Create AudioContext for resuming suspended audio in background tabs
         try {
             audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)()
@@ -54,8 +48,9 @@ export function OrderNotification() {
         }
 
         return () => {
-            audio.pause()
-            audio.src = ""
+            if (audioRef.current) {
+                audioRef.current.pause()
+            }
         }
     }, [])
 
@@ -349,8 +344,12 @@ export function OrderNotification() {
     }, [checkNewOrders])
 
     return (
-        <div className="fixed bottom-4 left-4 z-50 flex flex-col gap-2">
-            {/* Active Alert Banner */}
+        <>
+            {/* DOM-based audio is far more reliable on mobile/background tabs */}
+            <audio ref={audioRef} id="alarm-audio" src="/sounds/order-alarm.wav" preload="auto" loop className="hidden" />
+            
+            <div className="fixed bottom-4 left-4 z-50 flex flex-col gap-2">
+                {/* Active Alert Banner */}
             {hasNewOrders && (
                 <button
                     onClick={stopAlert}
@@ -390,6 +389,7 @@ export function OrderNotification() {
                     KLIKNIJ ABY WŁĄCZYĆ POWIADOMIENIA PUSH
                 </button>
             )}
-        </div>
+            </div>
+        </>
     )
 }

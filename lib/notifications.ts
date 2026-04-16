@@ -286,7 +286,6 @@ export async function sendOrderConfirmation(order: OrderDetails) {
                 from: 'Basma Mezze & Grill <zamowienia@basmamezze.pl>',
                 replyTo: 'basmalublin@gmail.com',
                 to: order.customerEmail,
-                bcc: ['basmalublin@gmail.com', 'basmamezzestaff@gmail.com'],
                 subject: `Potwierdzenie zamówienia #${order.orderNumber} — Basma Mezze`,
                 html: buildOrderConfirmationHTML(order),
             })
@@ -362,13 +361,17 @@ export async function sendAdminOrderAlert(order: OrderDetails) {
             }
             const paymentLabel = paymentLabels[order.paymentMethod || ''] || order.paymentMethod || 'Nieznana'
 
-            await resend.emails.send({
-                from: 'Basma Admin <zamowienia@basmamezze.pl>',
-                to: ['basmalublin@gmail.com', 'basmamezzestaff@gmail.com'],
-                subject: `🚨 NOWE ZAMÓWIENIE #${order.orderNumber} — ${order.totalAmount.toFixed(2)} zł`,
-                html: `
-                    <div style="font-family: sans-serif; padding: 20px; border: 2px solid #BA9D76; border-radius: 12px; background-color: #fff;">
-                        <h1 style="color: #BA9D76; margin-top: 0; font-size: 24px;">🚨 Nowe Zamówienie!</h1>
+            const ADMIN_EMAILS = ['basmalublin@gmail.com', 'basmamezzestaff@gmail.com'];
+
+            // Loop and send entirely separately to avoid bundled/spam/dropped behavior
+            for (const adminEmail of ADMIN_EMAILS) {
+                await resend.emails.send({
+                    from: 'Basma Admin <zamowienia@basmamezze.pl>',
+                    to: adminEmail,
+                    subject: `🚨 NOWE ZAMÓWIENIE #${order.orderNumber} — ${order.totalAmount.toFixed(2)} zł`,
+                    html: `
+                        <div style="font-family: sans-serif; padding: 20px; border: 2px solid #BA9D76; border-radius: 12px; background-color: #fff;">
+                            <h1 style="color: #BA9D76; margin-top: 0; font-size: 24px;">🚨 Nowe Zamówienie!</h1>
                         <div style="background: #fdfaf6; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 5px solid #BA9D76;">
                             <p style="font-size: 18px; margin: 0;"><strong>Numer:</strong> #${order.orderNumber}</p>
                             <p style="margin: 5px 0 0;"><strong>Metoda płatności:</strong> <span style="color: #BA9D76; font-weight: bold;">${paymentLabel}</span></p>
@@ -416,8 +419,9 @@ export async function sendAdminOrderAlert(order: OrderDetails) {
                         </div>
                     </div>
                 `,
-            })
-            console.log(`[Notifications] ✅ Admin alert email sent for #${order.orderNumber}`)
+                })
+            }
+            console.log(`[Notifications] ✅ Admin alert emails sent for #${order.orderNumber}`)
             return { resend: true }
         } catch (err) {
             console.error('[Notifications] ❌ Admin alert email failed:', err)
