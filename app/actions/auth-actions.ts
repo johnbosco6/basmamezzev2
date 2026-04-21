@@ -169,7 +169,7 @@ export async function isAuthenticated(): Promise<boolean> {
 export async function ensureAuthenticated() {
     const authenticated = await isAuthenticated()
     if (!authenticated) {
-        throw new Error('Unauthorized: Admin access required')
+        redirect('/admin/login')
     }
 }
 
