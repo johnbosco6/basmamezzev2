@@ -4,6 +4,7 @@ import { createClient } from 'next-sanity'
 import { revalidatePath } from 'next/cache'
 import { sendOrderStatusUpdate } from '@/lib/notifications'
 import { cookies } from 'next/headers'
+import { ensureAuthenticated } from './auth-actions'
 
 const STAFF_COOKIE = 'current_staff'
 
@@ -24,6 +25,7 @@ const client = createClient({
 })
 
 export async function updateOrderStatus(orderId: string, newStatus: string) {
+    await ensureAuthenticated()
     try {
         // First, fetch the order's customer info for the notification
         const order = await client.fetch(
@@ -74,6 +76,7 @@ export async function updateOrderStatus(orderId: string, newStatus: string) {
  * Used by OrderCard buttons (Cooking, On the Way).
  */
 export async function sendNotificationEmail(orderId: string, stage: 'preparing' | 'out_for_delivery') {
+    await ensureAuthenticated()
     try {
         const order = await client.fetch(
             `*[_type == "order" && _id == $id][0]{ orderNumber, customerName, customerEmail, customerPhone }`,
@@ -119,6 +122,7 @@ export async function sendNotificationEmail(orderId: string, stage: 'preparing' 
 }
 
 export async function getOrders() {
+    await ensureAuthenticated()
     try {
         const todayStart = new Date()
         todayStart.setHours(0, 0, 0, 0)
@@ -167,6 +171,7 @@ export async function getOrders() {
 }
 
 export async function getActiveOrders() {
+    await ensureAuthenticated()
     try {
         const query = `*[_type == "order" && status != "delivered" && status != "picked_up" && status != "cancelled" && !(paymentMethod == "p24" && paymentStatus != "paid")] | order(orderDate desc) {
             _id,
@@ -185,6 +190,7 @@ export async function getActiveOrders() {
  * so they disappear from the dashboard.
  */
 export async function archiveCompletedOrders() {
+    await ensureAuthenticated()
     try {
         // Find all completed orders that are not yet archived
         const completedOrders = await client.fetch(
@@ -208,6 +214,7 @@ export async function archiveCompletedOrders() {
 }
 
 export async function getHistoryOrders(dateStr?: string) {
+    await ensureAuthenticated()
     try {
         let dateFilter = ''
         if (dateStr) {
@@ -265,6 +272,7 @@ export async function getHistoryOrders(dateStr?: string) {
  * including archived ones, for analytics purposes.
  */
 export async function getMonthlyOrders() {
+    await ensureAuthenticated()
     try {
         const now = new Date()
         const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString()

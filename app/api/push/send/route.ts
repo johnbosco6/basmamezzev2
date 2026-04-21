@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { sendPushToAll, getSubscriptions, setSubscriptions } from '@/lib/web-push'
 import { createClient } from 'next-sanity'
+import { ensureAuthenticated } from '@/app/actions/auth-actions'
 
 export const dynamic = 'force-dynamic'
 
@@ -18,6 +19,7 @@ const client = createClient({
  */
 export async function POST(req: NextRequest) {
     try {
+        await ensureAuthenticated()
         const { title, body, url } = await req.json()
 
         // If no subscriptions in memory, try loading from Sanity first

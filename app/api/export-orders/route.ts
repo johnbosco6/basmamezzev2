@@ -1,10 +1,12 @@
 import { NextResponse } from 'next/server'
 import { client } from '@/lib/sanity'
+import { ensureAuthenticated } from '@/app/actions/auth-actions'
 
 export const dynamic = 'force-dynamic'
 
 export async function GET() {
     try {
+        await ensureAuthenticated()
         // Fetch only completed orders (Delivered or Picked Up)
         const query = `*[_type == "order" && status in ["delivered", "picked_up"]] | order(completedAt desc) {
             orderNumber,

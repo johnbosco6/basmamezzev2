@@ -36,7 +36,15 @@ export async function POST(req: NextRequest) {
             promoCode,
             totalPrice,
             paymentMethod,
+            _hb, // Honeypot field
         } = body
+
+        // 1. Honeypot check: If the hidden field '_hb' is filled, it's a bot.
+        if (_hb) {
+            console.warn(`[BOT DETECTED] Honeypot filled: ${_hb}. Rejecting order.`)
+            // Silently fail or return a generic error to not tip off the bot author
+            return NextResponse.json({ ok: false, error: 'Request rejected' }, { status: 400 })
+        }
 
         // 0.1 Check distance (Server-side safety)
         if (orderType === 'delivery' && deliveryAddress && parseFloat(deliveryAddress.distanceKm) >= 10) {
@@ -194,12 +202,5 @@ export async function POST(req: NextRequest) {
 }
 
 export async function GET() {
-    return NextResponse.json({
-        status: "Diagnostic Mode Active",
-        projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'missing',
-        dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'missing',
-        hasToken: !!process.env.SANITY_API_TOKEN,
-        tokenLength: process.env.SANITY_API_TOKEN ? process.env.SANITY_API_TOKEN.length : 0,
-        time: new Date().toISOString()
-    })
+    return NextResponse.json({ error: 'Method not allowed' }, { status: 405 })
 }

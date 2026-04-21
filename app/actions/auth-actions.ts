@@ -5,9 +5,16 @@ import { redirect } from 'next/navigation'
 import { createClient } from 'next-sanity'
 
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || ''
+const SESSION_SECRET = process.env.SESSION_SECRET || 'fallback_secret_change_me'
 const SESSION_COOKIE = 'admin_session'
 const STAFF_COOKIE = 'current_staff'
 const SHIFT_ID_COOKIE = 'shift_id'
+
+// Helper to generate a session hash
+import crypto from 'crypto'
+function generateSessionToken() {
+    return crypto.createHmac('sha256', SESSION_SECRET).update('authenticated').digest('hex')
+}
 
 const client = createClient({
     projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'placeholder',
@@ -25,11 +32,11 @@ export async function loginAdmin(formData: FormData) {
     }
 
     if (password === ADMIN_PASSWORD) {
-        // Set secure session cookie
-        cookies().set(SESSION_COOKIE, 'authenticated', {
+        // Set secure session cookie with a signed token
+        cookies().set(SESSION_COOKIE, generateSessionToken(), {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
+            sameSite: 'strict',
             maxAge: 60 * 60 * 24 * 7, // 7 days
             path: '/',
         })
@@ -37,6 +44,8 @@ export async function loginAdmin(formData: FormData) {
         redirect('/admin')
     }
 
+    // Slow down brute force attempts by adding a fixed delay to rejected requests
+    await new Promise(resolve => setTimeout(resolve, 1000))
     return { success: false, message: 'Nieprawidłowe hasło' }
 }
 
@@ -149,7 +158,19 @@ export async function logoutAdmin() {
 
 export async function isAuthenticated(): Promise<boolean> {
     const session = cookies().get(SESSION_COOKIE)
-    return session?.value === 'authenticated'
+    if (!session?.value) return false
+    return session.value === generateSessionToken()
+}
+
+/**
+ * Server-side helper to ensure the user is authenticated.
+ * Throws an error or redirects if not.
+ */
+export async function ensureAuthenticated() {
+    const authenticated = await isAuthenticated()
+    if (!authenticated) {
+        throw new Error('Unauthorized: Admin access required')
+    }
 }
 
 export async function logAuditAction(staffName: string, action: string, details: string, orderId?: string) {
