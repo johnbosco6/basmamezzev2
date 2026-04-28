@@ -52,16 +52,26 @@ export function OrderListManager({ initialOrders }: OrderListManagerProps) {
     }, [])
 
     useEffect(() => {
-        // Subscribe to real-time updates for all orders
+        // Subscribe to real-time updates for all orders (WebSocket)
         const query = '*[_type == "order"]'
         const subscription = client.listen(query).subscribe(() => {
+            console.log('🔄 Real-time update detected!')
             refreshOrders()
         })
 
-        // Also initial refresh to be safe
+        // Fallback: Poll every 30 seconds in case listener fails or tab was in background
+        const interval = setInterval(() => {
+            console.log('⏰ Scheduled poll...')
+            refreshOrders()
+        }, 30000)
+
+        // Initial refresh
         refreshOrders()
 
-        return () => subscription.unsubscribe()
+        return () => {
+            subscription.unsubscribe()
+            clearInterval(interval)
+        }
     }, [refreshOrders])
 
     // Memoized derived data

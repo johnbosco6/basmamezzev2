@@ -125,13 +125,13 @@ export async function sendNotificationEmail(orderId: string, stage: 'preparing' 
 export async function getOrders() {
     await ensureAuthenticated()
     try {
-        const { dateString } = getWarsawTimeState()
-        // Today starts at 00:00:00 Warsaw time
-        const todayStr = `${dateString}T00:00:00.000Z` 
+        // Fetch orders from the last 24 hours + 4 hour margin to cover Warsaw midnight correctly in UTC
+        const now = new Date()
+        const twentyEightHoursAgo = new Date(now.getTime() - 28 * 60 * 60 * 1000).toISOString()
 
         const query = `*[_type == "order" && (
             (status != "delivered" && status != "picked_up" && status != "cancelled") || 
-            (orderDate >= "${todayStr}" || completedAt >= "${todayStr}")
+            (orderDate >= $timeThreshold || completedAt >= $timeThreshold)
         ) && !(paymentMethod == "p24" && paymentStatus != "paid")] | order(orderDate desc) {
             _id,
             orderNumber,
@@ -164,7 +164,7 @@ export async function getOrders() {
                 timestamp
             }
         }`
-        return await client.fetch(query, {}, { cache: "no-store" })
+        return await client.fetch(query, { timeThreshold: twentyEightHoursAgo }, { cache: "no-store" })
     } catch (error) {
         console.error('Failed to fetch orders:', error)
         return []
@@ -275,9 +275,9 @@ export async function getHistoryOrders(dateStr?: string) {
 export async function getMonthlyOrders() {
     await ensureAuthenticated()
     try {
-        const { dateString } = getWarsawTimeState()
-        const [year, month] = dateString.split('-')
-        const startOfMonth = `${year}-${month}-01T00:00:00.000Z`
+        const now = new Date()
+        // Start of the current month in UTC (safe enough for monthly stats)
+        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString()
         
         const query = `*[_type == "order" && orderDate >= $startOfMonth && !(paymentMethod == "p24" && paymentStatus != "paid")] | order(orderDate desc) {
             _id,
