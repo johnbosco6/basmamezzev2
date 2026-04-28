@@ -22,7 +22,6 @@ export async function POST(req: NextRequest) {
     try {
         const body = await req.json()
         const {
-            orderNumber,
             name,
             phone,
             email,
@@ -36,13 +35,13 @@ export async function POST(req: NextRequest) {
             promoCode,
             totalPrice,
             paymentMethod,
+            marketingConsent,
             _hb, // Honeypot field
         } = body
 
         // 1. Honeypot check: If the hidden field '_hb' is filled, it's a bot.
         if (_hb) {
             console.warn(`[BOT DETECTED] Honeypot filled: ${_hb}. Rejecting order.`)
-            // Silently fail or return a generic error to not tip off the bot author
             return NextResponse.json({ ok: false, error: 'Request rejected' }, { status: 400 })
         }
 
@@ -54,6 +53,10 @@ export async function POST(req: NextRequest) {
             }, { status: 403 })
         }
 
+        // 1.5 Generate Unique Order Number on Server
+        // Format: B-XXXX (4 random digits) or based on timestamp
+        const orderNumber = `B-${Math.floor(1000 + Math.random() * 9000)}`;
+
         console.log(`Processing Order #${orderNumber} for ${name}`)
 
         const doc = {
@@ -63,6 +66,7 @@ export async function POST(req: NextRequest) {
             customerPhone: phone,
             customerEmail: email || '',
             orderType,
+            marketingConsent: !!marketingConsent,
             customerAddress: deliveryAddress ? {
                 street: deliveryAddress.street || '',
                 houseNumber: deliveryAddress.houseNumber || '',
@@ -89,7 +93,7 @@ export async function POST(req: NextRequest) {
                     }
                 }
                 return {
-                    _key: `item-${item.id}-${Date.now()}`,
+                    _key: `item-${item.id}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
                     itemId: item.id,
                     name: item.name,
                     description: actualDescription,
@@ -146,8 +150,6 @@ export async function POST(req: NextRequest) {
         }
 
         // Fire off email notification (non-blocking)
-        // We defer this for P24 orders to the webhook, or we can send a "Received" email here.
-        // The user said "implement the rest flows after payment is done", so we'll defer.
         if (body.paymentMethod !== 'p24') {
             sendOrderConfirmation({
                 orderNumber,
@@ -171,8 +173,8 @@ export async function POST(req: NextRequest) {
             }).catch(err => console.error('[Order API] Notification error:', err))
         }
 
-        // Auto-subscribe customer to marketing collection
-        if (email) {
+        // Auto-subscribe customer ONLY if marketingConsent is true
+        if (email && marketingConsent) {
             writeClient.fetch(`*[_type == "subscriber" && email == $email][0]`, { email })
                 .then(async (existing) => {
                     if (!existing) {

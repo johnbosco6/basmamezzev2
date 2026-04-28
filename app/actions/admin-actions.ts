@@ -5,6 +5,7 @@ import { revalidatePath } from 'next/cache'
 import { sendOrderStatusUpdate } from '@/lib/notifications'
 import { cookies } from 'next/headers'
 import { ensureAuthenticated } from './auth-actions'
+import { getWarsawTimeState } from '@/lib/hours'
 
 const STAFF_COOKIE = 'current_staff'
 
@@ -124,9 +125,9 @@ export async function sendNotificationEmail(orderId: string, stage: 'preparing' 
 export async function getOrders() {
     await ensureAuthenticated()
     try {
-        const todayStart = new Date()
-        todayStart.setHours(0, 0, 0, 0)
-        const todayStr = todayStart.toISOString()
+        const { dateString } = getWarsawTimeState()
+        // Today starts at 00:00:00 Warsaw time
+        const todayStr = `${dateString}T00:00:00.000Z` 
 
         const query = `*[_type == "order" && (
             (status != "delivered" && status != "picked_up" && status != "cancelled") || 
@@ -274,8 +275,9 @@ export async function getHistoryOrders(dateStr?: string) {
 export async function getMonthlyOrders() {
     await ensureAuthenticated()
     try {
-        const now = new Date()
-        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString()
+        const { dateString } = getWarsawTimeState()
+        const [year, month] = dateString.split('-')
+        const startOfMonth = `${year}-${month}-01T00:00:00.000Z`
         
         const query = `*[_type == "order" && orderDate >= $startOfMonth && !(paymentMethod == "p24" && paymentStatus != "paid")] | order(orderDate desc) {
             _id,

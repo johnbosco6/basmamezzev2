@@ -1,26 +1,25 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { generateSessionToken } from './lib/auth-utils'
 
-const PUBLIC_ROUTES = ['/admin/login']
+const SESSION_SECRET = process.env.SESSION_SECRET || 'fallback_secret_change_me'
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl
     const session = request.cookies.get('admin_session')
     
-    // We rely on the backend (Server Actions/API) to verify the token signature.
-    // The middleware handles UI redirection.
-    const isAuthenticated = !!session?.value
-
-    // Allow public routes (login page) - MUST be first
-    if (pathname === '/admin/login') {
-        return NextResponse.next()
-    }
-
-    // Removed the aggressive block on public routes. 
-    // The public site should remain public!
-
     // Protect all /admin routes and sensitive administrative API routes
     if (pathname.startsWith('/admin') || pathname.startsWith('/api/archive-all') || pathname.startsWith('/api/export-orders')) {
+        
+        // Allow public login page
+        if (pathname === '/admin/login') {
+            return NextResponse.next()
+        }
+
+        const token = session?.value
+        const expectedToken = await generateSessionToken(SESSION_SECRET)
+        const isAuthenticated = token === expectedToken
+
         if (!isAuthenticated) {
             // For API routes, return 401
             if (pathname.startsWith('/api')) {

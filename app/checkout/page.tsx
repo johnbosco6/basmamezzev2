@@ -115,6 +115,7 @@ export default function CheckoutPage() {
     const [locationError, setLocationError] = useState("")
     const [addressConfirmed, setAddressConfirmed] = useState(false)
     const [acceptedTerms, setAcceptedTerms] = useState(false)
+    const [marketingConsent, setMarketingConsent] = useState(false)
     const [paymentMethod, setPaymentMethod] = useState<string | null>(null)
 
     // Check for items that cannot be delivered (e.g. ice cream desserts)
@@ -277,9 +278,10 @@ export default function CheckoutPage() {
         setErrors({})
 
         setIsSubmitting(true)
-        const orderNumber = Math.floor(1000 + Math.random() * 9000).toString()
+        
         const orderData = {
-            orderNumber,
+            _hb: "", // Honeypot field (hidden)
+            marketingConsent,
             name: form.name,
             phone: form.phone,
             email: form.email,
@@ -314,20 +316,22 @@ export default function CheckoutPage() {
             if (!response.ok) {
                 const data = await response.json()
                 console.error("Sanity save failed:", data.error)
-            } else {
-                console.log("Order saved to Sanity successfully")
+                throw new Error(data.error || "Nie udało się zapisać zamówienia")
             }
-        } catch (err) {
-            console.error("Network error saving to Sanity:", err)
-        }
+            
+            const { orderNumber } = await response.json()
+            console.log("Order saved successfully with number:", orderNumber)
 
-        // Always save to sessionStorage
-        sessionStorage.setItem("basma-order", JSON.stringify({ ...orderData, paymentMethod }))
+            // Save to sessionStorage for confirmation page
+            sessionStorage.setItem("basma-order", JSON.stringify({ 
+                ...orderData, 
+                orderNumber, 
+                paymentMethod 
+            }))
 
-        // Branching based on payment method
-        if (paymentMethod === 'p24') {
-            // Trigger Przelewy24 Payment
-            try {
+            // Branching based on payment method
+            if (paymentMethod === 'p24') {
+                // Trigger Przelewy24 Payment
                 const p24Response = await fetch("/api/payments/p24/create", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -345,21 +349,20 @@ export default function CheckoutPage() {
                 if (p24Response.ok) {
                     const { redirectUrl } = await p24Response.json()
                     clearCart()
-                    // Redirect to P24
                     window.location.href = redirectUrl
                 } else {
                     const errorData = await p24Response.json()
                     throw new Error(errorData.error || "Błąd inicjalizacji płatności")
                 }
-            } catch (err: any) {
-                console.error("Payment redirect failed:", err)
-                alert(`Wystąpił błąd podczas inicjalizacji płatności: ${err.message}. Spróbuj ponownie lub skontaktuj się z nami.`)
-                setIsSubmitting(false)
+            } else {
+                // Cash or Card on Delivery
+                clearCart()
+                router.push("/order-confirmation")
             }
-        } else {
-            // Cash or Card on Delivery
-            clearCart()
-            router.push("/order-confirmation")
+        } catch (err: any) {
+            console.error("Order submission failed:", err)
+            setSubmitError(`Wystąpił błąd: ${err.message}. Spróbuj ponownie lub skontaktuj się z nami.`)
+            setIsSubmitting(false)
         }
     }
 
@@ -866,15 +869,12 @@ export default function CheckoutPage() {
                                                             setErrors(prev => { const n = { ...prev }; delete n.terms; return n; })
                                                         }
                                                     }}
-                                                    className="h-6 w-6 rounded border-gray-300 text-[#BA9D76] focus:ring-[#BA9D76] accent-[#BA9D76] cursor-pointer transition-transform duration-200 hover:scale-110"
+                                                    className="h-6 w-6 rounded-md border-2 border-gray-400 bg-white text-[#BA9D76] focus:ring-[#BA9D76] accent-[#BA9D76] cursor-pointer transition-all duration-200 hover:scale-105"
                                                 />
                                             </div>
                                             <div className="flex-1">
                                                 <label htmlFor="terms" className={`text-sm text-gray-700 font-medium cursor-pointer leading-relaxed block ${archivo.className}`}>
-                                                    Akceptuję <Link href="/regulamin" target="_blank" className="font-bold text-[#BA9D76] hover:underline decoration-2">regulamin</Link> sklepu oraz zgadzam się na przetwarzanie danych osobowych. <span className="text-red-500 font-bold">*</span>
-                                                    <span className="block text-[11px] text-gray-500 font-light mt-1 leading-normal italic">
-                                                        Zgoda obejmuje email i telefon w celu realizacji zamówienia oraz celach marketingowych zgodnie z <Link href="/polityka-prywatnosci" target="_blank" className="font-medium text-[#BA9D76] hover:underline">polityką prywatności</Link>.
-                                                    </span>
+                                                    Akceptuję <Link href="/regulamin" target="_blank" className="font-bold text-[#BA9D76] hover:underline decoration-2">regulamin</Link> sklepu oraz zgadzam się na przetwarzanie danych osobowych w celu realizacji zamówienia. <span className="text-red-500 font-bold">*</span>
                                                 </label>
                                                 {errors.terms && (
                                                     <motion.p 
@@ -889,6 +889,29 @@ export default function CheckoutPage() {
                                             </div>
                                         </div>
                                     </div>
+
+                                    {/* Marketing Consent */}
+                                    <div className={`p-4 rounded-2xl border-2 transition-all duration-300 ${marketingConsent ? 'bg-[#597FB1]/5 border-[#597FB1]/20' : 'bg-white border-gray-100 shadow-sm'}`}>
+                                        <div className="flex items-start gap-4">
+                                            <div className="pt-0.5">
+                                                <input
+                                                    type="checkbox"
+                                                    id="marketing"
+                                                    checked={marketingConsent}
+                                                    onChange={(e) => setMarketingConsent(e.target.checked)}
+                                                    className="h-6 w-6 rounded-md border-2 border-gray-400 bg-white text-[#597FB1] focus:ring-[#597FB1] accent-[#597FB1] cursor-pointer transition-all duration-200 hover:scale-105"
+                                                />
+                                            </div>
+                                            <div className="flex-1">
+                                                <label htmlFor="marketing" className={`text-sm text-gray-600 font-light cursor-pointer leading-relaxed block ${archivo.className}`}>
+                                                    Chcę otrzymywać informacje o promocjach i nowościach (marketing). Zgoda jest dobrowolna i można ją wycofać.
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Honeypot field (hidden) */}
+                                    <input type="text" name="_hb" style={{ display: 'none' }} tabIndex={-1} autoComplete="off" />
 
                                     {submitError && (
                                         <div className="flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded-xl animate-in fade-in slide-in-from-top-1 duration-200">

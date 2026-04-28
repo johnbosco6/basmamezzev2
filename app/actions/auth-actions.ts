@@ -10,11 +10,7 @@ const SESSION_COOKIE = 'admin_session'
 const STAFF_COOKIE = 'current_staff'
 const SHIFT_ID_COOKIE = 'shift_id'
 
-// Helper to generate a session hash
-import crypto from 'crypto'
-function generateSessionToken() {
-    return crypto.createHmac('sha256', SESSION_SECRET).update('authenticated').digest('hex')
-}
+import { generateSessionToken } from '@/lib/auth-utils'
 
 const client = createClient({
     projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'placeholder',
@@ -31,9 +27,10 @@ export async function loginAdmin(formData: FormData) {
         return { success: false, message: 'Proszę wprowadzić hasło' }
     }
 
-    if (password === ADMIN_PASSWORD) {
+    if (password === ADMIN_PASSWORD && ADMIN_PASSWORD !== '') {
         // Set secure session cookie with a signed token
-        cookies().set(SESSION_COOKIE, generateSessionToken(), {
+        const token = await generateSessionToken(SESSION_SECRET)
+        cookies().set(SESSION_COOKIE, token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'strict',
@@ -159,7 +156,8 @@ export async function logoutAdmin() {
 export async function isAuthenticated(): Promise<boolean> {
     const session = cookies().get(SESSION_COOKIE)
     if (!session?.value) return false
-    return session.value === generateSessionToken()
+    const expectedToken = await generateSessionToken(SESSION_SECRET)
+    return session.value === expectedToken
 }
 
 /**

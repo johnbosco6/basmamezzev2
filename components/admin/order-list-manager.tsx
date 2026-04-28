@@ -7,6 +7,8 @@ import { OrderAnalyticsChart } from './order-analytics-chart'
 import { CsvDownloadButton } from './csv-download-button'
 import { TrendingUp, ShoppingBag, UtensilsCrossed, Users, RefreshCcw } from 'lucide-react'
 import { client } from '@/lib/sanity'
+import { getWarsawTimeState } from '@/lib/hours'
+import { useRef } from 'react'
 
 interface OrderListManagerProps {
     initialOrders: any[]
@@ -16,7 +18,10 @@ export function OrderListManager({ initialOrders }: OrderListManagerProps) {
     const [orders, setOrders] = useState(initialOrders)
     const [monthlyOrders, setMonthlyOrders] = useState<any[]>([])
     const [isPolling, setIsPolling] = useState(false)
+    const [lastSync, setLastSync] = useState<Date | null>(null)
     const [timeRange, setTimeRange] = useState<'day' | 'month'>('month')
+    const audioRef = useRef<HTMLAudioElement | null>(null)
+    const prevOrdersCount = useRef<number>(initialOrders.length)
 
     const refreshOrders = useCallback(async () => {
         setIsPolling(true)
@@ -26,12 +31,19 @@ export function OrderListManager({ initialOrders }: OrderListManagerProps) {
                 getMonthlyOrders()
             ])
             
-            if (latest && latest.length > 0) {
+            if (latest) {
+                // Play sound if new orders arrived (count increased)
+                if (latest.length > prevOrdersCount.current) {
+                    console.log('🔔 New order detected! Playing alert...')
+                    audioRef.current?.play().catch(e => console.warn('Audio play blocked:', e))
+                }
+                prevOrdersCount.current = latest.length
                 setOrders(latest)
             }
             if (monthly) {
                 setMonthlyOrders(monthly)
             }
+            setLastSync(new Date())
         } catch (error) {
             console.error('Failed to poll orders:', error)
         } finally {
@@ -67,13 +79,12 @@ export function OrderListManager({ initialOrders }: OrderListManagerProps) {
 
     // Stats (using monthlyOrders for persistence)
     const stats = useMemo(() => {
-        const today = new Date()
-        today.setHours(0, 0, 0, 0)
+        const { dateString } = getWarsawTimeState()
 
         const filteredOrders = timeRange === 'day' 
             ? monthlyOrders.filter((o: any) => {
-                const orderDate = new Date(o.completedAt || o.orderDate)
-                return orderDate >= today
+                const orderDate = o.completedAt || o.orderDate
+                return orderDate && orderDate.startsWith(dateString)
             })
             : monthlyOrders
 
@@ -174,9 +185,10 @@ export function OrderListManager({ initialOrders }: OrderListManagerProps) {
                                 : "bg-white/5 border-white/10 text-white/20"
                         }`}>
                             <span className={`w-1.5 h-1.5 rounded-full ${isPolling ? "bg-[#BA9D76]" : "bg-white/20"}`} />
-                            Live Sync
+                            Live Sync {lastSync ? `· ${lastSync.toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}` : ''}
                         </span>
                     </h2>
+                    <audio ref={audioRef} src="/sounds/order-alarm.wav" preload="auto" />
                     <div className="h-px bg-white/5 flex-1" />
                     {activeOrders.length > 0 && (
                         <span className="text-xs bg-[#BA9D76]/20 text-[#BA9D76] border border-[#BA9D76]/30 px-3 py-1 rounded-full font-bold shrink-0">
