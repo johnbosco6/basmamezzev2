@@ -78,7 +78,7 @@ export const menuData: MenuCategory[] = [
             id: "sabich",
             name: "Sabich",
             description:
-              "Grillowany bakłażan, jajko, świeże warzywa, hummus, pietruszka, mięta, sosy: pilpelchuma i amba, podane na wypiekanej na miejscu picie",
+              "Grillowany bakłażan, jajko, świeże warzywa, hummus, pietruszka, mięta, sosy: harissa i amba, podane na wypiekanej na miejscu picie",
             price: "45 zł",
             image: "/images/menu/sabich-dish-new.jpeg",
             allergens: [1, 3, 7, 10, 11],
@@ -105,7 +105,7 @@ export const menuData: MenuCategory[] = [
             id: "greek-sandwich",
             name: "Kanapka Grecka",
             description:
-              "Halloumi, oliwki, labneh, sos pilpelchuma, sałata, marynowana papryka, natka pietruszki, serwowane na chlebie pita",
+              "Halloumi, oliwki, labneh, sos harissa, sałata, marynowana papryka, natka pietruszki, serwowane na chlebie pita",
             price: "45 zł",
             image: "/images/menu/kanapka-grecka.jpg",
             allergens: [1, 7, 10, 11, 12],
@@ -126,7 +126,7 @@ export const menuData: MenuCategory[] = [
           {
             id: "wrap-syryjski",
             name: "Syryjski",
-            description: "Falafel, sałata, ogórek, pomidor, natka pietruszki, sos basma",
+            description: "Falafel, sałata, ogórek, pomidor, natka pietruszki, piklowana marchewka, sos basma",
             price: "37 zł",
             image: "/images/menu/wrap-syryjski.jpeg",
             allergens: [1, 11],
@@ -134,7 +134,7 @@ export const menuData: MenuCategory[] = [
           {
             id: "wrap-jerozolimski",
             name: "Jerozolimski",
-            description: "Bakłażan, hummus, ogórek, pomidor, cebula, sos pilpelchuma, amba",
+            description: "Bakłażan, hummus, ogórek, pomidor, cebula, sos amba",
             price: "37 zł",
             image: "/images/menu/wrap-jerusalem.jpeg",
             allergens: [1, 11],
@@ -150,7 +150,7 @@ export const menuData: MenuCategory[] = [
           {
             id: "wrap-turecki",
             name: "Turecki",
-            description: "Adana kebab, sałata, cebula, pikle, sumak, natka pietruszki, sos toum, sos pilpelchuma",
+            description: "Adana kebab, sałata, cebula, pikle, sumak, natka pietruszki, sos toum, sos harissa",
             price: "42 zł",
             image: "/images/menu/wrap-turkish.jpeg",
             allergens: [1, 3, 10],
@@ -158,7 +158,7 @@ export const menuData: MenuCategory[] = [
           {
             id: "wrap-grecki",
             name: "Grecki",
-            description: "Halloumi, sałata, czerwona cebula, oliwki, pomidor, ubijana feta, sos pilpelchuma, natka pietruszki",
+            description: "Halloumi, sałata, czerwona cebula, oliwki, pomidor, ubijana feta, sos harissa, natka pietruszki",
             price: "43 zł",
             image: "/images/menu/wrap-grecki.jpg",
             allergens: [1, 7],
@@ -265,6 +265,21 @@ export const menuData: MenuCategory[] = [
             allergens: [1, 10],
           },
           {
+            id: "tomatoes-amba",
+            name: "Pomidory z sosem amba",
+            description: "Pomidory z aromatycznym sosem amba",
+            price: "12 zł",
+            allergens: [11],
+          },
+          {
+            id: "grilled-corn-labneh",
+            name: "Grillowana kukurydza na labneh z masłem chilli",
+            description: "Grillowana kukurydza serwowana na kremowym labneh z pikantnym masłem chilli",
+            price: "18 zł",
+            allergens: [7],
+            notAvailableOnline: true,
+          },
+          {
             id: "kibbeh",
             name: "Kibbeh",
             description: "Smażona kulka z kaszy bulgur z jagnięciną, cebulą i przyprawami",
@@ -272,14 +287,7 @@ export const menuData: MenuCategory[] = [
             image: "/images/menu/kibbeh.jpg",
             allergens: [1, 8],
           },
-          {
-            id: "tabbouleh-basma",
-            name: "Tabbouleh by BASMA",
-            description: "Sałatka z kaszą bulgur, suszoną morelą, migdałami, miodem i wodą z kwiatów pomarańczy",
-            price: "12 zł",
-            image: "/images/menu/tabbouleh-basma-mezze.jpeg",
-            allergens: [1, 8, 10, 12],
-          },
+
           {
             id: "muhammara",
             name: "Muhammara",
@@ -365,8 +373,8 @@ export const menuData: MenuCategory[] = [
           {
             id: "jerozolimski-talerz",
             name: "Jerozolimski",
-            description: "3x falafel, baba ghanoush, tabbouleh by BASMA, muhammara, mix pikli, pita",
-            price: "48 zł",
+            description: "3 Falafels, Baba Ghanoush, Hummus, Muhammara, Pomidory z sosem amba, Pita",
+            price: "49 zł",
             image: "/images/menu/mezze-platter-jerusalem.jpeg",
             allergens: [1, 7, 8, 10, 11, 12],
           },
@@ -422,10 +430,17 @@ export const menuData: MenuCategory[] = [
             allergens: [7, 10],
           },
           {
+            id: "chicken-shish-shawarma",
+            name: "Chicken Shish Shawarma",
+            description: "Chicken Skewers Marinated in Yogurt and Shawarma Spices, Served With Amba Sauce And Arabic Yogurt Relish",
+            price: "42 zł",
+            allergens: [7, 11],
+          },
+          {
             id: "adana-kebap",
             name: "Adana Kebap Barani",
-            description: "Z sosami toum i pilpelchuma, piklami i natką pietruszki",
-            price: "64 zł",
+            description: "with toum and harissa sauces, pickles and parsley",
+            price: "59 zł",
             image: "/images/menu/adana-mutton-kebab-new.jpeg",
             allergens: [3, 10, 12],
           },
@@ -433,7 +448,7 @@ export const menuData: MenuCategory[] = [
             id: "kofty-jagniece",
             name: "Kofty Jagnięce",
             description: "Z sosami zhoug i harissa, piklami, natką pietruszki i cebulą z sumakiem",
-            price: "74 zł",
+            price: "69 zł",
             image: "/images/menu/lamb-kofta-with-sauces-new.jpeg",
             allergens: [7, 10, 12],
           },
@@ -441,8 +456,8 @@ export const menuData: MenuCategory[] = [
           {
             id: "lamb-chops",
             name: "Comber Jagnięcy / Lamb Chops",
-            description: "z labneh, orzechami pinii, piklami, natką pietruszki, cebulą i czarnuszką",
-            price: "139 zł",
+            description: "With Labneh, pine nuts, Grilled Corn with Chili Butter, Parsley, Onion and Nigella",
+            price: "129 zł",
             image: "/images/menu/lamb-chops-with-labneh-new.jpeg",
             allergens: [7, 8, 10, 12],
           },
@@ -450,8 +465,8 @@ export const menuData: MenuCategory[] = [
             id: "meat-platter-2",
             name: "Menu Degustacyjne dla Dwóch Osób",
             description:
-              "Adana kebab 1/2, kofta jagnięca 1/2, comber jagnięcy 1/2, kurczak shish joojeh, kurczak shish taouk, sosy: zhoug, toum, harissa, pilpelchuma, basma, 2x pita, ryż, frytki z sumakiem, mix pikli",
-            price: "249 zł",
+              "Adana Kebap 1/2, Lamb Koftas 1/2, Lamb Chops 1/2, Shish Joojeh Chicken, Shish Taouk Chicken, Sauces: Basma, Zhoug, Toum, Amba, Harissa, Arabic Yogurt Relish, 2xPita, Rice, Fries With Sumac, Mixed Pickles",
+            price: "239 zł",
             image: "/images/menu/meat-platter-for-two-new.jpeg",
             allergens: [1, 3, 7, 8, 10, 11, 12],
           },
@@ -459,8 +474,8 @@ export const menuData: MenuCategory[] = [
             id: "meat-platter-4",
             name: "Menu Degustacyjne dla Czterech Osób",
             description:
-              "Comber jagnięcy, adana kebap, kofty jagnięce, kurczak shish joojeh, kurczak shish taouk, sosy: zhoug, toum, harissa, pilpelchuma, basma, 4x pita, ryż, frytki z sumakiem, mix pikli",
-            price: "439 zł",
+              "Adana Kebap, Lamb Koftas, Lamb Chops, Shish Joojeh Chicken, Shish Taouk Chicken, Chicken Shish Shawarma, Sauces: Basma, Zhoug, Toum, Amba, Harissa, Arabic Yogurt Relish, 4xPita, Rice, Fries With Sumac, Mixed Pickles",
+            price: "449 zł",
             image: "/images/menu/meat-platter-for-four-new.jpeg",
             allergens: [1, 3, 7, 8, 10, 11, 12],
           },
@@ -481,7 +496,7 @@ export const menuData: MenuCategory[] = [
           {
             id: "grilled-halloumi",
             name: "Grillowane Halloumi",
-            description: "Z chutney morelowym, orzechową dukkah, kolendrą i sosem pilpelchuma",
+            description: "Z chutney morelowym, orzechową dukkah, kolendrą i sosem harissa",
             price: "55 zł",
             image: "/images/menu/halloumi-danie.jpg",
             allergens: [7, 8, 12],
@@ -547,33 +562,7 @@ export const menuData: MenuCategory[] = [
       },
     ],
   },
-  {
-    id: "zupy",
-    sectionTitle: "Zupy",
-    categories: [
-      {
-        categoryName: "Zupy Sezonowe",
-        items: [
-          {
-            id: "seasonal-soup-vege",
-            name: "Sezonowa Zupa Wegetariańska",
-            description:
-              "W ofercie restauracji znajdują się sezonowa zupa mięsna i sezonowa zupa wegetariańska. O aktualną dostępność zapytaj obsługę",
-            price: "25 zł",
-            image: "/images/menu/seasonal-soup.jpg",
-          },
-          {
-            id: "seasonal-soup-meat",
-            name: "Sezonowa Zupa Mięsna",
-            description:
-              "W ofercie restauracji znajdują się sezonowa zupa mięsna i sezonowa zupa wegetariańska. O aktualną dostępność zapytaj obsługę",
-            price: "25 zł",
-            image: "/images/menu/seasonal-soup.jpg",
-          },
-        ],
-      },
-    ],
-  },
+
   {
     id: "desery",
     sectionTitle: "Desery",
@@ -581,13 +570,12 @@ export const menuData: MenuCategory[] = [
       {
         categoryName: "Słodkości Bliskowschodnie",
         items: [
-
           {
-            id: "sekerpare",
-            name: "Sekerpare",
-            description: "2 x ciasteczko z orzechem laskowym, nasączone syropem",
-            price: "9 zł",
-            allergens: [1, 8],
+            id: "baklava",
+            name: "Baklava",
+            description: "Layered Dessert Made With Phyllo Dough, Pistachios and Honey",
+            price: "12 zł",
+            allergens: [1, 8, 11],
           },
           {
             id: "dubai-dream",
@@ -617,14 +605,12 @@ export const menuData: MenuCategory[] = [
             allergens: [7],
           },
           {
-            id: "warm-apple-pie",
-            name: "Szarlotka na Ciepło z Lodami",
-            description:
-              "Jabłka, gruszki, rodzynki, kruszonka, krem tahini, lody waniliowe",
-            price: "32 zł",
-            image: "/images/menu/szarlotka.jpg",
-            allergens: [1, 7, 11],
-            notAvailableForDelivery: true,
+            id: "halva-mousse",
+            name: "Halva Mousse",
+            description: "Layerred With Phyllo Dough, Served With Raspberry Sauce And Seasonal Fruit",
+            price: "35 zł",
+            allergens: [1, 7, 8],
+            notAvailableOnline: true,
           },
         ],
       },
@@ -700,11 +686,17 @@ export const menuData: MenuCategory[] = [
             allergens: [3],
           },
           {
-            id: "pilpelchuma",
-            name: "Pilpelchuma",
-            description: "Pikantny sos z papryki",
+            id: "arabic-yogurt-relish",
+            name: "Arabic Yogurt Relish",
+            description: "Yogurt Sauce With Chopped Vegetables And Sumac",
             price: "7 zł",
-            image: "/images/menu/pilpelchuma-sauce.jpeg",
+            allergens: [7],
+          },
+          {
+            id: "amba",
+            name: "Amba",
+            description: "Sweet-and-Sour Mango Sauce With Spicy Notes",
+            price: "7 zł",
             allergens: [],
           },
           {
@@ -751,15 +743,7 @@ export const menuData: MenuCategory[] = [
             allergens: [],
             notAvailableOnline: true,
           },
-          {
-            id: "autumn-tea",
-            name: "Herbata Jesienna",
-            description: "Herbata arabska, syrop z bzu, miód, woda z kwiatów pomarańczy",
-            price: "18 zł",
-            image: "/images/menu/herbata-sezonowa.jpg",
-            allergens: [12],
-            notAvailableOnline: true,
-          },
+
 
           {
             id: "espresso",
@@ -843,39 +827,7 @@ export const menuData: MenuCategory[] = [
           },
         ],
       },
-      {
-        categoryName: "Grzańce",
-        items: [
-          {
-            id: "mulled-white-wine",
-            name: "Grzaniec z Białym Winem",
-            description: "Białe wino, syrop waniliowy, miód, korzenne przyprawy, pomarańcza",
-            price: "25 zł",
-            notAvailableOnline: true,
-          },
-          {
-            id: "mulled-red-wine",
-            name: "Grzaniec z Czerwonym Winem",
-            description: "Czerwone wino, sok pomarańczowy, syrop waniliowy, korzenne przyprawy, pomarańcza",
-            price: "25 zł",
-            notAvailableOnline: true,
-          },
-          {
-            id: "mulled-aperol",
-            name: "Grzaniec z Aperolem",
-            description: "Aperol, białe wino, sok jabłkowy, syrop brzoskwiniowy, korzenne przyprawy, pomarańcza",
-            price: "29 zł",
-            notAvailableOnline: true,
-          },
-          {
-            id: "mulled-nonalcoholic",
-            name: "Grzaniec Bezalkoholowy",
-            description: "Syrop ruby grape, sok z granatu, adriatico, korzenne przyprawy, pomarańcza",
-            price: "29 zł",
-            notAvailableOnline: true,
-          },
-        ],
-      },
+
       {
         categoryName: "Napoje Zimne",
         items: [
@@ -975,11 +927,19 @@ export const menuData: MenuCategory[] = [
             notAvailableOnline: true,
           },
           {
-            id: "yaffa-lemonade",
-            name: "Yaffa Lemonade",
-            description: "Sok jabłkowy / sok z granatu / syrop cynamonowy / sok z cytryny",
+            id: "juniper-groove",
+            name: "Juniper Groove",
+            description: "Juniper Syrup, Rosemary, Lemon Juice, Orange Blossom Water, Sugar Syrup",
             price: "25 zł",
-            image: "/images/menu/yaffa-lemonade.jpg",
+            allergens: [],
+            notAvailableOnline: true,
+          },
+          {
+            id: "hibiscus-shams",
+            name: "Hibiscus Shams",
+            description: "Hibiscus Syrup, Jallab, Elderberry Syrup, Sparkling Water",
+            price: "25 zł",
+            allergens: [],
             notAvailableOnline: true,
           },
           {
@@ -1009,15 +969,6 @@ export const menuData: MenuCategory[] = [
             allergens: [12],
             notAvailableOnline: true,
           },
-          {
-            id: "orange-rosemary",
-            name: "Orange Rosemary",
-            description: "Tonik / woda z kwiatów pomarańczy / rozmaryn / syrop cukrowy / sok z cytryny / woda gazowana",
-            price: "25 zł",
-            image: "/images/menu/orange-rosemary.jpg",
-            allergens: [12],
-            notAvailableOnline: true,
-          },
         ],
       },
     ],
@@ -1033,8 +984,22 @@ export const menuData: MenuCategory[] = [
             id: "craft-beer",
             name: "Piwo Butelkowe",
             description: "Szeroki wybór piw kraftowych - zapytaj obsługę o aktualną ofertę",
-            price: "20 zł",
+            price: "21 zł",
             allergens: [1, 12],
+          },
+          {
+            id: "wine-muscaris",
+            name: "Majątek Drzewce Muscaris",
+            description: "Glass (150 ml)",
+            price: "32 zł",
+            allergens: [12],
+          },
+          {
+            id: "wine-johanniter",
+            name: "Kazimierskie Wzgórza Johanniter",
+            description: "Glass (150 ml)",
+            price: "32 zł",
+            allergens: [12],
           },
           {
             id: "house-wine-glass",
@@ -1200,9 +1165,30 @@ export const menuData: MenuCategory[] = [
             id: "porn-star-martini",
             name: "Porn Star Martini",
             description: "Distil No.9 / prosecco / puree marakuja / syrop waniliowy / sok z cytryny",
-            price: "37 zł",
+            price: "38 zł",
             image: "/images/menu/porn-star-martini.jpg",
             allergens: [1, 12],
+          },
+          {
+            id: "cherry-amore",
+            name: "Cherry Amore",
+            description: "Amaretto, Cherry Puree, Vanilla Syrup, Lemon Juice, Angostura Coccoa",
+            price: "34 zł",
+            allergens: [12],
+          },
+          {
+            id: "violet-queen",
+            name: "Violet Queen",
+            description: "Whitley Neill London Dry Gin, Hibiscus Syrup. Lychee Puree, Grapefruit Juice, Sugar Syrup",
+            price: "34 zł",
+            allergens: [12],
+          },
+          {
+            id: "pink-madar",
+            name: "Pink Madar",
+            description: "Passoa, Lychee Puree, Hibiscus Syrup, Pomegranate Syrup",
+            price: "34 zł",
+            allergens: [12],
           },
           {
             id: "negroni",
@@ -1211,14 +1197,6 @@ export const menuData: MenuCategory[] = [
             price: "35 zł",
             image: "/images/menu/negroni.jpg",
             allergens: [12],
-          },
-          {
-            id: "arabian-nights-sour",
-            name: "Arabian Nights Sour",
-            description: "Bushmills original / wino czerwone / syrop cukrowy / białko / sok z cytryny / angostura",
-            price: "35 zł",
-            image: "/images/menu/arabian-nights-sour.jpg",
-            allergens: [3, 12],
           },
           {
             id: "aperol-spritz",
@@ -1252,15 +1230,6 @@ export const menuData: MenuCategory[] = [
             price: "35 zł",
             image: "/images/menu/sweet-sahara.jpg",
             allergens: [3, 12],
-          },
-          {
-            id: "asmar",
-            name: "Asmar",
-            description:
-              "Jagermeister / czerwone wino / sok jabłkowy / puree z gruszki / sok z cytryny / melasa z daktyli",
-            price: "34 zł",
-            image: "/images/menu/asmar.jpg",
-            allergens: [12],
           },
           {
             id: "whisky-sour-basma",
@@ -1376,7 +1345,7 @@ export const specialOccasionsData: MenuCategory = {
             { id: "p1-chicken-touk", name: "KURCZAK TOUK Z HARISSĄ", description: "Podawany z ryżem basmati z pomidorami lub frytkami z sumakiem, cytryną kiszoną oraz sałatką arabską lub mixem pikli", price: "" },
             { id: "p1-chicken-joojeh", name: "KURCZAK SHISH JOOJEH", description: "Podawany z ryżem basmati z pomidorami lub frytkami z sumakiem oraz z sałatką arabską lub mixem pikli", price: "" },
             { id: "p1-main-header-veg", name: "Wegetariańskie:", description: "", price: "" },
-            { id: "p1-cauliflower", name: "KALAFIOR PANIEROWANY", description: "Polany sosem tahini i pilpelchuma, podawany z bulgurem z warzywami oraz piklowanym kalafiorem", price: "" },
+            { id: "p1-cauliflower", name: "KALAFIOR PANIEROWANY", description: "Polany sosem tahini i harissa, podawany z bulgurem z warzywami oraz piklowanym kalafiorem", price: "" },
             { id: "p1-grilled-aubergine", name: "GRILLOWANY BAKŁAŻAN", description: "Serwowany na hummusie z fasoli", price: "" },
           ],
         },
@@ -1446,7 +1415,7 @@ export const specialOccasionsData: MenuCategory = {
             { id: "p2-beef-steak", name: "STEK Z POLĘDWICY WOŁOWEJ", description: "Podawany z ziemniakami latkes, szaszłykiem warzywnym, labneh i sosem zoug", price: "" },
             { id: "p2-meat-trio", name: "TRIO MIĘS (ADANA KEBAB, KOFTA JAGNIĘCA, KURCZAK)", description: "Podawane z pieczonym ziemniakiem z zatarem i sumakiem, oraz piklowaną kapustą i ogórkiem", price: "" },
             { id: "p2-main-header-veg", name: "Wegetariańskie:", description: "", price: "" },
-            { id: "p2-cauliflower", name: "KALAFIOR PANIEROWANY", description: "Polany sosem tahini i pilpelchuma, podawany z bulgurem z warzywami oraz piklowanym kalafiorem", price: "" },
+            { id: "p2-cauliflower", name: "KALAFIOR PANIEROWANY", description: "Polany sosem tahini i harissa, podawany z bulgurem z warzywami oraz piklowanym kalafiorem", price: "" },
             { id: "p2-grilled-aubergine", name: "GRILLOWANY BAKŁAŻAN", description: "Serwowany na hummusie z fasoli", price: "" },
           ],
         },
