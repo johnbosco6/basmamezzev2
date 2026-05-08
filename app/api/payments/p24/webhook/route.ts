@@ -112,6 +112,15 @@ export async function POST(req: NextRequest) {
             console.error(`P24 Webhook: Notification error for order #${order.orderNumber}`, err)
         }
 
+        // 7. Trigger GoPOS Notification ("Ping")
+        try {
+            const { sendGoPosNotification } = await import('@/lib/gopos')
+            await sendGoPosNotification(order.orderNumber, order.customerName, order.totalAmount || 0)
+            console.log(`P24 Webhook: GoPOS notification sent for order #${order.orderNumber}`)
+        } catch (err) {
+            console.error(`P24 Webhook: GoPOS notification error for order #${order.orderNumber}`, err)
+        }
+
         return NextResponse.json({ ok: true })
     } catch (error: any) {
         console.error("P24 Webhook Error:", error)

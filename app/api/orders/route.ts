@@ -4,6 +4,7 @@ import { sendOrderConfirmation, sendAdminOrderAlert } from '@/lib/notifications'
 import { isRestaurantOpenForOrders } from '@/lib/hours'
 import { sendPushToAll } from '@/lib/web-push'
 import { menuData } from '@/app/menu/menu-data'
+import { sendGoPosNotification } from '@/lib/gopos'
 
 export const dynamic = 'force-dynamic'
 
@@ -145,6 +146,9 @@ export async function POST(req: NextRequest) {
                 `${name} zamówił właśnie ${items.length} potraw za ${(totalPrice || 0).toFixed(2)} zł.`,
                 '/admin'
             ).catch(err => console.error('[Order API] Web Push Alert failed:', err))
+            // Trigger GoPOS Notification ("Ping")
+            sendGoPosNotification(orderNumber, name, totalPrice)
+                .catch(err => console.error('[Order API] GoPOS Notification failed:', err))
         } else {
             console.log(`[Order API] P24 order #${orderNumber} — admin alerts deferred to payment webhook`)
         }
