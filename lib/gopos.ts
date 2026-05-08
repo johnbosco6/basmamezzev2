@@ -69,21 +69,21 @@ export async function sendGoPosNotification(orderNumber: string, customerName: s
         const now = new Date().toISOString().split('.')[0];
         const payload = {
             type: "DELIVERY",
-            terminal_name: "Basma Online",
+            terminal_name: "Sklep Online Basma",
             execution_at: now,
             items: [
                 {
-                    name: `NOWE ZAMÓWIENIE #${orderNumber}`,
+                    name: "NOWE ZAMÓWIENIE",
                     quantity: 1,
                     unit_price: {
                         amount: totalPrice,
                         currency: "PLN"
                     },
-                    tax: { id: 1 }, // Default tax ID
-                    comment: `Klient: ${customerName}`
+                    tax: { id: 1 }, 
+                    comment: "Otrzymano nowe zamówienie przez stronę internetową!"
                 }
             ],
-            comment: `ZAMÓWIENIE Z WITRYNY: #${orderNumber}. Sprawdź panel Basma!`,
+            comment: `ZAMÓWIENIE NR: #${orderNumber}. PROSZĘ SPRAWDŹ DASHBOARD BASMA!`,
             source: "EXTERNAL",
             transactions: [],
             contact: {
