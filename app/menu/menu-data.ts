@@ -333,6 +333,7 @@ export const menuData: MenuCategory[] = [
             description: "Zestaw wszystkich mezze z 4x kibbeh i 4x falafel",
             price: "199 zł",
             allergens: [1, 4, 7, 8, 10, 11],
+            notAvailableOnline: true,
           },
         ],
       },
@@ -460,6 +461,7 @@ export const menuData: MenuCategory[] = [
             price: "129 zł",
             image: "/images/menu/lamb-chops-with-labneh-new.jpeg",
             allergens: [7, 8, 10, 12],
+            notAvailableOnline: true,
           },
           {
             id: "meat-platter-2",
