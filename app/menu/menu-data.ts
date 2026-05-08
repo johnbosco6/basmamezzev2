@@ -461,6 +461,7 @@ export const menuData: MenuCategory[] = [
             price: "129 zł",
             image: "/images/menu/lamb-chops-with-labneh-new.jpeg",
             allergens: [7, 8, 10, 12],
+            notAvailableOnline: true,
           },
           {
             id: "meat-platter-2",
