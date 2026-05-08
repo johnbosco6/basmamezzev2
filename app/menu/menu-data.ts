@@ -461,7 +461,6 @@ export const menuData: MenuCategory[] = [
             price: "129 zł",
             image: "/images/menu/lamb-chops-with-labneh-new.jpeg",
             allergens: [7, 8, 10, 12],
-            notAvailableOnline: true,
           },
           {
             id: "meat-platter-2",
@@ -471,6 +470,7 @@ export const menuData: MenuCategory[] = [
             price: "239 zł",
             image: "/images/menu/meat-platter-for-two-new.jpeg",
             allergens: [1, 3, 7, 8, 10, 11, 12],
+            notAvailableOnline: true,
           },
           {
             id: "meat-platter-4",
@@ -480,6 +480,7 @@ export const menuData: MenuCategory[] = [
             price: "449 zł",
             image: "/images/menu/meat-platter-for-four-new.jpeg",
             allergens: [1, 3, 7, 8, 10, 11, 12],
+            notAvailableOnline: true,
           },
         ],
       },
