@@ -1,10 +1,10 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { client } from '@/lib/sanity'
 import { ensureAuthenticated } from '@/app/actions/auth-actions'
 
 export const dynamic = 'force-dynamic'
 
-export async function GET() {
+export async function GET(req: NextRequest) {
     try {
         await ensureAuthenticated()
         // Fetch only completed orders (Delivered or Picked Up)

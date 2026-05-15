@@ -429,3 +429,124 @@ export async function sendAdminOrderAlert(order: OrderDetails) {
     }
     return { resend: false }
 }
+/**
+ * Send special event request confirmation email to customer.
+ */
+export async function sendSpecialEventRequestConfirmation(data: {
+    name: string,
+    email: string,
+    phone: string,
+    eventType: string,
+    date: string,
+    guests: string,
+    message: string
+}) {
+    if (process.env.RESEND_API_KEY && data.email) {
+        try {
+            await resend.emails.send({
+                from: 'Basma Mezze & Grill <zamowienia@basmamezze.pl>',
+                replyTo: 'basmalublin@gmail.com',
+                to: data.email,
+                subject: `Dziękujemy za zapytanie — Basma Mezze & Grill`,
+                html: `
+                <!DOCTYPE html>
+                <html>
+                <head><meta charset="utf-8"></head>
+                <body style="margin: 0; padding: 0; background-color: #f5f5f5;">
+                    <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f5f5f5; padding: 40px 20px;">
+                        <tr>
+                            <td align="center">
+                                <table width="600" cellpadding="0" cellspacing="0" style="background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
+                                    <tr>
+                                        <td style="background: linear-gradient(135deg, #597FB1, #326096); padding: 40px 30px; text-align: center;">
+                                            <h1 style="margin: 0; font-family: Arial, sans-serif; font-size: 28px; color: #BA9D76; letter-spacing: 2px;">BASMA MEZZE & GRILL</h1>
+                                            <p style="margin: 8px 0 0; font-family: Arial, sans-serif; font-size: 13px; color: rgba(255,255,255,0.7); letter-spacing: 1px;">ZAPYTANIE O WYDARZENIE</p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 30px 30px 10px;">
+                                            <p style="font-family: Arial, sans-serif; font-size: 16px; color: #333; margin: 0;">Dzień dobry <strong>${escapeHTML(data.name)}</strong>,</p>
+                                            <p style="font-family: Arial, sans-serif; font-size: 14px; color: #666; margin: 10px 0 0;">Dziękujemy za zainteresowanie organizacją wydarzenia w naszej restauracji. Potwierdzamy otrzymanie Twojego zapytania. Nasz zespół skontaktuje się z Tobą wkrótce, aby omówić szczegóły.</p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding: 15px 30px;">
+                                            <table width="100%" cellpadding="0" cellspacing="0" style="background: #f8f6f3; border-radius: 12px; border-left: 4px solid #BA9D76; padding: 20px;">
+                                                <tr>
+                                                    <td>
+                                                        <p style="margin: 0 0 10px; font-family: Arial, sans-serif; font-size: 14px; color: #555;"><strong>Typ wydarzenia:</strong> ${escapeHTML(data.eventType)}</p>
+                                                        <p style="margin: 0 0 10px; font-family: Arial, sans-serif; font-size: 14px; color: #555;"><strong>Data:</strong> ${escapeHTML(data.date)}</p>
+                                                        <p style="margin: 0 0 10px; font-family: Arial, sans-serif; font-size: 14px; color: #555;"><strong>Liczba gości:</strong> ${escapeHTML(data.guests)}</p>
+                                                        <p style="margin: 0; font-family: Arial, sans-serif; font-size: 14px; color: #555;"><strong>Twoja wiadomość:</strong><br/>${escapeHTML(data.message)}</p>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="background: #2B2B2B; padding: 25px 30px; text-align: center;">
+                                            <p style="margin: 0; font-family: Arial, sans-serif; font-size: 12px; color: #BA9D76;">Basma Mezze & Grill — Do zobaczenia! 🥙</p>
+                                            <p style="margin: 6px 0 0; font-family: Arial, sans-serif; font-size: 11px; color: rgba(255,255,255,0.4);">Ta wiadomość została wysłana automatycznie.</p>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </body>
+                </html>
+                `
+            })
+            return { resend: true }
+        } catch (err) {
+            console.error('[Notifications] Special event confirmation failed:', err)
+        }
+    }
+    return { resend: false }
+}
+
+/**
+ * Send special event alert to admin.
+ */
+export async function sendAdminSpecialEventAlert(data: {
+    name: string,
+    email: string,
+    phone: string,
+    eventType: string,
+    date: string,
+    guests: string,
+    message: string
+}) {
+    if (process.env.RESEND_API_KEY) {
+        try {
+            await resend.emails.send({
+                from: 'Basma Event Alert <zamowienia@basmamezze.pl>',
+                to: 'basmalublin@gmail.com',
+                subject: `✨ NOWE ZAPYTANIE: ${data.eventType} — ${data.name}`,
+                html: `
+                <div style="font-family: sans-serif; padding: 20px; border: 2px solid #BA9D76; border-radius: 12px; background-color: #fff;">
+                    <h1 style="color: #BA9D76; margin-top: 0; font-size: 24px;">✨ Nowe Zapytanie o Event!</h1>
+                    <div style="background: #fdfaf6; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 5px solid #BA9D76;">
+                        <p style="font-size: 16px; margin: 0;"><strong>Typ:</strong> ${escapeHTML(data.eventType)}</p>
+                        <p style="margin: 5px 0 0;"><strong>Planowana data:</strong> ${escapeHTML(data.date)}</p>
+                        <p style="margin: 5px 0 0;"><strong>Liczba gości:</strong> ${escapeHTML(data.guests)}</p>
+                    </div>
+                    <p><strong>Imię i nazwisko:</strong> ${escapeHTML(data.name)}</p>
+                    <p><strong>Email:</strong> ${escapeHTML(data.email)}</p>
+                    <p><strong>Telefon:</strong> ${escapeHTML(data.phone)}</p>
+                    <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;" />
+                    <p style="font-weight: bold; text-transform: uppercase; font-size: 12px; color: #999; margin-bottom: 10px;">Wiadomość:</p>
+                    <p style="font-size: 15px; line-height: 1.6;">${escapeHTML(data.message)}</p>
+                    <div style="margin-top: 30px; text-align: center;">
+                        <a href="mailto:${data.email}" style="display: inline-block; background: #BA9D76; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 16px;">ODPOWIEDZ KLIENTOWI</a>
+                    </div>
+                </div>
+                `
+            })
+            return { resend: true }
+        } catch (err) {
+            console.error('[Notifications] Admin event alert failed:', err)
+        }
+    }
+    return { resend: false }
+}
