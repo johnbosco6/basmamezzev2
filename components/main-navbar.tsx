@@ -156,15 +156,15 @@ export function MainNavbar() {
                 <nav className="flex items-center justify-center gap-1 md:gap-6 backdrop-blur-md bg-white/10 border border-white/20 rounded-full px-4 py-1.5 shadow-lg scale-90 md:scale-95">
                     <Link href="/special-events" className={navLinkClass("/special-events")}>
                         <CalendarDays className="h-3.5 w-3.5 transition-colors duration-300" />
-                        <span className={`text-[10px] md:text-xs font-light ${archivo.className}`}>Przyjęcia</span>
+                        <span className={`text-[10px] md:text-xs font-light ${archivo.className}`}>Imprezy Okolicznościowe</span>
+                    </Link>
+                    <Link href="/offers" className={navLinkClass("/offers")}>
+                        <Megaphone className="h-3.5 w-3.5 transition-colors duration-300" />
+                        <span className={`text-[10px] md:text-xs font-light ${archivo.className}`}>Party Box</span>
                     </Link>
                     <Link href="/faq" className={navLinkClass("/faq")}>
                         <MessageCircle className="h-3.5 w-3.5 transition-colors duration-300" />
                         <span className={`text-[10px] md:text-xs font-light ${archivo.className}`}>FAQ</span>
-                    </Link>
-                    <Link href="/offers" className={navLinkClass("/offers")}>
-                        <Megaphone className="h-3.5 w-3.5 transition-colors duration-300" />
-                        <span className={`text-[10px] md:text-xs font-light ${archivo.className}`}>Oferty</span>
                     </Link>
                 </nav>
 

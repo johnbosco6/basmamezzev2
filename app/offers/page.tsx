@@ -8,7 +8,9 @@ import { Archivo } from "next/font/google"
 import { specialOccasionsData } from "../menu/menu-data"
 import { Badge } from "@/components/ui/badge"
 import { Check } from "lucide-react"
+import { Button } from "@/components/ui/button"
 import { PartyBoxActions } from "@/components/offers/party-box-actions"
+import { PartyBoxContact } from "@/components/offers/party-box-contact"
 
 const archivo = Archivo({ subsets: ["latin"], weight: ["200", "400", "600", "700"], display: "swap" })
 
@@ -35,13 +37,10 @@ export default async function OffersPage() {
     return (
         <div className="min-h-screen bg-white text-gray-900 pt-[240px] md:pt-[200px]">
             <MainNavbar />
-
             <div className="container mx-auto py-12 px-4 max-w-6xl">
-                <h1 className={`text-4xl md:text-5xl font-semibold mb-12 text-center text-gray-900 ${archivo.className}`}>Aktualne Oferty i Nowości</h1>
-
                 {/* Featured Party Box Offer */}
                 {partyBox && (
-                    <div className="mb-20 overflow-hidden rounded-[2.5rem] border border-gray-100 shadow-2xl bg-white group">
+                    <div className="mb-12 overflow-hidden rounded-[2.5rem] border border-gray-100 shadow-2xl bg-white group">
                         <div className="flex flex-col lg:flex-row">
                             <div className="relative w-full lg:w-1/2 h-[400px] lg:h-auto overflow-hidden">
                                 <Image
@@ -58,14 +57,13 @@ export default async function OffersPage() {
                                 </div>
                             </div>
                             <div className="w-full lg:w-1/2 p-8 md:p-12 flex flex-col justify-center bg-gray-50/50">
-                                <h2 className={`text-3xl md:text-4xl font-semibold text-gray-900 mb-2 ${archivo.className}`}>
+                                <h1 className={`text-4xl md:text-5xl font-semibold text-gray-900 mb-2 ${archivo.className}`}>
                                     {partyBox.packageName}
-                                </h2>
+                                </h1>
                                 <p className={`text-3xl text-[#BA9D76] font-semibold mb-6 ${archivo.className}`}>
                                     {partyBox.packagePrice}
                                 </p>
                                 
-
                                 <div className="space-y-4 mb-8">
                                     <p className={`text-gray-600 font-light leading-relaxed ${archivo.className}`}>
                                         Idealny zestaw na spotkanie z przyjaciółmi lub rodziną. Zawiera bogaty wybór naszych najlepszych mezze i przekąsek.
@@ -91,8 +89,13 @@ export default async function OffersPage() {
                     </div>
                 )}
 
+                {/* Contact Section */}
+                <div className="mb-20">
+                    <PartyBoxContact />
+                </div>
+
                 <div className="w-full h-px bg-gray-100 mb-16"></div>
-                <h3 className={`text-2xl font-semibold mb-8 text-gray-900 ${archivo.className}`}>Więcej Aktualności</h3>
+                <h3 className={`text-2xl font-semibold mb-8 text-gray-900 ${archivo.className}`}>Inne Aktualności</h3>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {offers.length > 0 ? (
