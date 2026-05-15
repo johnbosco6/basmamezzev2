@@ -54,41 +54,63 @@ async function getGoPosToken(): Promise<string | null> {
 }
 
 /**
- * Sends a "Ping" notification to the GoPOS terminal
+ * Sends a detailed order to the GoPOS terminal
  * @param orderNumber The website order number (e.g. B-1234)
  * @param customerName The name of the customer
- * @param totalPrice The total price of the order
+ * @param items The list of items from the cart
+ * @param deliveryFee The delivery fee amount
  */
-export async function sendGoPosNotification(orderNumber: string, customerName: string, totalPrice: number) {
-    console.log(`[GoPOS] Triggering notification for order #${orderNumber}...`);
+export async function sendGoPosNotification(
+    orderNumber: string, 
+    customerName: string, 
+    items: any[], 
+    deliveryFee: number = 0
+) {
+    console.log(`[GoPOS] Sending detailed order #${orderNumber} to terminal...`);
 
     const token = await getGoPosToken();
     if (!token) return { success: false, error: 'Authentication failed' };
 
     try {
         const now = new Date().toISOString().split('.')[0];
+        
+        // Map website items to GoPOS format
+        const goposItems = items.map(item => ({
+            name: item.name.toUpperCase(),
+            quantity: item.quantity,
+            unit_price: {
+                amount: item.price,
+                currency: "PLN"
+            },
+            tax: { id: 1 }, // Default tax ID
+            comment: item.description || ""
+        }));
+
+        // Add Delivery Fee as a separate item if applicable
+        if (deliveryFee > 0) {
+            goposItems.push({
+                name: "DOSTAWA (DELIVERY FEE)",
+                quantity: 1,
+                unit_price: {
+                    amount: deliveryFee,
+                    currency: "PLN"
+                },
+                tax: { id: 1 },
+                comment: "Opłata za dowóz"
+            });
+        }
+
         const payload = {
             type: "DELIVERY",
             terminal_name: "Sklep Online Basma",
             execution_at: now,
-            items: [
-                {
-                    name: "NOWE ZAMÓWIENIE",
-                    quantity: 1,
-                    unit_price: {
-                        amount: totalPrice,
-                        currency: "PLN"
-                    },
-                    tax: { id: 1 }, 
-                    comment: "Otrzymano nowe zamówienie przez stronę internetową!"
-                }
-            ],
-            comment: `ZAMÓWIENIE NR: #${orderNumber}. PROSZĘ SPRAWDŹ DASHBOARD BASMA!`,
+            items: goposItems,
+            comment: `ZAMÓWIENIE STRONA WWW #${orderNumber}. PROSZĘ SPRAWDZIĆ DASHBOARD!`,
             source: "EXTERNAL",
             transactions: [],
             contact: {
                 name: customerName,
-                phone_number: "000000000"
+                phone_number: "000000000" // We don't necessarily need to sync phone here if it's on the dashboard
             }
         };
 
@@ -109,7 +131,7 @@ export async function sendGoPosNotification(orderNumber: string, customerName: s
         }
 
         const data = await response.json();
-        console.log(`[GoPOS] Notification sent successfully! GoPOS Order ID: ${data.data?.id}`);
+        console.log(`[GoPOS] Detailed order sent successfully! GoPOS Order ID: ${data.data?.id}`);
         return { success: true, id: data.data?.id };
     } catch (err) {
         console.error('[GoPOS] Notification error:', err);

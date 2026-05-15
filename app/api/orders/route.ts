@@ -147,7 +147,7 @@ export async function POST(req: NextRequest) {
                 '/admin'
             ).catch(err => console.error('[Order API] Web Push Alert failed:', err))
             // Trigger GoPOS Notification ("Ping")
-            sendGoPosNotification(orderNumber, name, totalPrice)
+            sendGoPosNotification(orderNumber, name, items, deliveryFee)
                 .catch(err => console.error('[Order API] GoPOS Notification failed:', err))
         } else {
             console.log(`[Order API] P24 order #${orderNumber} — admin alerts deferred to payment webhook`)

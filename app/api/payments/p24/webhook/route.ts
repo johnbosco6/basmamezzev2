@@ -115,7 +115,13 @@ export async function POST(req: NextRequest) {
         // 7. Trigger GoPOS Notification ("Ping")
         try {
             const { sendGoPosNotification } = await import('@/lib/gopos')
-            await sendGoPosNotification(order.orderNumber, order.customerName, order.totalAmount || 0)
+            const mappedItems = (order.items || []).map((item: any) => ({
+                name: item.name,
+                quantity: item.quantity,
+                price: item.price,
+                description: item.description
+            }))
+            await sendGoPosNotification(order.orderNumber, order.customerName, mappedItems, order.deliveryFee || 0)
             console.log(`P24 Webhook: GoPOS notification sent for order #${order.orderNumber}`)
         } catch (err) {
             console.error(`P24 Webhook: GoPOS notification error for order #${order.orderNumber}`, err)
