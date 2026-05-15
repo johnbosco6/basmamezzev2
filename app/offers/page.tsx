@@ -7,8 +7,8 @@ import { MainNavbar } from "@/components/main-navbar"
 import { Archivo } from "next/font/google"
 import { specialOccasionsData } from "../menu/menu-data"
 import { Badge } from "@/components/ui/badge"
-import { Check, ShoppingBag } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { Check } from "lucide-react"
+import { PartyBoxActions } from "@/components/offers/party-box-actions"
 
 const archivo = Archivo({ subsets: ["latin"], weight: ["200", "400", "600", "700"], display: "swap" })
 
@@ -65,6 +65,7 @@ export default async function OffersPage() {
                                     {partyBox.packagePrice}
                                 </p>
                                 
+
                                 <div className="space-y-4 mb-8">
                                     <p className={`text-gray-600 font-light leading-relaxed ${archivo.className}`}>
                                         Idealny zestaw na spotkanie z przyjaciółmi lub rodziną. Zawiera bogaty wybór naszych najlepszych mezze i przekąsek.
@@ -84,19 +85,7 @@ export default async function OffersPage() {
                                     </div>
                                 </div>
 
-                                <div className="flex flex-wrap gap-4 mt-4">
-                                    <Link href="/order" className="w-full sm:w-auto">
-                                        <Button size="lg" className="bg-[#BA9D76] hover:bg-[#BA9D76]/90 text-white border-none px-8 py-6 h-auto text-lg rounded-full shadow-lg transition-all hover:scale-105 w-full">
-                                            <ShoppingBag className="h-5 w-5 mr-2" />
-                                            Zamów Online
-                                        </Button>
-                                    </Link>
-                                    <Link href="/#contact" className="w-full sm:w-auto">
-                                        <Button size="lg" variant="outline" className="border-gray-200 text-gray-700 hover:bg-white px-8 py-6 h-auto text-lg rounded-full bg-transparent w-full">
-                                            Zapytaj o szczegóły
-                                        </Button>
-                                    </Link>
-                                </div>
+                                <PartyBoxActions partyBox={partyBox} />
                             </div>
                         </div>
                     </div>
