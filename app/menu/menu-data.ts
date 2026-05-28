@@ -723,6 +723,20 @@ export const menuData: MenuCategory[] = [
             id: "zhoug",
             name: "Zhoug",
             description: "Zielony sos z ziół i chili",
+            allergens: [],
+          },
+          {
+            id: "harissa",
+            name: "Harissa",
+            description: "Ostra pasta z chili",
+            price: "7 zł",
+            image: "/images/menu/harissa-sauce.jpeg",
+            allergens: [],
+          },
+          {
+            id: "zhoug",
+            name: "Zhoug",
+            description: "Zielony sos z ziół i chili",
             price: "7 zł",
             image: "/images/menu/zhoug-sauce.jpeg",
             allergens: [],
@@ -755,8 +769,6 @@ export const menuData: MenuCategory[] = [
             allergens: [],
             notAvailableOnline: true,
           },
-
-
           {
             id: "espresso",
             name: "Espresso",
@@ -839,7 +851,6 @@ export const menuData: MenuCategory[] = [
           },
         ],
       },
-
       {
         categoryName: "Napoje Zimne",
         items: [
@@ -928,7 +939,6 @@ export const menuData: MenuCategory[] = [
             allergens: [8, 12],
             notAvailableOnline: true,
           },
-
           {
             id: "basma-sour-lemonade",
             name: "Basma Sour Lemonade",
@@ -991,6 +1001,117 @@ export const menuData: MenuCategory[] = [
     id: "alkohole",
     sectionTitle: "Alkohole",
     categories: [
+      {
+        categoryName: "Koktajle",
+        items: [
+          {
+            id: "porn-star-martini",
+            name: "Porn Star Martini",
+            description: "Distil No.9 / prosecco / puree marakuja / syrop waniliowy / sok z cytryny",
+            price: "38 zł",
+            image: "/images/menu/porn-star-martini.jpg",
+            allergens: [1, 12],
+          },
+          {
+            id: "cherry-amore",
+            name: "Cherry Amore",
+            description: "Amaretto, Cherry Puree, Vanilla Syrup, Lemon Juice, Angostura Coccoa",
+            price: "34 zł",
+            image: "/images/menu/cherry-a-more-new.webp",
+            allergens: [12],
+          },
+          {
+            id: "violet-queen",
+            name: "Violet Queen",
+            description: "Whitley Neill London Dry Gin, Hibiscus Syrup. Lychee Puree, Grapefruit Juice, Sugar Syrup",
+            price: "34 zł",
+            image: "/images/menu/violet-queen-new.webp",
+            allergens: [12],
+          },
+          {
+            id: "pink-madar",
+            name: "Pink Madar",
+            description: "Passoa, Lychee Puree, Hibiscus Syrup, Pomegranate Syrup",
+            price: "34 zł",
+            image: "/images/menu/pink-madar-new.webp",
+            allergens: [12],
+          },
+          {
+            id: "negroni",
+            name: "Negroni",
+            description: "Whitley Neill gin London dry / Martini rosso / Campari",
+            price: "35 zł",
+            image: "/images/menu/negroni.jpg",
+            allergens: [12],
+          },
+          {
+            id: "aperol-spritz",
+            name: "Aperol Spritz",
+            description: "Aperol / prosecco / woda gazowana / pomarańcza",
+            price: "35 zł",
+            image: "/images/menu/aperol-spritz.jpg",
+            allergens: [12],
+          },
+          {
+            id: "mojito",
+            name: "Mojito",
+            description: "Planteray dark / cukier trzcinowy / limonka / mięta / woda gazowana",
+            price: "35 zł",
+            image: "/images/menu/mojito.jpg",
+            allergens: [12],
+          },
+          {
+            id: "mango-frizz",
+            name: "Mango Frizz",
+            description: "Prosecco / syrop mango / woda z kwiatów pomarańczy / woda gazowana",
+            price: "35 zł",
+            image: "/images/menu/mango-frizz.jpg",
+            allergens: [12],
+          },
+          {
+            id: "sweet-sahara",
+            name: "Sweet Sahara",
+            description:
+              "Likier melon / puree marakuja / woda z kwiatów pomarańczy / sok z cytryny / syrop cukrowy / białko",
+            price: "35 zł",
+            image: "/images/menu/sweet-sahara.jpg",
+            allergens: [3, 12],
+          },
+          {
+            id: "whisky-sour-basma",
+            name: "Whisky Sour by BASMA",
+            description: "Bushmills original / syrop z granatu / białko / angostura / sok z cytryny",
+            price: "32 zł",
+            image: "/images/menu/whisky-sour-basma.jpg",
+            allergens: [3, 12],
+          },
+          {
+            id: "basma-martini",
+            name: "Basma Martini",
+            description: "Distil No.9 / puree lychee / sok z cytryny / syrop różany",
+            price: "32 zł",
+            image: "/images/menu/basma-martini.jpg",
+            allergens: [12],
+          },
+          {
+            id: "nour",
+            name: "Nour",
+            description: "Martini bianco / puree z gruszki / syrop waniliowy / kardamon",
+            price: "29 zł",
+            image: "/images/menu/nour.jpg",
+            allergens: [12],
+          },
+          {
+            id: "ginger-girl",
+            name: "Ginger Girl",
+            description:
+              "Whitley Neill gin London dry / woda z kwiatów pomarańczy / syrop waniliowy / sok z cytryny / imbir / woda gazowana",
+            price: "29 zł",
+            image: "/images/menu/ginger-girl.jpg",
+            allergens: [12],
+          },
+        ],
+      },
       {
         categoryName: "Piwo i Wino",
         items: [
@@ -1172,120 +1293,9 @@ export const menuData: MenuCategory[] = [
           },
         ],
       },
-      {
-        categoryName: "Koktajle",
-        items: [
-          {
-            id: "porn-star-martini",
-            name: "Porn Star Martini",
-            description: "Distil No.9 / prosecco / puree marakuja / syrop waniliowy / sok z cytryny",
-            price: "38 zł",
-            image: "/images/menu/porn-star-martini.jpg",
-            allergens: [1, 12],
-          },
-          {
-            id: "cherry-amore",
-            name: "Cherry Amore",
-            description: "Amaretto, Cherry Puree, Vanilla Syrup, Lemon Juice, Angostura Coccoa",
-            price: "34 zł",
-            image: "/images/menu/cherry-a-more-new.webp",
-            allergens: [12],
-          },
-          {
-            id: "violet-queen",
-            name: "Violet Queen",
-            description: "Whitley Neill London Dry Gin, Hibiscus Syrup. Lychee Puree, Grapefruit Juice, Sugar Syrup",
-            price: "34 zł",
-            image: "/images/menu/violet-queen-new.webp",
-            allergens: [12],
-          },
-          {
-            id: "pink-madar",
-            name: "Pink Madar",
-            description: "Passoa, Lychee Puree, Hibiscus Syrup, Pomegranate Syrup",
-            price: "34 zł",
-            image: "/images/menu/pink-madar-new.webp",
-            allergens: [12],
-          },
-          {
-            id: "negroni",
-            name: "Negroni",
-            description: "Whitley Neill gin London dry / Martini rosso / Campari",
-            price: "35 zł",
-            image: "/images/menu/negroni.jpg",
-            allergens: [12],
-          },
-          {
-            id: "aperol-spritz",
-            name: "Aperol Spritz",
-            description: "Aperol / prosecco / woda gazowana / pomarańcza",
-            price: "35 zł",
-            image: "/images/menu/aperol-spritz.jpg",
-            allergens: [12],
-          },
-          {
-            id: "mojito",
-            name: "Mojito",
-            description: "Planteray dark / cukier trzcinowy / limonka / mięta / woda gazowana",
-            price: "35 zł",
-            image: "/images/menu/mojito.jpg",
-            allergens: [12],
-          },
-          {
-            id: "mango-frizz",
-            name: "Mango Frizz",
-            description: "Prosecco / syrop mango / woda z kwiatów pomarańczy / woda gazowana",
-            price: "35 zł",
-            image: "/images/menu/mango-frizz.jpg",
-            allergens: [12],
-          },
-          {
-            id: "sweet-sahara",
-            name: "Sweet Sahara",
-            description:
-              "Likier melon / puree marakuja / woda z kwiatów pomarańczy / sok z cytryny / syrop cukrowy / białko",
-            price: "35 zł",
-            image: "/images/menu/sweet-sahara.jpg",
-            allergens: [3, 12],
-          },
-          {
-            id: "whisky-sour-basma",
-            name: "Whisky Sour by BASMA",
-            description: "Bushmills original / syrop z granatu / białko / angostura / sok z cytryny",
-            price: "32 zł",
-            image: "/images/menu/whisky-sour-basma.jpg",
-            allergens: [3, 12],
-          },
-          {
-            id: "basma-martini",
-            name: "Basma Martini",
-            description: "Distil No.9 / puree lychee / sok z cytryny / syrop różany",
-            price: "32 zł",
-            image: "/images/menu/basma-martini.jpg",
-            allergens: [12],
-          },
-          {
-            id: "nour",
-            name: "Nour",
-            description: "Martini bianco / puree z gruszki / syrop waniliowy / kardamon",
-            price: "29 zł",
-            image: "/images/menu/nour.jpg",
-            allergens: [12],
-          },
-          {
-            id: "ginger-girl",
-            name: "Ginger Girl",
-            description:
-              "Whitley Neill gin London dry / woda z kwiatów pomarańczy / syrop waniliowy / sok z cytryny / imbir / woda gazowana",
-            price: "29 zł",
-            image: "/images/menu/ginger-girl.jpg",
-            allergens: [12],
-          },
-        ],
-      },
     ],
   },
-]
+];
 
 export const specialOccasionsData: MenuCategory = {
   id: "specjalne-okazje",
