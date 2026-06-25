@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Home, BookOpen, ShoppingBag, Phone, CalendarDays, MessageCircle, Megaphone } from "lucide-react"
 import { Archivo } from "next/font/google"
@@ -20,6 +20,17 @@ export function MainNavbar() {
     const pathname = usePathname()
     const { totalItems, setCartOpen } = useCart()
     const isHomePage = pathname === "/"
+    const reservationScriptLoaded = useRef(false)
+
+    const openReservation = useCallback(() => {
+        if (!reservationScriptLoaded.current) {
+            reservationScriptLoaded.current = true
+            const script = document.createElement("script")
+            script.type = "text/javascript"
+            script.src = "//api.myrest.io/integration?cn=basmaea"
+            document.body.appendChild(script)
+        }
+    }, [])
     
     // Scroll tracking for hide/show behavior
     const [isVisible, setIsVisible] = useState(true)
@@ -125,6 +136,14 @@ export function MainNavbar() {
                             <Phone className="h-3.5 w-3.5 transition-colors duration-300" />
                             <span className={`text-[10px] md:text-xs font-light ${archivo.className}`}>Kontakt</span>
                         </Link>
+                        <button
+                            onClick={openReservation}
+                            className="flex flex-col items-center gap-1 p-1 md:p-2 rounded-xl transition-all duration-300 hover:bg-white/20 hover:shadow-lg text-white/80 hover:text-[#BA9D76] group"
+                            aria-label="Zarezerwuj stolik"
+                        >
+                            <CalendarDays className="h-3.5 w-3.5 transition-colors duration-300" />
+                            <span className={`text-[10px] md:text-xs font-light ${archivo.className}`}>Rezerwacja</span>
+                        </button>
                     </nav>
 
                     {/* Cart Button on the Right */}
