@@ -69,7 +69,7 @@ export function MainNavbar() {
         } else {
             triggerOpen()
         }
-    }, [])])
+    }, [])
     
     // Scroll tracking for hide/show behavior
     const [isVisible, setIsVisible] = useState(true)
