@@ -147,3 +147,18 @@ html:not([data-theme]) {
   --admin-border: rgb(55, 65, 81);
   --admin-accent: rgb(186, 157, 118);
 }
+
+/* Hide MyRest booking widget floating button globally */
+#myrestio-booking-widget-button,
+.myrestio-booking-widget-button,
+[id*="myrest"] > a,
+[id*="myrest"] > button,
+div[style*="position: fixed"][style*="z-index"][style*="bottom"] a[href*="myrest"],
+div[style*="position: fixed"][style*="z-index"][style*="bottom"] button,
+iframe[src*="myrest.io"] ~ button,
+iframe[src*="myrest.io"] ~ a {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
