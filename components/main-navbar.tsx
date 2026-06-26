@@ -23,14 +23,53 @@ export function MainNavbar() {
     const reservationScriptLoaded = useRef(false)
 
     const openReservation = useCallback(() => {
+        const triggerOpen = () => {
+            if (typeof window !== "undefined" && typeof (window as any).mrOpen === "function") {
+                (window as any).mrOpen()
+            }
+        }
+
         if (!reservationScriptLoaded.current) {
             reservationScriptLoaded.current = true
+
+            // Inject CSS to hide the floating "BOOK A TABLE" button created by MyRest
+            const style = document.createElement("style")
+            style.textContent = `
+                #myrestio-booking-widget-button,
+                .myrestio-booking-widget-button,
+                [id*="myrest"] > a,
+                [id*="myrest"] > button,
+                div[style*="position: fixed"][style*="z-index"][style*="bottom"] a[href*="myrest"],
+                div[style*="position: fixed"][style*="z-index"][style*="bottom"] button,
+                iframe[src*="myrest.io"] ~ button,
+                iframe[src*="myrest.io"] ~ a {
+                    display: none !important;
+                    visibility: hidden !important;
+                    opacity: 0 !important;
+                    pointer-events: none !important;
+                }
+            `
+            document.head.appendChild(style)
+
             const script = document.createElement("script")
             script.type = "text/javascript"
             script.src = "//api.myrest.io/integration?cn=basmaea"
+            script.onload = () => {
+                // Try opening the form after script loads
+                const tryOpen = (attempts: number) => {
+                    if (typeof window !== "undefined" && typeof (window as any).mrOpen === "function") {
+                        (window as any).mrOpen()
+                    } else if (attempts > 0) {
+                        setTimeout(() => tryOpen(attempts - 1), 200)
+                    }
+                }
+                tryOpen(10)
+            }
             document.body.appendChild(script)
+        } else {
+            triggerOpen()
         }
-    }, [])
+    }, [])])
     
     // Scroll tracking for hide/show behavior
     const [isVisible, setIsVisible] = useState(true)
