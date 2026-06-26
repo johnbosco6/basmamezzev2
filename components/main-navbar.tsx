@@ -32,24 +32,26 @@ export function MainNavbar() {
         if (!reservationScriptLoaded.current) {
             reservationScriptLoaded.current = true
 
-            // Inject CSS to hide the floating "BOOK A TABLE" button created by MyRest
-            const style = document.createElement("style")
-            style.textContent = `
-                #myrestio-booking-widget-button,
-                .myrestio-booking-widget-button,
-                [id*="myrest"] > a,
-                [id*="myrest"] > button,
-                div[style*="position: fixed"][style*="z-index"][style*="bottom"] a[href*="myrest"],
-                div[style*="position: fixed"][style*="z-index"][style*="bottom"] button,
-                iframe[src*="myrest.io"] ~ button,
-                iframe[src*="myrest.io"] ~ a {
-                    display: none !important;
-                    visibility: hidden !important;
-                    opacity: 0 !important;
-                    pointer-events: none !important;
-                }
-            `
-            document.head.appendChild(style)
+            // Set up a MutationObserver to instantly remove the floating button if it appears
+            if (typeof window !== "undefined") {
+                const observer = new MutationObserver((mutations) => {
+                    mutations.forEach(() => {
+                        const badButtons = document.querySelectorAll(
+                            '#myrestio-booking-widget-button, .myrestio-booking-widget-button, [id*="myrestio"] button, [id*="myrestio"] a, a[href*="myrest.io"]'
+                        )
+                        badButtons.forEach((btn) => {
+                            // Hide the button element so it is never visible
+                            if (btn instanceof HTMLElement) {
+                                btn.style.setProperty("display", "none", "important")
+                                btn.style.setProperty("visibility", "hidden", "important")
+                                btn.style.setProperty("opacity", "0", "important")
+                                btn.style.setProperty("pointer-events", "none", "important")
+                            }
+                        })
+                    })
+                })
+                observer.observe(document.body, { childList: true, subtree: true })
+            }
 
             const script = document.createElement("script")
             script.type = "text/javascript"
