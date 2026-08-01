@@ -36,7 +36,7 @@ export const menuItemType = defineType({
             type: 'string',
             options: {
                 list: [
-                    { title: 'Śniadania', value: 'sniadania' },
+                    { title: 'ALL DAY BREAKFAST & STREETFOOD', value: 'breakfast-streetfood' },
                     { title: 'Mezze - Talerzyki', value: 'mezze-talerzyki' },
                     { title: 'Mezze - Talerze', value: 'mezze-talerze' },
                     { title: 'Grill', value: 'grill' },

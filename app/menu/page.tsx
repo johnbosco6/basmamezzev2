@@ -21,8 +21,7 @@ const archivo = Archivo({
 
 // Icon mapping for menu sections
 const IconMap = {
-  sniadania: Coffee,
-  wrapy: Utensils,
+  "breakfast-streetfood": Coffee,
   "mezze-talerzyki": Utensils,
   "mezze-talerze": Utensils,
   grill: Utensils,
@@ -43,7 +42,7 @@ export default function MenuPage() {
     return parseFloat(numeric) || 0
   }
 
-  const [activeSection, setActiveSection] = useState("sniadania")
+  const [activeSection, setActiveSection] = useState("breakfast-streetfood")
   const [activeCategory, setActiveCategory] = useState<string | null>(null)
   const [selectedImage, setSelectedImage] = useState<{ src: string; alt: string } | null>(null)
   const [activeAllergens, setActiveAllergens] = useState<number[]>([])
@@ -292,12 +291,12 @@ ${shareData.url}`)
                   {section.sectionTitle}
                 </h2>
                 <div className="w-24 h-1 bg-gradient-to-r from-[#BA9D76] to-[#597FB1] mx-auto rounded-full"></div>
-                {section.id === "sniadania" && (
+                {section.id === "breakfast-streetfood" && (
                   <div className="mt-6 inline-flex items-center gap-3 bg-amber-50 border border-amber-200 text-amber-800 rounded-2xl px-6 py-4 text-sm shadow-sm">
                     <Coffee className="h-5 w-5 text-amber-600 flex-shrink-0" />
                     <div className="text-left">
-                      <p className={`font-semibold text-amber-900 ${archivo.className}`}>Śniadania dostępne wyłącznie w restauracji</p>
-                      <p className={`font-light text-amber-700 ${archivo.className}`}>Sobota – Niedziela: 10:00–13:00 &nbsp;·&nbsp; Poniedziałek–Piątek: niedostępne</p>
+                      <p className={`font-semibold text-amber-900 ${archivo.className}`}>Pozycje śniadaniowe 1-3 dostępne wyłącznie w restauracji</p>
+                      <p className={`font-light text-amber-700 ${archivo.className}`}>Sobota – Niedziela: 10:00–13:00 &nbsp;·&nbsp; Pozycje 4-9 (Sabich, Mezze Morning i Wrapy) dostępne codziennie na miejscu i online</p>
                     </div>
                   </div>
                 )}

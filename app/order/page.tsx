@@ -22,8 +22,7 @@ const archivo = Archivo({
 
 // Icon mapping for menu sections
 const IconMap = {
-    sniadania: Coffee,
-    wrapy: Utensils,
+    "breakfast-streetfood": Coffee,
     "mezze-talerzyki": Utensils,
     "mezze-talerze": Utensils,
     grill: Utensils,
@@ -56,7 +55,7 @@ export default function OrderPage() {
         ])
 
         return (menuData || [])
-            .filter(section => section?.id && !["sniadania", "alkohole", "specjalne-okazje"].includes(section.id))
+            .filter(section => section?.id && !["alkohole", "specjalne-okazje"].includes(section.id))
             .map(section => ({
                 ...section,
                 categories: (section.categories || [])
@@ -351,7 +350,7 @@ export default function OrderPage() {
                                                 const canOrder = item.price && 
                                                     typeof item.price === "string" && 
                                                     parsePrice(item.price) > 0 && 
-                                                    !(["specjalne-okazje", "sniadania", "alkohole"].includes(section.id))
+                                                    !(["specjalne-okazje", "alkohole"].includes(section.id))
 
                                                 return (
                                                     <div

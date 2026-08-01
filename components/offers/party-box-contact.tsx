@@ -32,14 +32,11 @@ export function PartyBoxContact() {
         setIsSubmitting(true)
 
         try {
-            // Reusing the special-events API since it's already set up to handle inquiries
-            const response = await fetch("/api/special-events", {
+            // Dedicated Party Box API endpoint
+            const response = await fetch("/api/party-box", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    ...formData,
-                    eventType: "Party Box Inquiry"
-                })
+                body: JSON.stringify(formData)
             })
 
             if (response.ok) {
