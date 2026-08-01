@@ -85,7 +85,7 @@ export const menuData: MenuCategory[] = [
           {
             id: "mezze-morning",
             name: "Mezze Morning",
-            description: "Poranny zestaw mezze: hummus, labneh, falafel, oliwki, świeże warzywa, pita",
+            description: "2 x falafel, 2 x dowolne mezze do wyboru, pita",
             price: "29 zł",
             image: "/images/menu/talerz-basma-new.webp",
             allergens: [1, 7, 11],
