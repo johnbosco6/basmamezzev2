@@ -12,6 +12,7 @@ import { CookieSettingsButton } from "@/components/cookie-settings-button"
 import StyledComponentsRegistry from "@/lib/registry"
 import { CartProvider } from "@/context/cart-context"
 import { GlobalCart } from "@/components/global-cart"
+import { SiteBorderBeam } from "@/components/site-border-beam"
 
 const archivo = Archivo({
   subsets: ["latin"],
@@ -48,6 +49,7 @@ export default function RootLayout({
           <CartProvider>
             <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
               <Suspense fallback={null}>
+                <SiteBorderBeam />
                 {children}
                 <GlobalCart />
                 <CookieConsent />
