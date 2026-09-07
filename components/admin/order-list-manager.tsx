@@ -1,14 +1,12 @@
 'use client'
 
-import { useState, useEffect, useMemo, useCallback } from 'react'
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import { getOrders, getMonthlyOrders } from '@/app/actions/admin-actions'
 import { OrderCard } from './order-card'
 import { OrderAnalyticsChart } from './order-analytics-chart'
 import { CsvDownloadButton } from './csv-download-button'
-import { TrendingUp, ShoppingBag, UtensilsCrossed, Users, RefreshCcw } from 'lucide-react'
-import { client } from '@/lib/sanity'
+import { TrendingUp, ShoppingBag, UtensilsCrossed, Users } from 'lucide-react'
 import { getWarsawTimeState } from '@/lib/hours'
-import { useRef } from 'react'
 
 interface OrderListManagerProps {
     initialOrders: any[]
@@ -45,32 +43,29 @@ export function OrderListManager({ initialOrders }: OrderListManagerProps) {
             }
             setLastSync(new Date())
         } catch (error) {
-            console.error('Failed to poll orders:', error)
+            console.error('Failed to refresh orders:', error)
         } finally {
             setIsPolling(false)
         }
     }, [])
 
     useEffect(() => {
-        // Subscribe to real-time updates for all orders (WebSocket)
-        const query = '*[_type == "order"]'
-        const subscription = client.listen(query).subscribe(() => {
-            console.log('🔄 Real-time update detected!')
+        // Listen for the custom event dispatched by OrderNotification
+        // when a real-time Sanity update is detected.
+        // This avoids opening a second WebSocket connection here.
+        const handleOrdersUpdated = () => {
             refreshOrders()
-        })
+        }
 
-        // Fallback: Poll every 30 seconds in case listener fails or tab was in background
-        const interval = setInterval(() => {
-            console.log('⏰ Scheduled poll...')
-            refreshOrders()
-        }, 30000)
+        window.addEventListener('basma:orders-updated', handleOrdersUpdated)
 
-        // Initial refresh
-        refreshOrders()
+        // Also do an initial fetch of monthly orders (not included in initialOrders)
+        getMonthlyOrders()
+            .then((monthly) => { if (monthly) setMonthlyOrders(monthly) })
+            .catch(() => {})
 
         return () => {
-            subscription.unsubscribe()
-            clearInterval(interval)
+            window.removeEventListener('basma:orders-updated', handleOrdersUpdated)
         }
     }, [refreshOrders])
 

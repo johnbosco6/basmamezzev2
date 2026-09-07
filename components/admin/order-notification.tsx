@@ -309,6 +309,10 @@ export function OrderNotification() {
                     knownOrderIdsRef.current = currentPendingIds
                 }
             }
+
+            // Notify OrderListManager to refresh its order list
+            // (single event bus instead of a duplicate WebSocket connection)
+            window.dispatchEvent(new CustomEvent('basma:orders-updated'))
         } catch (error) {
             console.error("[Notification] Error checking orders:", error)
         }
@@ -332,10 +336,10 @@ export function OrderNotification() {
         // 2. Initial check
         checkNewOrders()
 
-        // 3. Polling fallback every 15 seconds — catches missed WebSocket events
+        // 3. Polling fallback every 30 seconds — catches missed WebSocket events
         const pollInterval = setInterval(() => {
             checkNewOrders()
-        }, 15000)
+        }, 30000)
 
         return () => {
             subscription.unsubscribe()

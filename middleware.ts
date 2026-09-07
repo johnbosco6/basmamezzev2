@@ -11,8 +11,18 @@ export async function middleware(request: NextRequest) {
     // Protect all /admin routes and sensitive administrative API routes
     if (pathname.startsWith('/admin') || pathname.startsWith('/api/archive-all') || pathname.startsWith('/api/export-orders')) {
         
-        // Allow public login page
+        // If already authenticated and visiting login page, redirect to dashboard
         if (pathname === '/admin/login') {
+            // Quick cookie existence check — no async crypto needed here
+            const token = session?.value
+            if (token) {
+                // Let the page load; full token validation happens in the server action
+                // Middleware only does a fast presence check to avoid redirect loops
+                const expectedToken = await generateSessionToken(SESSION_SECRET)
+                if (token === expectedToken) {
+                    return NextResponse.redirect(new URL('/admin', request.url))
+                }
+            }
             return NextResponse.next()
         }
 

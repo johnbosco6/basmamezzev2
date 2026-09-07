@@ -1,8 +1,6 @@
 import { loginAdmin } from '@/app/actions/auth-actions'
 import { Archivo } from 'next/font/google'
 import Image from 'next/image'
-import { isAuthenticated } from '@/app/actions/auth-actions'
-import { redirect } from 'next/navigation'
 import { PasswordInput } from './password-input'
 
 const archivo = Archivo({
@@ -14,12 +12,6 @@ const archivo = Archivo({
 export const dynamic = 'force-dynamic'
 
 export default async function AdminLoginPage() {
-    // Redirect if already authenticated
-    const authenticated = await isAuthenticated()
-    if (authenticated) {
-        redirect('/admin')
-    }
-
     return (
         <div className={`min-h-screen bg-gradient-to-br from-[#1a1a1a] via-[#2d2d2d] to-[#1a1a1a] flex items-center justify-center p-4 ${archivo.className}`}>
             <div className="w-full max-w-md">
