@@ -33,7 +33,9 @@ export async function loginAdmin(formData: FormData) {
         cookies().set(SESSION_COOKIE, token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict',
+            // 'lax' is required — 'strict' causes cookies to be dropped
+            // by browsers during cross-origin redirects (e.g. after login)
+            sameSite: 'lax',
             maxAge: 60 * 60 * 24 * 7, // 7 days
             path: '/',
         })
