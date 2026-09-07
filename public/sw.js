@@ -1,54 +1,85 @@
-// Basma Admin Service Worker — handles caching + push notifications
+// Basma Admin Service Worker — handles push notifications
+// IMPORTANT: We do NOT cache any admin pages to avoid redirect loops
 
-const CACHE_NAME = 'admin-cache-v3';
-const ADMIN_URL = '/admin';
+const CACHE_NAME = 'admin-cache-v5'; // bumped to bust old broken caches
 
-// Install: cache admin pages
+// Assets safe to cache (no HTML pages — they cause redirect loops)
+const STATIC_ASSETS = [
+    '/sounds/order-alarm.wav',
+    '/icons/icon-192x192.png',
+    '/icons/icon-512x512.png',
+];
+
+// Install: only cache safe static assets — NEVER cache admin HTML pages
 self.addEventListener('install', (event) => {
     event.waitUntil(
         caches.open(CACHE_NAME).then((cache) => {
-            return cache.addAll([
-                '/admin',
-                '/admin/history',
-                '/favicon.ico',
-                '/sounds/order-alarm.wav'
-            ]);
-        })
-    );
-    // Activate immediately
-    self.skipWaiting();
-});
-
-// Activate: clean old caches
-self.addEventListener('activate', (event) => {
-    event.waitUntil(
-        caches.keys().then((names) => {
-            return Promise.all(
-                names.filter((name) => name !== CACHE_NAME).map((name) => caches.delete(name))
+            // Cache only static assets that never redirect
+            return Promise.allSettled(
+                STATIC_ASSETS.map((asset) =>
+                    fetch(asset, { cache: 'no-store' })
+                        .then((res) => {
+                            if (res.ok) return cache.put(asset, res);
+                        })
+                        .catch(() => { /* ignore missing assets */ })
+                )
             );
         })
     );
-    // Take control of all pages immediately
+    self.skipWaiting();
+});
+
+// Activate: clean ALL old caches to remove any cached redirects
+self.addEventListener('activate', (event) => {
+    event.waitUntil(
+        caches.keys().then((names) =>
+            Promise.all(names.map((name) => caches.delete(name)))
+        ).then(() => {
+            // Re-create only the new clean cache
+            return caches.open(CACHE_NAME).then((cache) =>
+                Promise.allSettled(
+                    STATIC_ASSETS.map((asset) =>
+                        fetch(asset, { cache: 'no-store' })
+                            .then((res) => { if (res.ok) return cache.put(asset, res); })
+                            .catch(() => {})
+                    )
+                )
+            );
+        })
+    );
     self.clients.claim();
 });
 
-// Fetch: cache-first for static, network-first for API
+// Fetch: NEVER intercept admin page navigation — always go to network
+// This prevents caching of auth redirects which causes the login loop
 self.addEventListener('fetch', (event) => {
     const url = new URL(event.request.url);
 
-    // Skip non-GET and API routes
-    if (event.request.method !== 'GET' || url.pathname.startsWith('/api/')) {
-        return;
+    // Let ALL of these go straight to the network (no SW interception):
+    // 1. Non-GET requests (POST, etc.)
+    // 2. API routes
+    // 3. Admin HTML pages (navigation requests to /admin/*)
+    // 4. Next.js internal routes
+    if (
+        event.request.method !== 'GET' ||
+        url.pathname.startsWith('/api/') ||
+        url.pathname.startsWith('/admin') ||
+        url.pathname.startsWith('/_next/') ||
+        event.request.mode === 'navigate'
+    ) {
+        return; // Pass through to network — no caching
     }
 
+    // For safe static assets only: cache-first strategy
     event.respondWith(
-        caches.match(event.request).then((response) => {
-            return response || fetch(event.request);
+        caches.match(event.request).then((cached) => {
+            return cached || fetch(event.request);
         })
     );
 });
 
-// Message from the client — show notification when requested
+// ─── Push Notifications ────────────────────────────────────────────────────
+
 self.addEventListener('message', (event) => {
     if (event.data && event.data.type === 'SHOW_NOTIFICATION') {
         const uniqueTag = `basma-order-${Date.now()}`;
@@ -67,10 +98,9 @@ self.addEventListener('message', (event) => {
     }
 });
 
-// Push notification received (server-side push via web-push)
 self.addEventListener('push', (event) => {
-    let data = { 
-        title: '🔔 Nowe Zamówienie!', 
+    let data = {
+        title: '🔔 Nowe Zamówienie!',
         body: 'Nowe zamówienie czeka na potwierdzenie w panelu Basma!',
         icon: '/icons/icon-192x192.png'
     };
@@ -89,12 +119,10 @@ self.addEventListener('push', (event) => {
         icon: data.icon || '/icons/icon-192x192.png',
         badge: '/icons/icon-192x192.png',
         tag: uniqueTag,
-        requireInteraction: true, // IMPORTANT: Stays until user acts — wakes phone screen
+        requireInteraction: true,
         vibrate: [500, 200, 500, 200, 500, 200, 500],
         timestamp: Date.now(),
-        data: {
-            url: data.url || ADMIN_URL
-        },
+        data: { url: data.url || '/admin' },
         actions: [
             { action: 'open', title: 'OTWÓRZ PANEL' },
             { action: 'dismiss', title: 'Zamknij' }
@@ -103,7 +131,6 @@ self.addEventListener('push', (event) => {
 
     event.waitUntil(
         self.registration.showNotification(data.title, options).then(() => {
-            // Post message to all open admin pages to trigger in-app alarm sound
             return self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clients) => {
                 clients.forEach((client) => {
                     if (client.url.includes('/admin')) {
@@ -115,7 +142,6 @@ self.addEventListener('push', (event) => {
     );
 });
 
-// Notification click — open/focus the admin dashboard
 self.addEventListener('notificationclick', (event) => {
     event.notification.close();
 
@@ -123,14 +149,12 @@ self.addEventListener('notificationclick', (event) => {
 
     event.waitUntil(
         self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clients) => {
-            // If admin dashboard is already open, focus it
             for (const client of clients) {
                 if (client.url.includes('/admin') && 'focus' in client) {
                     return client.focus();
                 }
             }
-            // Otherwise open a new window
-            return self.clients.openWindow(ADMIN_URL);
+            return self.clients.openWindow('/admin');
         })
     );
 });
