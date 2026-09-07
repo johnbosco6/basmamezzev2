@@ -242,7 +242,7 @@ export const menuData: MenuCategory[] = [
             name: "Pomidory z sosem amba",
             description: "Pomidory z aromatycznym sosem amba",
             price: "12 zł",
-            image: "/images/menu/tomatoes-amba.jpg", // Kept exact original filename or fallback
+            image: "/images/menu/tomatoes-amba-new.jpg",
             allergens: [11],
           },
           {
@@ -393,7 +393,7 @@ export const menuData: MenuCategory[] = [
             name: "Fiery Wings By basma",
             description: "Spicy harissa chicken wings with chili flakes, honey, and lime juice",
             price: "39 zł",
-            image: "/images/menu/explorer-plate.jpg",
+            image: "/images/menu/fiery-wings-new.jpg",
             allergens: [3, 7, 10],
           },
           {
@@ -401,7 +401,7 @@ export const menuData: MenuCategory[] = [
             name: "Marinated sweet & sour wings",
             description: "Honey and pomegranate molasses chicken wings with sumac and urfa biber flakes",
             price: "39 zł",
-            image: "/images/menu/explorer-plate.jpg",
+            image: "/images/menu/sweet-sour-wings-new.jpg",
             allergens: [3, 7, 11],
           },
           {
